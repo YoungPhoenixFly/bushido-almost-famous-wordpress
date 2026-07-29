@@ -86,13 +86,13 @@ if [[ -n "$forbidden" ]]; then
 fi
 
 if [[ "$channel" == "production" ]]; then
-  if rg -n '^[[:space:]]*\*[[:space:]]+Update URI:|RELEASE_CHANNEL.*staging' "$main"; then
+  if grep -En '^[[:space:]]*\*[[:space:]]+Update URI:|RELEASE_CHANNEL.*staging' "$main"; then
     echo "Production distribution contains staging/update-channel markers." >&2
     exit 67
   fi
 else
-  rg -q 'Update URI: https://github.com/YoungPhoenixFly/bushido-almost-famous-wordpress' "$main"
-  rg -q "BUSHIDO_ALMOST_FAMOUS_RELEASE_CHANNEL', 'staging'" "$main"
+  grep -Fq 'Update URI: https://github.com/YoungPhoenixFly/bushido-almost-famous-wordpress' "$main"
+  grep -Fq "BUSHIDO_ALMOST_FAMOUS_RELEASE_CHANNEL', 'staging'" "$main"
 fi
 
 while IFS= read -r php_file; do
