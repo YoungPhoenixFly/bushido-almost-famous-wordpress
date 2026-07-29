@@ -63,7 +63,7 @@ jobs:
           mkdir "$RUNNER_TEMP/release"
           scripts/build-dist.sh "$RUNNER_TEMP/release/bushido-almost-famous" 1.0.0 production
           (cd "$RUNNER_TEMP/release" && zip -X -qr "$RUNNER_TEMP/bushido-almost-famous.zip" bushido-almost-famous)
-          sha256sum "$RUNNER_TEMP/bushido-almost-famous.zip" > "$RUNNER_TEMP/bushido-almost-famous.zip.sha256"
+          (cd "$RUNNER_TEMP" && sha256sum bushido-almost-famous.zip > bushido-almost-famous.zip.sha256)
           mkdir "$RUNNER_TEMP/checked"
           scripts/extract-archive.sh "$RUNNER_TEMP/bushido-almost-famous.zip" "$RUNNER_TEMP/checked" 1.0.0 production
           cp .wp-env.json "$RUNNER_TEMP/wp-env-e2e.json"
@@ -96,7 +96,7 @@ jobs:
           npm run test:e2e
       - if: always()
         name: Prove tested archive bytes did not change
-        run: sha256sum --check "$RUNNER_TEMP/bushido-almost-famous.zip.sha256"
+        run: (cd "$RUNNER_TEMP" && sha256sum --check bushido-almost-famous.zip.sha256)
       - uses: actions/upload-artifact@v4
         with:
           name: bushido-almost-famous-production-${{ github.sha }}

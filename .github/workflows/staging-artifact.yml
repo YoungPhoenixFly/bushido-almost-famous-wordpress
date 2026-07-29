@@ -30,7 +30,7 @@ jobs:
           mkdir "$RUNNER_TEMP/release"
           scripts/build-dist.sh "$RUNNER_TEMP/release/bushido-almost-famous" 1.0.0 staging
           (cd "$RUNNER_TEMP/release" && zip -X -qr "$RUNNER_TEMP/bushido-almost-famous-staging.zip" bushido-almost-famous)
-          sha256sum "$RUNNER_TEMP/bushido-almost-famous-staging.zip" > "$RUNNER_TEMP/bushido-almost-famous-staging.zip.sha256"
+          (cd "$RUNNER_TEMP" && sha256sum bushido-almost-famous-staging.zip > bushido-almost-famous-staging.zip.sha256)
           mkdir "$RUNNER_TEMP/checked"
           scripts/extract-archive.sh "$RUNNER_TEMP/bushido-almost-famous-staging.zip" "$RUNNER_TEMP/checked" 1.0.0 staging
       - uses: actions/upload-artifact@v4
