@@ -76,7 +76,7 @@ jobs:
       - name: Prepare E2E runner for exact archive
         run: |
           set -euo pipefail
-          wp-env destroy
+          printf 'y\n' | wp-env destroy
           cp "$RUNNER_TEMP/wp-env-e2e.json" .wp-env.json
           rm -f .wp-env.override.json
           npm ci

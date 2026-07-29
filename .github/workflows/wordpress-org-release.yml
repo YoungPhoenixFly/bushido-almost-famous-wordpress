@@ -73,7 +73,7 @@ jobs:
         env:
           WP_ENV_REUSE_EXISTING: "true"
         run: |
-          wp-env destroy
+          printf 'y\n' | wp-env destroy
           cp "$RUNNER_TEMP/wp-env-e2e.json" .wp-env.json
           rm -f .wp-env.override.json
           npx playwright install --with-deps chromium
