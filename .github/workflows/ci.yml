@@ -66,6 +66,7 @@ jobs:
           sha256sum "$RUNNER_TEMP/bushido-almost-famous.zip" > "$RUNNER_TEMP/bushido-almost-famous.zip.sha256"
           mkdir "$RUNNER_TEMP/checked"
           scripts/extract-archive.sh "$RUNNER_TEMP/bushido-almost-famous.zip" "$RUNNER_TEMP/checked" 1.0.0 production
+          cp .wp-env.json "$RUNNER_TEMP/wp-env-e2e.json"
           echo "PLUGIN_CHECK_DIR=$RUNNER_TEMP/checked/bushido-almost-famous" >> "$GITHUB_ENV"
       - name: WordPress Plugin Check against exact archive
         uses: WordPress/plugin-check-action@v1
@@ -75,6 +76,9 @@ jobs:
       - name: Prepare E2E runner for exact archive
         run: |
           set -euo pipefail
+          wp-env destroy
+          cp "$RUNNER_TEMP/wp-env-e2e.json" .wp-env.json
+          rm -f .wp-env.override.json
           npm ci
           npx playwright install --with-deps chromium
           node - "$RUNNER_TEMP/checked/bushido-almost-famous" <<'NODE'

@@ -62,6 +62,7 @@ jobs:
           sha256sum "$RUNNER_TEMP/bushido-almost-famous.zip" > "$RUNNER_TEMP/bushido-almost-famous.zip.sha256"
           mkdir "$RUNNER_TEMP/tested"
           scripts/extract-archive.sh "$RUNNER_TEMP/bushido-almost-famous.zip" "$RUNNER_TEMP/tested" "$PLUGIN_VERSION" production
+          cp .wp-env.json "$RUNNER_TEMP/wp-env-e2e.json"
           echo "PLUGIN_TEST_DIR=$RUNNER_TEMP/tested/bushido-almost-famous" >> "$GITHUB_ENV"
       - name: Plugin Check against release bytes
         uses: WordPress/plugin-check-action@v1
@@ -72,6 +73,9 @@ jobs:
         env:
           WP_ENV_REUSE_EXISTING: "true"
         run: |
+          wp-env destroy
+          cp "$RUNNER_TEMP/wp-env-e2e.json" .wp-env.json
+          rm -f .wp-env.override.json
           npx playwright install --with-deps chromium
           node - "$PLUGIN_TEST_DIR" <<'NODE'
           const fs = require("node:fs");
