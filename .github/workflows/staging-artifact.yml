@@ -1,0 +1,43 @@
+name: Staging artifact
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  artifact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          tools: composer:v2
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Build isolated non-WordPress.org staging artifact
+        run: |
+          set -euo pipefail
+          composer install --no-dev --optimize-autoloader --no-interaction
+          npm ci
+          npm run build
+          mkdir "$RUNNER_TEMP/release"
+          scripts/build-dist.sh "$RUNNER_TEMP/release/bushido-almost-famous" 1.0.0 staging
+          (cd "$RUNNER_TEMP/release" && zip -X -qr "$RUNNER_TEMP/bushido-almost-famous-staging.zip" bushido-almost-famous)
+          sha256sum "$RUNNER_TEMP/bushido-almost-famous-staging.zip" > "$RUNNER_TEMP/bushido-almost-famous-staging.zip.sha256"
+          mkdir "$RUNNER_TEMP/checked"
+          scripts/extract-archive.sh "$RUNNER_TEMP/bushido-almost-famous-staging.zip" "$RUNNER_TEMP/checked" 1.0.0 staging
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bushido-almost-famous-staging-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/bushido-almost-famous-staging.zip
+            ${{ runner.temp }}/bushido-almost-famous-staging.zip.sha256
+          compression-level: 0
+          retention-days: 14

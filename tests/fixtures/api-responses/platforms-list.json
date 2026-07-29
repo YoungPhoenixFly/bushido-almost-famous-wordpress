@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "id": "meta",
+      "name": "Meta (Instagram)",
+      "status": "available",
+      "auth_method": "oauth2"
+    },
+    {
+      "id": "youtube",
+      "name": "YouTube (Google Ads)",
+      "status": "available",
+      "auth_method": "oauth2"
+    },
+    {
+      "id": "tiktok",
+      "name": "TikTok",
+      "status": "available",
+      "auth_method": "oauth2"
+    },
+    {
+      "id": "spotify",
+      "name": "Spotify",
+      "status": "available",
+      "auth_method": "oauth2"
+    }
+  ]
+}

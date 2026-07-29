@@ -1,0 +1,12 @@
+{
+  "event_type": "campaign.updated",
+  "campaign_id": "cmp_test_001",
+  "account_id": "acc_12345",
+  "platform": "meta",
+  "timestamp": "2026-03-29T14:30:00Z",
+  "payload": {
+    "old_status": "active",
+    "new_status": "paused",
+    "reason": "user_action"
+  }
+}

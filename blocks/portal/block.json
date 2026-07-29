@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "almost-famous/portal",
+  "version": "1.0.0",
+  "title": "Bushido Almost Famous Portal",
+  "category": "widgets",
+  "icon": "megaphone",
+  "description": "Mount the Bushido Almost Famous campaign console (same as the [almost-famous-portal] shortcode).",
+  "supports": { "html": false },
+  "textdomain": "bushido-almost-famous",
+  "editorScript": "file:../../assets/js/blocks/portal/index.js",
+  "render": "file:./render.php"
+}

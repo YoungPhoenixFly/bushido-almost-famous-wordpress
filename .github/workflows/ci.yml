@@ -1,0 +1,103 @@
+name: Plugin CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source:
+    name: Source, unit, and coding standards
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.1", "8.3"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: none
+      - run: composer install --no-progress --prefer-dist --no-interaction
+      - run: composer test
+      - if: matrix.php == '8.1'
+        run: composer phpcs
+      - if: matrix.php == '8.1'
+        run: scripts/audit-public-tree.sh
+
+  archive:
+    name: Immutable production archive, Plugin Check, and E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          tools: composer:v2
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Build immutable production archive once
+        run: |
+          set -euo pipefail
+          composer install --no-dev --optimize-autoloader --no-interaction
+          npm ci
+          npm run build
+          mkdir "$RUNNER_TEMP/release"
+          scripts/build-dist.sh "$RUNNER_TEMP/release/bushido-almost-famous" 1.0.0 production
+          (cd "$RUNNER_TEMP/release" && zip -X -qr "$RUNNER_TEMP/bushido-almost-famous.zip" bushido-almost-famous)
+          sha256sum "$RUNNER_TEMP/bushido-almost-famous.zip" > "$RUNNER_TEMP/bushido-almost-famous.zip.sha256"
+          mkdir "$RUNNER_TEMP/checked"
+          scripts/extract-archive.sh "$RUNNER_TEMP/bushido-almost-famous.zip" "$RUNNER_TEMP/checked" 1.0.0 production
+          echo "PLUGIN_CHECK_DIR=$RUNNER_TEMP/checked/bushido-almost-famous" >> "$GITHUB_ENV"
+      - name: WordPress Plugin Check against exact archive
+        uses: WordPress/plugin-check-action@v1
+        with:
+          build-dir: ${{ env.PLUGIN_CHECK_DIR }}
+          ignore-warnings: false
+      - name: Prepare E2E runner for exact archive
+        run: |
+          set -euo pipefail
+          npm ci
+          npx playwright install --with-deps chromium
+          node - "$RUNNER_TEMP/checked/bushido-almost-famous" <<'NODE'
+          const fs = require("node:fs");
+          const plugin = process.argv[2];
+          const config = JSON.parse(fs.readFileSync(".wp-env.json", "utf8"));
+          config.plugins = [plugin];
+          fs.writeFileSync(".wp-env.override.json", JSON.stringify(config, null, 2));
+          NODE
+      - name: Run meaningful setup, analytics, and upload E2E flows
+        env:
+          WP_ENV_REUSE_EXISTING: "true"
+        run: |
+          npm run env start
+          npm run test:e2e
+      - if: always()
+        name: Prove tested archive bytes did not change
+        run: sha256sum --check "$RUNNER_TEMP/bushido-almost-famous.zip.sha256"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bushido-almost-famous-production-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/bushido-almost-famous.zip
+            ${{ runner.temp }}/bushido-almost-famous.zip.sha256
+          compression-level: 0
+          retention-days: 7

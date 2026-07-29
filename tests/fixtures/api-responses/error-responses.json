@@ -1,0 +1,34 @@
+{
+  "api_unreachable": {
+    "error": {
+      "code": "api_unreachable",
+      "message": "Could not connect to Bushido API.",
+      "detail": "Connection timed out"
+    },
+    "status": 503
+  },
+  "tier_insufficient": {
+    "error": {
+      "code": "tier_insufficient",
+      "message": "This feature requires a Pro subscription.",
+      "detail": "Upgrade at https://bushido.is/pricing"
+    },
+    "status": 403
+  },
+  "upgrade_required": {
+    "error": {
+      "code": "upgrade_required",
+      "message": "Plugin version 1.0.0 is no longer supported. Please update.",
+      "detail": "Minimum version: 1.1.0"
+    },
+    "status": 426
+  },
+  "rate_limited": {
+    "error": {
+      "code": "rate_limited",
+      "message": "Too many requests. Please wait.",
+      "detail": "Retry after 60 seconds"
+    },
+    "status": 429
+  }
+}

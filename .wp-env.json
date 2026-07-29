@@ -1,0 +1,17 @@
+{
+  "core": "WordPress/WordPress#7.0",
+  "plugins": ["."],
+  "mappings": {
+    "wp-content/mu-plugins/af-e2e-bootstrap.php": "./tests/e2e/fixtures/af-e2e-bootstrap.php"
+  },
+  "port": 8991,
+  "testsPort": 8992,
+  "config": {
+    "AF_API_BASE_URL": "https://api.almost-famous-staging.backend-bushidoco.de",
+    "AF_BUSHIDO_APP_URL": "https://staging.bushido.is",
+    "WP_DEBUG": true,
+    "WP_DEBUG_LOG": true,
+    "WP_DEBUG_DISPLAY": false,
+    "SCRIPT_DEBUG": true
+  }
+}

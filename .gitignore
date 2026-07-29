@@ -1,0 +1,9 @@
+vendor/
+node_modules/
+artifacts/
+.phpunit.result.cache
+blocks/*/build/
+.phpcs.xml
+phpunit.xml
+.phpunit.cache/
+.wp-env.override.json

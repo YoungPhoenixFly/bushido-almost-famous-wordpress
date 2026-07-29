@@ -1,0 +1,32 @@
+.git
+.github
+.gitignore
+.distignore
+.env
+.env.local
+.wp-env.json
+.wp-env.override.json
+.phpcs.xml.dist
+.eslintignore
+phpunit.xml.dist
+playwright.config.js
+webpack.config.js
+composer.lock
+package.json
+package-lock.json
+node_modules
+# vendor/ is NOT ignored: almost-famous.php requires vendor/autoload.php.
+# The deploy workflow runs `composer install --no-dev` first, so the shipped
+# vendor tree is just the generated classmap autoloader (no dependencies).
+tests
+artifacts
+docs
+scripts
+src
+blocks/*/src
+test_output.log
+test-output.log
+.phpunit.cache
+.phpunit.result.cache
+*.map
+*.md

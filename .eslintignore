@@ -1,0 +1,4 @@
+assets/js/
+blocks/*/build/
+node_modules/
+vendor/

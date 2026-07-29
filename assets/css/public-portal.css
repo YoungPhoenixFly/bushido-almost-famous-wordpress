@@ -1,0 +1,636 @@
+/* Bushido Almost Famous — Public Portal Styles */
+
+.af-portal {
+  --af-primary: #6c5ce7;
+  --af-primary-hover: #5a4bd1;
+  --af-success: #00b894;
+  --af-warning: #fdcb6e;
+  --af-danger: #d63031;
+  --af-info: #0984e3;
+  --af-muted: #636e72;
+  --af-bg: #f8f9fa;
+  --af-card-bg: #ffffff;
+  --af-border: #dee2e6;
+  --af-text: #2d3436;
+  --af-text-secondary: #636e72;
+  --af-radius: 12px;
+  --af-radius-sm: 8px;
+  --af-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --af-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --af-transition: 0.2s ease;
+
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    sans-serif;
+  color: var(--af-text);
+  line-height: 1.6;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* ——— Navigation ——— */
+.af-portal-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  background: var(--af-card-bg);
+  border: 1px solid var(--af-border);
+  border-radius: var(--af-radius);
+  box-shadow: var(--af-shadow);
+}
+
+.af-portal-nav a,
+.af-portal-nav button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--af-radius-sm);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--af-text-secondary);
+  background: transparent;
+  transition: all var(--af-transition);
+  cursor: pointer;
+  border: none;
+}
+
+.af-portal-nav a:hover,
+.af-portal-nav a.active,
+.af-portal-nav button:hover,
+.af-portal-nav button.active {
+  color: var(--af-primary);
+  background: rgba(108, 92, 231, 0.08);
+}
+
+.af-portal-nav .af-nav-spacer {
+  flex: 1;
+}
+
+/* ——— Page headers ——— */
+.af-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.af-page-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--af-text);
+}
+
+.af-page-header p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--af-text-secondary);
+}
+
+/* ——— Buttons ——— */
+.af-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--af-radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--af-transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.af-btn-primary {
+  background: var(--af-primary);
+  color: #fff;
+}
+
+.af-btn-primary:hover {
+  background: var(--af-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+}
+
+.af-btn-secondary {
+  background: transparent;
+  color: var(--af-text-secondary);
+  border: 1px solid var(--af-border);
+}
+
+.af-btn-secondary:hover {
+  background: var(--af-bg);
+  color: var(--af-text);
+  border-color: var(--af-text-secondary);
+}
+
+.af-btn-success {
+  background: var(--af-success);
+  color: #fff;
+}
+
+.af-btn-success:hover {
+  filter: brightness(0.9);
+}
+
+.af-btn-danger {
+  background: var(--af-danger);
+  color: #fff;
+}
+
+.af-btn-danger:hover {
+  filter: brightness(0.9);
+}
+
+.af-btn-warning {
+  background: var(--af-warning);
+  color: var(--af-text);
+}
+
+.af-btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.af-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ——— Cards ——— */
+.af-card {
+  background: var(--af-card-bg);
+  border: 1px solid var(--af-border);
+  border-radius: var(--af-radius);
+  padding: 20px;
+  box-shadow: var(--af-shadow);
+  transition: box-shadow var(--af-transition);
+}
+
+.af-card:hover {
+  box-shadow: var(--af-shadow-hover);
+}
+
+.af-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.af-card-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.af-card-body {
+  font-size: 14px;
+  color: var(--af-text-secondary);
+}
+
+.af-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--af-border);
+  flex-wrap: wrap;
+}
+
+/* ——— Campaign grid ——— */
+.af-campaign-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.af-campaign-card .af-campaign-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--af-text);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.af-campaign-card .af-campaign-name:hover {
+  color: var(--af-primary);
+}
+
+.af-campaign-meta {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--af-text-secondary);
+}
+
+.af-campaign-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ——— Status badges ——— */
+.af-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.af-badge-draft {
+  background: rgba(253, 203, 110, 0.2);
+  color: #e17055;
+}
+
+.af-badge-active,
+.af-badge-running {
+  background: rgba(0, 184, 148, 0.15);
+  color: #00b894;
+}
+
+.af-badge-pending_sync,
+.af-badge-refund_pending {
+  background: rgba(9, 132, 227, 0.12);
+  color: #0984e3;
+}
+
+.af-badge-paused {
+  background: rgba(253, 203, 110, 0.2);
+  color: #e17055;
+}
+
+.af-badge-completed,
+.af-badge-archived {
+  background: rgba(99, 110, 114, 0.15);
+  color: #636e72;
+}
+
+.af-badge-failed,
+.af-badge-error,
+.af-badge-launch_failed,
+.af-badge-launch_escalated,
+.af-badge-refund_escalated {
+  background: rgba(214, 48, 49, 0.12);
+  color: #d63031;
+}
+
+.af-badge-paid {
+  background: rgba(0, 184, 148, 0.15);
+  color: #00b894;
+}
+
+.af-badge-pending {
+  background: rgba(9, 132, 227, 0.12);
+  color: #0984e3;
+}
+
+.af-badge-refunded {
+  background: rgba(99, 110, 114, 0.15);
+  color: #636e72;
+}
+
+/* ——— Forms ——— */
+.af-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.af-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.af-form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--af-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.af-form-group input,
+.af-form-group select,
+.af-form-group textarea {
+  padding: 10px 14px;
+  border: 1px solid var(--af-border);
+  border-radius: var(--af-radius-sm);
+  font-size: 14px;
+  color: var(--af-text);
+  background: var(--af-card-bg);
+  transition:
+    border-color var(--af-transition),
+    box-shadow var(--af-transition);
+  font-family: inherit;
+}
+
+.af-form-group input:focus,
+.af-form-group select:focus,
+.af-form-group textarea:focus {
+  outline: none;
+  border-color: var(--af-primary);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+}
+
+.af-form-group .af-help-text {
+  font-size: 12px;
+  color: var(--af-text-secondary);
+}
+
+.af-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.af-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* ——— Tables ——— */
+.af-table-wrap {
+  overflow-x: auto;
+}
+
+.af-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.af-table th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--af-text-secondary);
+  border-bottom: 2px solid var(--af-border);
+  white-space: nowrap;
+}
+
+.af-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--af-border);
+  color: var(--af-text);
+}
+
+.af-table tr:last-child td {
+  border-bottom: none;
+}
+
+.af-table tr:hover td {
+  background: rgba(108, 92, 231, 0.03);
+}
+
+/* ——— Stats row ——— */
+.af-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.af-stat-card {
+  background: var(--af-card-bg);
+  border: 1px solid var(--af-border);
+  border-radius: var(--af-radius-sm);
+  padding: 16px;
+  text-align: center;
+}
+
+.af-stat-card .af-stat-value {
+  display: block;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--af-primary);
+  line-height: 1.2;
+}
+
+.af-stat-card .af-stat-label {
+  display: block;
+  font-size: 12px;
+  color: var(--af-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+/* ——— Loading ——— */
+.af-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: var(--af-text-secondary);
+  font-size: 14px;
+}
+
+.af-loading::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--af-border);
+  border-top-color: var(--af-primary);
+  border-radius: 50%;
+  margin-right: 10px;
+  animation: af-spin 0.8s linear infinite;
+}
+
+@keyframes af-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ——— Empty state ——— */
+.af-empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--af-text-secondary);
+}
+
+.af-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+
+.af-empty p {
+  margin: 0 0 16px;
+  font-size: 15px;
+}
+
+/* ——— Alert ——— */
+.af-alert {
+  padding: 12px 16px;
+  border-radius: var(--af-radius-sm);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.af-alert-error {
+  background: rgba(214, 48, 49, 0.08);
+  color: var(--af-danger);
+  border: 1px solid rgba(214, 48, 49, 0.2);
+}
+
+.af-alert-success {
+  background: rgba(0, 184, 148, 0.08);
+  color: #00855e;
+  border: 1px solid rgba(0, 184, 148, 0.2);
+}
+
+.af-alert-info {
+  background: rgba(9, 132, 227, 0.08);
+  color: var(--af-info);
+  border: 1px solid rgba(9, 132, 227, 0.2);
+}
+
+.af-alert-warning {
+  background: rgba(253, 203, 110, 0.14);
+  color: #8d6300;
+  border: 1px solid rgba(253, 203, 110, 0.3);
+}
+
+/* ——— Detail sections ——— */
+.af-detail-grid {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 8px 16px;
+  font-size: 14px;
+}
+
+.af-detail-label {
+  font-weight: 600;
+  color: var(--af-text-secondary);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  padding-top: 2px;
+}
+
+.af-detail-value {
+  color: var(--af-text);
+}
+
+/* ——— Search / Filters ——— */
+.af-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.af-toolbar input[type="text"],
+.af-toolbar select {
+  padding: 8px 12px;
+  border: 1px solid var(--af-border);
+  border-radius: var(--af-radius-sm);
+  font-size: 14px;
+  background: var(--af-card-bg);
+}
+
+.af-toolbar input[type="text"]:focus,
+.af-toolbar select:focus {
+  outline: none;
+  border-color: var(--af-primary);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+}
+
+/* ——— Responsive ——— */
+@media (max-width: 640px) {
+  .af-campaign-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .af-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .af-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .af-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .af-portal-nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .af-portal-nav .af-nav-spacer {
+    display: none;
+  }
+}
+
+/* Accessible visually-hidden label (frontend context — WP core's admin
+   copy of this class isn't loaded here). */
+.af-portal .screen-reader-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Sign-in gate shown to anonymous visitors. */
+.af-portal-gate {
+  max-width: 32rem;
+  margin: 3rem auto;
+  text-align: center;
+  padding: 2rem;
+}
+
+.af-portal-gate h2 {
+  margin-top: 0;
+}
+
+/* Link-styled button (keeps <a>-look while being a real, focusable button). */
+.af-portal .af-link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--af-accent, #6c5ce7);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+}
+
+.af-portal .af-link-button:hover,
+.af-portal .af-link-button:focus-visible {
+  text-decoration: underline;
+}

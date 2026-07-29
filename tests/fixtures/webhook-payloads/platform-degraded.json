@@ -1,0 +1,11 @@
+{
+  "event_type": "platform.status_changed",
+  "platform": "meta",
+  "timestamp": "2026-03-29T14:00:00Z",
+  "payload": {
+    "old_status": "operational",
+    "new_status": "degraded",
+    "reason": "rate_limited",
+    "affected_campaigns": ["cmp_test_001"]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "almost-famous/campaign-widget",
+  "version": "1.0.0",
+  "title": "Campaign Widget",
+  "category": "widgets",
+  "icon": "chart-bar",
+  "description": "Display Bushido Almost Famous campaign performance data",
+  "supports": { "html": false },
+  "textdomain": "bushido-almost-famous",
+  "attributes": {
+    "campaign_id": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:../../assets/js/blocks/campaign-widget/index.js",
+  "render": "file:./render.php",
+  "style": "file:./style.css"
+}

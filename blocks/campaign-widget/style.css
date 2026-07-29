@@ -1,0 +1,93 @@
+/* Bushido Almost Famous campaign-widget block styles */
+
+.af-campaign-widget {
+  border: 1px solid #e2e4e7;
+  border-radius: 4px;
+  padding: 16px;
+  background: #fff;
+  max-width: 400px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu,
+    Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.af-campaign-widget--empty,
+.af-campaign-widget--error {
+  text-align: center;
+  color: #757575;
+}
+
+.af-campaign-widget__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.af-campaign-widget__name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d2327;
+}
+
+.af-campaign-widget__metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.af-campaign-widget__metric-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #757575;
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
+}
+
+.af-campaign-widget__metric-value {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1d2327;
+}
+
+.af-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.af-badge--active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.af-badge--paused {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.af-badge--draft {
+  background: #f0f0f1;
+  color: #50575e;
+}
+
+.af-badge--completed {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.af-badge--archived {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+.af-badge--default {
+  background: #f0f0f1;
+  color: #50575e;
+}

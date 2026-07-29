@@ -1,0 +1,100 @@
+name: WordPress.org release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wordpress-org-production
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: wordpress.org
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Bind the release tag to the source version
+        run: |
+          set -euo pipefail
+          version="$(sed -n 's/^[[:space:]]*\* Version:[[:space:]]*//p' bushido-almost-famous.php | head -n 1)"
+          if [[ -z "$version" || "$GITHUB_REF_TYPE" != "tag" || "$GITHUB_REF_NAME" != "v$version" ]]; then
+            echo "Release tag '$GITHUB_REF_NAME' does not match source version '$version'." >&2
+            exit 65
+          fi
+          echo "PLUGIN_VERSION=$version" >> "$GITHUB_ENV"
+      - name: Block before packaging or credentials if production consent is unavailable
+        run: scripts/check-production-consent-route.sh
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          tools: composer:v2
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Run source quality and security gates
+        run: |
+          set -euo pipefail
+          scripts/audit-public-tree.sh
+          composer install --no-progress --prefer-dist --no-interaction
+          composer audit --locked
+          composer test
+          composer phpcs
+          npm ci
+          npm audit --omit=dev
+          npm run lint:js
+      - name: Build the production archive once
+        run: |
+          set -euo pipefail
+          composer install --no-dev --optimize-autoloader --no-interaction
+          npm run build
+          mkdir "$RUNNER_TEMP/release"
+          scripts/build-dist.sh "$RUNNER_TEMP/release/bushido-almost-famous" "$PLUGIN_VERSION" production
+          (cd "$RUNNER_TEMP/release" && zip -X -qr "$RUNNER_TEMP/bushido-almost-famous.zip" bushido-almost-famous)
+          sha256sum "$RUNNER_TEMP/bushido-almost-famous.zip" > "$RUNNER_TEMP/bushido-almost-famous.zip.sha256"
+          mkdir "$RUNNER_TEMP/tested"
+          scripts/extract-archive.sh "$RUNNER_TEMP/bushido-almost-famous.zip" "$RUNNER_TEMP/tested" "$PLUGIN_VERSION" production
+          echo "PLUGIN_TEST_DIR=$RUNNER_TEMP/tested/bushido-almost-famous" >> "$GITHUB_ENV"
+      - name: Plugin Check against release bytes
+        uses: WordPress/plugin-check-action@v1
+        with:
+          build-dir: ${{ env.PLUGIN_TEST_DIR }}
+          ignore-warnings: false
+      - name: Run E2E against release bytes
+        env:
+          WP_ENV_REUSE_EXISTING: "true"
+        run: |
+          npx playwright install --with-deps chromium
+          node - "$PLUGIN_TEST_DIR" <<'NODE'
+          const fs = require("node:fs");
+          const plugin = process.argv[2];
+          const config = JSON.parse(fs.readFileSync(".wp-env.json", "utf8"));
+          config.plugins = [plugin];
+          fs.writeFileSync(".wp-env.override.json", JSON.stringify(config, null, 2));
+          NODE
+          npm run env start
+          npm run test:e2e
+          sha256sum --check "$RUNNER_TEMP/bushido-almost-famous.zip.sha256"
+      - name: Prepare a fresh publish tree from the verified archive
+        run: |
+          set -euo pipefail
+          sha256sum --check "$RUNNER_TEMP/bushido-almost-famous.zip.sha256"
+          mkdir "$RUNNER_TEMP/publish"
+          scripts/extract-archive.sh "$RUNNER_TEMP/bushido-almost-famous.zip" "$RUNNER_TEMP/publish" "$PLUGIN_VERSION" production
+          echo "PLUGIN_RELEASE_DIR=$RUNNER_TEMP/publish/bushido-almost-famous" >> "$GITHUB_ENV"
+      - name: Deploy the same extracted archive to WordPress.org
+        uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SLUG: bushido-almost-famous
+          VERSION: ${{ env.PLUGIN_VERSION }}
+          BUILD_DIR: ${{ env.PLUGIN_RELEASE_DIR }}

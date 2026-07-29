@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<ruleset name="Bushido Almost Famous">
+	<description>WordPress Coding Standards for Bushido Almost Famous plugin</description>
+
+	<file>./bushido-almost-famous.php</file>
+	<file>./includes/</file>
+	<file>./shortcodes/</file>
+
+	<arg name="extensions" value="php"/>
+	<arg value="ps"/>
+
+	<rule ref="WordPress"/>
+	<rule ref="WordPress-Extra"/>
+
+	<config name="minimum_supported_wp_version" value="6.4"/>
+	<config name="testVersion" value="8.1-"/>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="af_"/>
+				<element value="almost_famous"/>
+				<element value="AlmostFamous"/>
+				<element value="ALMOST_FAMOUS"/>
+				<element value="AF_"/>
+				<element value="BUSHIDO_ALMOST_FAMOUS_"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="bushido-almost-famous"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!--
+		Tell phpcs about the four custom capabilities the plugin registers
+		via includes/roles/class-roles.php. Without these the WordPress
+		ruleset flags every current_user_can('af_*') as "unknown capability."
+	-->
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="af_view_campaigns"/>
+				<element value="af_manage_campaigns"/>
+				<element value="af_manage_settings"/>
+				<element value="af_manage_accounts"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!--
+		DTOs intentionally mirror the camelCase fields the Bushido OpenAPI
+		contracts ship over the wire. Snake-casing
+		them would require a name-translation layer that deviates from the
+		contract for no functional gain. The whole directory is excluded
+		from style sniffs.
+	-->
+	<exclude-pattern>./includes/dto/*</exclude-pattern>
+
+	<!--
+		Skip filename / class-file conventions: the plugin uses PSR-style
+		`class-foo-bar.php` consistently, but PHPCS expects either
+		`foo-bar.php` or `class-FooBar.php` depending on the rule and
+		emits noise for our valid convention.
+	-->
+	<rule ref="WordPress.Files.FileName">
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+	</rule>
+
+	<!-- Short-prefix shortcodes like `af-*` are documented + intentional. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed">
+		<severity>0</severity>
+	</rule>
+
+	<!--
+		The PrefixAllGlobals.NonPrefixedVariableFound sniff treats every
+		property access on a DTO instance (e.g. `$campaign->campaignId`) as
+		a "non-prefixed global." That's a false positive for OOP plugins.
+		The DTO field shapes are dictated by the upstream Bushido OpenAPI
+		contracts, not by WordPress global namespacing.
+	-->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase">
+		<severity>0</severity>
+	</rule>
+
+	<!--
+		PSR-4 dispatchers in includes/* use `do_action( 'almost_famous/foo/bar', ... )`
+		— slash-separated by design (mirrors the api/* / consent/* namespace
+		boundaries). Suppress the all-underscores nag.
+	-->
+	<rule ref="WordPress.NamingConventions.ValidHookName.UseUnderscores">
+		<severity>0</severity>
+	</rule>
+
+	<exclude-pattern>./vendor/*</exclude-pattern>
+	<exclude-pattern>./node_modules/*</exclude-pattern>
+	<exclude-pattern>./tests/*</exclude-pattern>
+	<exclude-pattern>./blocks/*/build/*</exclude-pattern>
+</ruleset>

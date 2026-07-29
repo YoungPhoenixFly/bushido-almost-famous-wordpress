@@ -1,0 +1,13 @@
+# Copyright (C) 2026 Bushido
+# This file is distributed under the same license as the Bushido Almost Famous plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Bushido Almost Famous 1.0.0\n"
+"Report-Msgid-Bugs-To: https://bushido.is/support\n"
+"POT-Creation-Date: 2026-03-29\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2026-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
