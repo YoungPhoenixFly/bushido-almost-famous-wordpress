@@ -27,7 +27,7 @@ final class Test_Api_Client_Typed extends TestCase {
 		af_test_reset();
 
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( 'bsh_test_key_typed' ) );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( 'bsh_test_key_typed' ) );
 		$this->client = new Api_Client( $auth );
 	}
 

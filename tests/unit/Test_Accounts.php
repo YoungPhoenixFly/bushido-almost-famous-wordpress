@@ -7,7 +7,7 @@
  *
  * The OAuth Connect/Disconnect endpoints themselves are covered by
  * Test_Oauth_Controller — this file only verifies the page picks up
- * platform-account data from the `af_accounts` option.
+ * platform-account data from the `almost_famous_accounts` option.
  *
  * @package AlmostFamous
  * @license GPL-2.0-or-later
@@ -52,7 +52,7 @@ class Test_Accounts extends TestCase {
 		$af_test_redirect_throws = true;
 
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( 'bsh_test' ) );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( 'bsh_test' ) );
 
 		$this->accounts = new Accounts( new Api_Client( $auth ) );
 	}
@@ -72,7 +72,7 @@ class Test_Accounts extends TestCase {
 	public function test_register_page_uses_manage_accounts_capability(): void {
 		$this->accounts->register_page();
 		$pages = af_test_get_menu_pages();
-		$this->assertSame( 'af_manage_accounts', $pages[0]['capability'] );
+		$this->assertSame( 'almost_famous_manage_accounts', $pages[0]['capability'] );
 		$this->assertSame( Accounts::PAGE_SLUG, $pages[0]['menu_slug'] );
 	}
 
@@ -81,9 +81,9 @@ class Test_Accounts extends TestCase {
 	// -------------------------------------------------------------------
 
 	public function test_reconcile_overwrites_local_state_from_backend_credentials(): void {
-		af_test_set_caps( array( 'af_manage_accounts' => true ) );
+		af_test_set_caps( array( 'almost_famous_manage_accounts' => true ) );
 		update_option(
-			'af_accounts',
+			'almost_famous_accounts',
 			array(
 				'meta' => array( 'credentialId' => 'old-cred', 'accountId' => 'old', 'accountName' => 'Stale Page', 'status' => 'active', 'connectedAt' => 100 ),
 			)
@@ -108,31 +108,31 @@ class Test_Accounts extends TestCase {
 		$this->assertSame( 'cred-new', $reconciled['meta']['credentialId'] );
 		$this->assertSame( 'Fresh Page', $reconciled['meta']['accountName'] );
 		$this->assertArrayHasKey( 'tiktok', $reconciled );
-		$this->assertSame( $reconciled, get_option( 'af_accounts' ) );
+		$this->assertSame( $reconciled, get_option( 'almost_famous_accounts' ) );
 	}
 
 	public function test_reconcile_preserves_local_state_on_empty_backend_response(): void {
-		af_test_set_caps( array( 'af_manage_accounts' => true ) );
+		af_test_set_caps( array( 'almost_famous_manage_accounts' => true ) );
 		$local = array(
 			'meta' => array( 'credentialId' => 'local-cred', 'accountId' => 'local', 'accountName' => 'Local Page', 'status' => 'active', 'connectedAt' => 0 ),
 		);
-		update_option( 'af_accounts', $local );
+		update_option( 'almost_famous_accounts', $local );
 		// No HTTP mock registered → default `{}` response. Local cache must stay.
 
 		$reconciled = $this->accounts->reconcile_platform_accounts();
 
 		$this->assertSame( $local, $reconciled );
-		$this->assertSame( $local, get_option( 'af_accounts' ) );
+		$this->assertSame( $local, get_option( 'almost_famous_accounts' ) );
 	}
 
 	// -------------------------------------------------------------------
 	// render() — Platform Connections table
 	// -------------------------------------------------------------------
 
-	public function test_render_reads_platform_accounts_from_af_accounts_option(): void {
-		af_test_set_caps( array( 'af_manage_accounts' => true ) );
+	public function test_render_reads_platform_accounts_from_almost_famous_accounts_option(): void {
+		af_test_set_caps( array( 'almost_famous_manage_accounts' => true ) );
 		update_option(
-			'af_accounts',
+			'almost_famous_accounts',
 			array(
 				'meta' => array( 'credentialId' => 'cred-1', 'accountId' => 'act_42', 'accountName' => 'My Page', 'status' => 'active' ),
 			)
@@ -152,8 +152,8 @@ class Test_Accounts extends TestCase {
 	}
 
 	public function test_render_shows_disconnected_label_when_no_platform_linked(): void {
-		af_test_set_caps( array( 'af_manage_accounts' => true ) );
-		update_option( 'af_accounts', array() );
+		af_test_set_caps( array( 'almost_famous_manage_accounts' => true ) );
+		update_option( 'almost_famous_accounts', array() );
 
 		ob_start();
 		try {

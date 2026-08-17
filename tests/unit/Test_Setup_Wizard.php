@@ -102,7 +102,7 @@ class Test_Setup_Wizard extends TestCase {
 		$this->wizard->register_page();
 		$pages = af_test_get_menu_pages();
 		$this->assertNotEmpty( $pages );
-		$this->assertSame( 'af_manage_settings', $pages[0]['capability'] );
+		$this->assertSame( 'almost_famous_manage_settings', $pages[0]['capability'] );
 		$this->assertSame( Setup_Wizard::PAGE_SLUG, $pages[0]['menu_slug'] );
 	}
 
@@ -142,7 +142,7 @@ class Test_Setup_Wizard extends TestCase {
 	}
 
 	public function test_step_2_with_valid_key_redirects_to_step_3(): void {
-		$_POST['af_api_key'] = 'bsh_validkey_12345';
+		$_POST['almost_famous_api_key'] = 'bsh_validkey_12345';
 		af_test_register_http_response(
 			'/auth/validate',
 			array(
@@ -155,12 +155,12 @@ class Test_Setup_Wizard extends TestCase {
 		$this->process_step_2_directly();
 
 		$this->assertStringContainsString( 'step=3', $this->last_redirect() );
-		$this->assertStringNotContainsString( 'af_error=', $this->last_redirect() );
-		$this->assertNotEmpty( get_option( 'af_api_key', '' ) );
+		$this->assertStringNotContainsString( 'almost_famous_error=', $this->last_redirect() );
+		$this->assertNotEmpty( get_option( 'almost_famous_api_key', '' ) );
 	}
 
 	public function test_step_2_with_401_redirects_to_connection_failed_and_clears_key(): void {
-		$_POST['af_api_key'] = 'bsh_badkey';
+		$_POST['almost_famous_api_key'] = 'bsh_badkey';
 		af_test_register_http_response(
 			'/auth/validate',
 			array(
@@ -174,36 +174,36 @@ class Test_Setup_Wizard extends TestCase {
 
 		$this->process_step_2_directly();
 
-		$this->assertStringContainsString( 'af_error=connection_failed', $this->last_redirect() );
-		$this->assertSame( '', (string) get_option( 'af_api_key', '' ), 'Invalid key must be cleared.' );
+		$this->assertStringContainsString( 'almost_famous_error=connection_failed', $this->last_redirect() );
+		$this->assertSame( '', (string) get_option( 'almost_famous_api_key', '' ), 'Invalid key must be cleared.' );
 	}
 
 	public function test_step_2_with_empty_key_redirects_with_empty_key_error(): void {
-		$_POST['af_api_key'] = '';
+		$_POST['almost_famous_api_key'] = '';
 		$this->process_step_2_directly();
-		$this->assertStringContainsString( 'af_error=empty_key', $this->last_redirect() );
+		$this->assertStringContainsString( 'almost_famous_error=empty_key', $this->last_redirect() );
 	}
 
 	public function test_step_2_with_invalid_chars_redirects_with_format_error(): void {
-		$_POST['af_api_key'] = 'has spaces & weird chars!';
+		$_POST['almost_famous_api_key'] = 'has spaces & weird chars!';
 		$this->process_step_2_directly();
-		$this->assertStringContainsString( 'af_error=invalid_key_format', $this->last_redirect() );
+		$this->assertStringContainsString( 'almost_famous_error=invalid_key_format', $this->last_redirect() );
 	}
 
 	public function test_get_error_message_returns_human_string_per_code(): void {
-		$_GET['af_error'] = 'connection_failed';
+		$_GET['almost_famous_error'] = 'connection_failed';
 		$this->assertStringContainsString( 'Could not connect', $this->wizard->get_error_message() );
 
-		$_GET['af_error'] = 'empty_key';
+		$_GET['almost_famous_error'] = 'empty_key';
 		$this->assertStringContainsString( 'Bushido API key', $this->wizard->get_error_message() );
 
-		$_GET['af_error'] = 'unknown_error';
+		$_GET['almost_famous_error'] = 'unknown_error';
 		$this->assertSame( '', $this->wizard->get_error_message() );
 	}
 
 	public function test_activation_redirect_only_fires_once(): void {
-		set_transient( 'af_activation_redirect', true, 60 );
-		af_test_set_caps( array( 'af_manage_settings' => true ) );
+		set_transient( 'almost_famous_activation_redirect', true, 60 );
+		af_test_set_caps( array( 'almost_famous_manage_settings' => true ) );
 
 		try {
 			$this->wizard->maybe_redirect_to_wizard();
@@ -212,25 +212,25 @@ class Test_Setup_Wizard extends TestCase {
 		}
 
 		$this->assertStringContainsString( 'page=' . Setup_Wizard::PAGE_SLUG, $this->last_redirect() );
-		$this->assertFalse( get_transient( 'af_activation_redirect' ), 'Transient must be consumed.' );
+		$this->assertFalse( get_transient( 'almost_famous_activation_redirect' ), 'Transient must be consumed.' );
 	}
 
 	public function test_activation_redirect_skipped_when_setup_complete(): void {
-		update_option( 'af_setup_complete', true );
-		set_transient( 'af_activation_redirect', true, 60 );
+		update_option( 'almost_famous_setup_complete', true );
+		set_transient( 'almost_famous_activation_redirect', true, 60 );
 
 		$this->wizard->maybe_redirect_to_wizard();
 
 		global $af_test_redirects;
 		$this->assertSame( array(), $af_test_redirects );
 		// Transient should still be there — we never reached the consume branch.
-		$this->assertNotFalse( get_transient( 'af_activation_redirect' ) );
+		$this->assertNotFalse( get_transient( 'almost_famous_activation_redirect' ) );
 	}
 
 	public function test_activation_redirect_skipped_during_ajax(): void {
 		global $af_test_doing_ajax;
 		$af_test_doing_ajax = true;
-		set_transient( 'af_activation_redirect', true, 60 );
+		set_transient( 'almost_famous_activation_redirect', true, 60 );
 
 		$this->wizard->maybe_redirect_to_wizard();
 
@@ -243,7 +243,7 @@ class Test_Setup_Wizard extends TestCase {
 	}
 
 	public function test_get_connected_platforms_returns_transient_payload(): void {
-		set_transient( 'af_wizard_platforms', array( array( 'id' => 'meta' ) ), 60 );
+		set_transient( 'almost_famous_wizard_platforms', array( array( 'id' => 'meta' ) ), 60 );
 		$this->assertCount( 1, $this->wizard->get_connected_platforms() );
 	}
 }

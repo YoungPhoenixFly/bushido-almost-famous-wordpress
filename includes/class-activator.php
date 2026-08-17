@@ -112,8 +112,8 @@ class Activator {
 		// unconfigured dashboard. Consumed once by
 		// Setup_Wizard::maybe_redirect_to_wizard(); skipped for already-configured
 		// sites (re-activation) since that handler bails when setup is complete.
-		if ( $arm_redirect && ! get_option( 'af_setup_complete', false ) ) {
-			set_transient( 'af_activation_redirect', true, 30 );
+		if ( $arm_redirect && ! get_option( 'almost_famous_setup_complete', false ) ) {
+			set_transient( 'almost_famous_activation_redirect', true, 30 );
 		}
 	}
 
@@ -176,9 +176,9 @@ class Activator {
 	 * @return void
 	 */
 	private static function set_default_options(): void {
-		add_option( 'af_setup_complete', false );
+		add_option( 'almost_famous_setup_complete', false );
 		add_option(
-			'af_settings',
+			'almost_famous_settings',
 			array(
 				'cache_ttl_active'         => 60,
 				'cache_ttl_archived'       => 300,

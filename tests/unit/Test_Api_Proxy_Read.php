@@ -35,7 +35,7 @@ class Test_Api_Proxy_Read extends TestCase {
 		af_test_reset();
 
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( 'bsh_test_proxy_read' ) );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( 'bsh_test_proxy_read' ) );
 
 		$this->proxy = new Api_Proxy(
 			new Api_Client( $auth ),
@@ -96,7 +96,7 @@ class Test_Api_Proxy_Read extends TestCase {
 	// -----------------------------------------------------------------------
 
 	public function test_check_read_permission_true_with_view_campaigns_cap(): void {
-		af_test_set_caps( array( 'af_view_campaigns' => true ) );
+		af_test_set_caps( array( 'almost_famous_view_campaigns' => true ) );
 		$this->assertTrue( $this->proxy->check_read_permission() );
 	}
 

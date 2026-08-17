@@ -163,7 +163,7 @@ class Webhook_Handlers {
 			'timestamp'   => gmdate( 'c' ),
 		);
 
-		set_transient( 'af_redistribution_notice_' . $campaign_id, $notification, DAY_IN_SECONDS );
+		set_transient( 'almost_famous_redistribution_notice_' . $campaign_id, $notification, DAY_IN_SECONDS );
 
 		// Clear campaign caches so the dashboard refetches fresh state.
 		$this->cache->delete( $this->cache->build_key( 'campaigns', $campaign_id ) );
@@ -204,7 +204,7 @@ class Webhook_Handlers {
 			'timestamp'       => gmdate( 'c' ),
 		);
 
-		set_transient( 'af_retarget_notice_' . $content_id, $notification, DAY_IN_SECONDS );
+		set_transient( 'almost_famous_retarget_notice_' . $content_id, $notification, DAY_IN_SECONDS );
 
 		/**
 		 * Fires when organic traction is detected for promoted content.

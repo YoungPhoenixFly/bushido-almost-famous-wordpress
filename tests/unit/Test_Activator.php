@@ -47,14 +47,14 @@ class Test_Activator extends TestCase {
 	}
 
 	/**
-	 * Activation seeds the `af_setup_complete` option as boolean false.
+	 * Activation seeds the `almost_famous_setup_complete` option as boolean false.
 	 *
 	 * @return void
 	 */
 	public function test_activate_seeds_setup_complete_option(): void {
 		Activator::activate();
 
-		$this->assertSame( false, get_option( 'af_setup_complete', 'sentinel' ) );
+		$this->assertSame( false, get_option( 'almost_famous_setup_complete', 'sentinel' ) );
 	}
 
 	/**
@@ -68,7 +68,7 @@ class Test_Activator extends TestCase {
 	public function test_activate_arms_setup_redirect_when_not_configured(): void {
 		Activator::activate();
 
-		$this->assertNotFalse( get_transient( 'af_activation_redirect' ) );
+		$this->assertNotFalse( get_transient( 'almost_famous_activation_redirect' ) );
 	}
 
 	/**
@@ -78,23 +78,23 @@ class Test_Activator extends TestCase {
 	 * @return void
 	 */
 	public function test_activate_does_not_arm_redirect_when_already_setup(): void {
-		update_option( 'af_setup_complete', true );
+		update_option( 'almost_famous_setup_complete', true );
 
 		Activator::activate();
 
-		$this->assertFalse( get_transient( 'af_activation_redirect' ) );
+		$this->assertFalse( get_transient( 'almost_famous_activation_redirect' ) );
 	}
 
 	/**
-	 * Activation seeds the `af_settings` defaults including cache TTLs and
+	 * Activation seeds the `almost_famous_settings` defaults including cache TTLs and
 	 * the budget safety multiplier.
 	 *
 	 * @return void
 	 */
-	public function test_activate_seeds_af_settings_defaults(): void {
+	public function test_activate_seeds_almost_famous_settings_defaults(): void {
 		Activator::activate();
 
-		$settings = get_option( 'af_settings' );
+		$settings = get_option( 'almost_famous_settings' );
 
 		$this->assertIsArray( $settings );
 		$this->assertSame( 60, $settings['cache_ttl_active'] ?? null );
@@ -103,13 +103,13 @@ class Test_Activator extends TestCase {
 	}
 
 	/**
-	 * Existing `af_settings` are not overwritten by add_option on re-activation.
+	 * Existing `almost_famous_settings` are not overwritten by add_option on re-activation.
 	 *
 	 * @return void
 	 */
 	public function test_activate_does_not_overwrite_existing_settings(): void {
 		update_option(
-			'af_settings',
+			'almost_famous_settings',
 			array(
 				'cache_ttl_active'         => 999,
 				'cache_ttl_archived'       => 999,
@@ -119,7 +119,7 @@ class Test_Activator extends TestCase {
 
 		Activator::activate();
 
-		$settings = get_option( 'af_settings' );
+		$settings = get_option( 'almost_famous_settings' );
 
 		$this->assertSame( 999, $settings['cache_ttl_active'] );
 		$this->assertSame( 999, $settings['budget_safety_multiplier'] );
@@ -127,14 +127,14 @@ class Test_Activator extends TestCase {
 
 	/**
 	 * Roles::register_roles() is called from activate() — its side effect of
-	 * writing the af_role_mapping option proves the call ran.
+	 * writing the almost_famous_role_mapping option proves the call ran.
 	 *
 	 * @return void
 	 */
 	public function test_activate_registers_role_mapping(): void {
 		Activator::activate();
 
-		$mapping = get_option( 'af_role_mapping' );
+		$mapping = get_option( 'almost_famous_role_mapping' );
 
 		$this->assertIsArray( $mapping );
 		$this->assertSame( 'bushido_admin', $mapping['administrator'] ?? null );
@@ -166,7 +166,7 @@ class Test_Activator extends TestCase {
 		Activator::activate( true );
 
 		$this->assertSame( array( 2, 7, 11 ), $af_test_blog_switches );
-		$this->assertFalse( get_transient( 'af_activation_redirect' ) );
+		$this->assertFalse( get_transient( 'almost_famous_activation_redirect' ) );
 		$this->assertSame( 1, get_current_blog_id() );
 	}
 
@@ -186,7 +186,7 @@ class Test_Activator extends TestCase {
 
 		global $af_test_blog_switches;
 		$this->assertSame( array( 19 ), $af_test_blog_switches );
-		$this->assertSame( false, get_option( 'af_setup_complete', 'missing' ) );
+		$this->assertSame( false, get_option( 'almost_famous_setup_complete', 'missing' ) );
 		$this->assertSame( 1, get_current_blog_id() );
 	}
 
@@ -227,6 +227,6 @@ class Test_Activator extends TestCase {
 
 		Activator::activate();
 
-		$this->assertTrue( get_option( 'af_setup_complete' ) === false );
+		$this->assertTrue( get_option( 'almost_famous_setup_complete' ) === false );
 	}
 }

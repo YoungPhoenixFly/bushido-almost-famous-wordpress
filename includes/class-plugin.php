@@ -304,33 +304,33 @@ class Plugin {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( string $hook_suffix ): void {
-		if ( false === strpos( $hook_suffix, 'bushido-almost-famous' ) && false === strpos( $hook_suffix, 'af-' ) ) {
+		if ( false === strpos( $hook_suffix, 'bushido-almost-famous' ) && false === strpos( $hook_suffix, 'almost-famous-' ) ) {
 			return;
 		}
 
 		wp_enqueue_media();
 
 		wp_register_style(
-			'af-admin',
+			'almost-famous-admin',
 			ALMOST_FAMOUS_PLUGIN_URL . 'assets/css/admin.css',
 			array(),
 			ALMOST_FAMOUS_VERSION
 		);
 
 		wp_register_script(
-			'af-admin',
+			'almost-famous-admin',
 			ALMOST_FAMOUS_PLUGIN_URL . 'assets/js/admin.js',
 			array( 'wp-api-fetch', 'media-editor', 'media-views' ),
 			ALMOST_FAMOUS_VERSION,
 			true
 		);
 
-		wp_enqueue_style( 'af-admin' );
-		wp_enqueue_script( 'af-admin' );
+		wp_enqueue_style( 'almost-famous-admin' );
+		wp_enqueue_script( 'almost-famous-admin' );
 
 		wp_localize_script(
-			'af-admin',
-			'afAdminData',
+			'almost-famous-admin',
+			'almostFamousAdminData',
 			array(
 				'restNamespace' => 'almost-famous/v1',
 				'endpoints'     => array(
@@ -363,7 +363,18 @@ class Plugin {
 					'assetProcessingFailed' => __( 'Asset processing failed. Please try again.', 'bushido-almost-famous' ),
 					/* translators: %s: progress percentage. */
 					'progressFmt'           => __( 'Progress: %s%', 'bushido-almost-famous' ),
+					'credentialModeFail'    => __( 'Could not update credential mode:', 'bushido-almost-famous' ),
+					'redirecting'           => __( 'Redirecting…', 'bushido-almost-famous' ),
+					'connectFail'           => __( 'Could not start the connection:', 'bushido-almost-famous' ),
+					'disconnectConfirm'     => __( 'Disconnect this platform? Active campaigns may pause.', 'bushido-almost-famous' ),
+					'disconnecting'         => __( 'Disconnecting…', 'bushido-almost-famous' ),
+					'disconnectFail'        => __( 'Could not disconnect:', 'bushido-almost-famous' ),
+					'testingConnection'     => __( 'Testing...', 'bushido-almost-famous' ),
+					'connectionFailed'      => __( 'Connection failed.', 'bushido-almost-famous' ),
+					'requestFailed'         => __( 'Request failed.', 'bushido-almost-famous' ),
 				),
+				'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
+				'testAction'    => 'almost_famous_test_connection',
 			)
 		);
 	}

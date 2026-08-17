@@ -4,7 +4,7 @@ import { useState, useEffect } from '@wordpress/element';
  * Localized portal configuration (capabilities, i18n, endpoints).
  */
 export function portalConfig() {
-	return window.afPublicPortal || {};
+	return window.almostFamousPublicPortal || {};
 }
 
 /**
@@ -121,7 +121,7 @@ export function formatCurrency( amount, currency = 'USD' ) {
 		return '—';
 	}
 	const locale =
-		( window.afPublicPortal && window.afPublicPortal.locale ) || undefined;
+		( window.almostFamousPublicPortal && window.almostFamousPublicPortal.locale ) || undefined;
 	return new Intl.NumberFormat( locale, {
 		style: 'currency',
 		currency,
@@ -138,7 +138,7 @@ export function formatDate( dateStr ) {
 		return '—';
 	}
 	const locale =
-		( window.afPublicPortal && window.afPublicPortal.locale ) || undefined;
+		( window.almostFamousPublicPortal && window.almostFamousPublicPortal.locale ) || undefined;
 	return new Date( dateStr ).toLocaleDateString( locale, {
 		year: 'numeric',
 		month: 'short',

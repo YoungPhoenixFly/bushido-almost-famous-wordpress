@@ -32,28 +32,28 @@ class Settings {
 	 *
 	 * @var string
 	 */
-	public const PAGE_SLUG = 'af-settings';
+	public const PAGE_SLUG = 'almost-famous-settings';
 
 	/**
 	 * Option group for Settings API.
 	 *
 	 * @var string
 	 */
-	private const OPTION_GROUP = 'af_settings_group';
+	private const OPTION_GROUP = 'almost_famous_settings_group';
 
 	/**
 	 * Settings option name.
 	 *
 	 * @var string
 	 */
-	private const OPTION_NAME = 'af_settings';
+	private const OPTION_NAME = 'almost_famous_settings';
 
 	/**
 	 * Transient key for cached platform data.
 	 *
 	 * @var string
 	 */
-	private const PLATFORMS_CACHE_KEY = 'af_platforms_cache';
+	private const PLATFORMS_CACHE_KEY = 'almost_famous_platforms_cache';
 
 	/**
 	 * Cache TTL for platform data (5 minutes).
@@ -98,7 +98,7 @@ class Settings {
 		add_action( 'admin_init', array( $this, 'handle_refresh_platforms' ) );
 
 		// AJAX handler for API connection test (Story 5.5).
-		add_action( 'wp_ajax_af_test_connection', array( $this, 'ajax_test_connection' ) );
+		add_action( 'wp_ajax_almost_famous_test_connection', array( $this, 'ajax_test_connection' ) );
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Settings {
 			'bushido-almost-famous',
 			__( 'Settings', 'bushido-almost-famous' ),
 			__( 'Settings', 'bushido-almost-famous' ),
-			'af_manage_settings',
+			'almost_famous_manage_settings',
 			self::PAGE_SLUG,
 			array( $this, 'render' )
 		);
@@ -139,20 +139,20 @@ class Settings {
 
 		// General settings section.
 		add_settings_section(
-			'af_general_section',
+			'almost_famous_general_section',
 			__( 'General Settings', 'bushido-almost-famous' ),
 			array( $this, 'render_general_section_description' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
-			'af_cache_ttl_active',
+			'almost_famous_cache_ttl_active',
 			__( 'Active Campaign Cache TTL (seconds)', 'bushido-almost-famous' ),
 			array( $this, 'render_number_field' ),
 			self::PAGE_SLUG,
-			'af_general_section',
+			'almost_famous_general_section',
 			array(
-				'label_for' => 'af_cache_ttl_active',
+				'label_for' => 'almost_famous_cache_ttl_active',
 				'field_key' => 'cache_ttl_active',
 				'min'       => 10,
 				'max'       => 3600,
@@ -160,13 +160,13 @@ class Settings {
 		);
 
 		add_settings_field(
-			'af_cache_ttl_archived',
+			'almost_famous_cache_ttl_archived',
 			__( 'Archived Campaign Cache TTL (seconds)', 'bushido-almost-famous' ),
 			array( $this, 'render_number_field' ),
 			self::PAGE_SLUG,
-			'af_general_section',
+			'almost_famous_general_section',
 			array(
-				'label_for' => 'af_cache_ttl_archived',
+				'label_for' => 'almost_famous_cache_ttl_archived',
 				'field_key' => 'cache_ttl_archived',
 				'min'       => 60,
 				'max'       => 86400,
@@ -174,13 +174,13 @@ class Settings {
 		);
 
 		add_settings_field(
-			'af_budget_safety_multiplier',
+			'almost_famous_budget_safety_multiplier',
 			__( 'Budget Safety Multiplier (%)', 'bushido-almost-famous' ),
 			array( $this, 'render_number_field' ),
 			self::PAGE_SLUG,
-			'af_general_section',
+			'almost_famous_general_section',
 			array(
-				'label_for' => 'af_budget_safety_multiplier',
+				'label_for' => 'almost_famous_budget_safety_multiplier',
 				'field_key' => 'budget_safety_multiplier',
 				'min'       => 0,
 				'max'       => 100,
@@ -189,7 +189,7 @@ class Settings {
 
 		// -- Section: Budget Safety Limits (Story 3.4) --
 		add_settings_section(
-			'af_budget_limits_section',
+			'almost_famous_budget_limits_section',
 			__( 'Budget Safety Limits', 'bushido-almost-famous' ),
 			array( $this, 'render_budget_limits_section_description' ),
 			self::PAGE_SLUG
@@ -197,7 +197,7 @@ class Settings {
 
 		register_setting(
 			self::OPTION_GROUP,
-			'af_daily_budget_limit',
+			'almost_famous_daily_budget_limit',
 			array(
 				'type'              => 'number',
 				'sanitize_callback' => array( $this, 'sanitize_daily_budget_limit' ),
@@ -206,16 +206,16 @@ class Settings {
 		);
 
 		add_settings_field(
-			'af_daily_budget_limit',
+			'almost_famous_daily_budget_limit',
 			__( 'Daily Budget Limit ($)', 'bushido-almost-famous' ),
 			array( $this, 'render_daily_budget_limit_field' ),
 			self::PAGE_SLUG,
-			'af_budget_limits_section'
+			'almost_famous_budget_limits_section'
 		);
 
 		// -- Section: Campaign Defaults --
 		add_settings_section(
-			'af_campaign_defaults_section',
+			'almost_famous_campaign_defaults_section',
 			__( 'Campaign Defaults', 'bushido-almost-famous' ),
 			array( $this, 'render_campaign_defaults_section_description' ),
 			self::PAGE_SLUG
@@ -236,14 +236,14 @@ class Settings {
 			__( 'Default ad destination', 'bushido-almost-famous' ),
 			array( $this, 'render_default_destination_field' ),
 			self::PAGE_SLUG,
-			'af_campaign_defaults_section',
+			'almost_famous_campaign_defaults_section',
 			array( 'label_for' => Config::DESTINATION_PAGE_OPTION )
 		);
 
 		// -- Section: Privacy & Consent (Task 1.8) --
 		register_setting(
 			self::OPTION_GROUP,
-			'af_assume_consent_no_cmp',
+			'almost_famous_assume_consent_no_cmp',
 			array(
 				'type'              => 'string',
 				'sanitize_callback' => array( $this, 'sanitize_checkbox' ),
@@ -252,23 +252,23 @@ class Settings {
 		);
 
 		add_settings_section(
-			'af_privacy_section',
+			'almost_famous_privacy_section',
 			__( 'Privacy & Consent', 'bushido-almost-famous' ),
 			array( $this, 'render_privacy_section_description' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
-			'af_assume_consent_no_cmp',
+			'almost_famous_assume_consent_no_cmp',
 			__( 'Consent without a CMP', 'bushido-almost-famous' ),
 			array( $this, 'render_assume_consent_field' ),
 			self::PAGE_SLUG,
-			'af_privacy_section'
+			'almost_famous_privacy_section'
 		);
 
 		// -- Section: Cache TTL Configuration (Story 5.5) --
 		add_settings_section(
-			'af_cache_ttl_section',
+			'almost_famous_cache_ttl_section',
 			__( 'Cache TTL Configuration', 'bushido-almost-famous' ),
 			array( $this, 'render_cache_ttl_section_description' ),
 			self::PAGE_SLUG
@@ -276,7 +276,7 @@ class Settings {
 
 		register_setting(
 			self::OPTION_GROUP,
-			'af_cache_ttl_platform_status',
+			'almost_famous_cache_ttl_platform_status',
 			array(
 				'type'              => 'integer',
 				'sanitize_callback' => 'absint',
@@ -285,13 +285,13 @@ class Settings {
 		);
 
 		add_settings_field(
-			'af_cache_ttl_platform_status',
+			'almost_famous_cache_ttl_platform_status',
 			__( 'Platform Status Cache TTL (seconds)', 'bushido-almost-famous' ),
 			array( $this, 'render_standalone_number_field' ),
 			self::PAGE_SLUG,
-			'af_cache_ttl_section',
+			'almost_famous_cache_ttl_section',
 			array(
-				'option_name' => 'af_cache_ttl_platform_status',
+				'option_name' => 'almost_famous_cache_ttl_platform_status',
 				'default'     => 3600,
 				'description' => __( 'How long to cache platform status data. Default: 3600 (1 hour).', 'bushido-almost-famous' ),
 			)
@@ -299,7 +299,7 @@ class Settings {
 
 		register_setting(
 			self::OPTION_GROUP,
-			'af_cache_ttl_campaigns_list',
+			'almost_famous_cache_ttl_campaigns_list',
 			array(
 				'type'              => 'integer',
 				'sanitize_callback' => 'absint',
@@ -308,13 +308,13 @@ class Settings {
 		);
 
 		add_settings_field(
-			'af_cache_ttl_campaigns_list',
+			'almost_famous_cache_ttl_campaigns_list',
 			__( 'Campaigns List Cache TTL (seconds)', 'bushido-almost-famous' ),
 			array( $this, 'render_standalone_number_field' ),
 			self::PAGE_SLUG,
-			'af_cache_ttl_section',
+			'almost_famous_cache_ttl_section',
 			array(
-				'option_name' => 'af_cache_ttl_campaigns_list',
+				'option_name' => 'almost_famous_cache_ttl_campaigns_list',
 				'default'     => 300,
 				'description' => __( 'How long to cache campaign list data. Default: 300 (5 minutes).', 'bushido-almost-famous' ),
 			)
@@ -322,7 +322,7 @@ class Settings {
 
 		register_setting(
 			self::OPTION_GROUP,
-			'af_cache_ttl_analytics_data',
+			'almost_famous_cache_ttl_analytics_data',
 			array(
 				'type'              => 'integer',
 				'sanitize_callback' => 'absint',
@@ -331,13 +331,13 @@ class Settings {
 		);
 
 		add_settings_field(
-			'af_cache_ttl_analytics_data',
+			'almost_famous_cache_ttl_analytics_data',
 			__( 'Analytics Cache TTL (seconds)', 'bushido-almost-famous' ),
 			array( $this, 'render_standalone_number_field' ),
 			self::PAGE_SLUG,
-			'af_cache_ttl_section',
+			'almost_famous_cache_ttl_section',
 			array(
-				'option_name' => 'af_cache_ttl_analytics_data',
+				'option_name' => 'almost_famous_cache_ttl_analytics_data',
 				'default'     => 60,
 				'description' => __( 'How long to cache analytics data. Default: 60 (1 minute).', 'bushido-almost-famous' ),
 			)
@@ -345,26 +345,26 @@ class Settings {
 
 		// -- Section: Operations Diagnostics (Story 5.5) --
 		add_settings_section(
-			'af_ops_section',
+			'almost_famous_ops_section',
 			__( 'Operations Diagnostics', 'bushido-almost-famous' ),
 			array( $this, 'render_ops_section_description' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
-			'af_test_connection',
+			'almost_famous_test_connection',
 			__( 'API Connection Test', 'bushido-almost-famous' ),
 			array( $this, 'render_test_connection_field' ),
 			self::PAGE_SLUG,
-			'af_ops_section'
+			'almost_famous_ops_section'
 		);
 
 		add_settings_field(
-			'af_webhook_log',
+			'almost_famous_webhook_log',
 			__( 'Webhook Event Log', 'bushido-almost-famous' ),
 			array( $this, 'render_webhook_log_field' ),
 			self::PAGE_SLUG,
-			'af_ops_section'
+			'almost_famous_ops_section'
 		);
 	}
 
@@ -432,20 +432,20 @@ class Settings {
 	 */
 	public function handle_refresh_platforms(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( ! isset( $_GET['af_refresh_platforms'] ) ) {
+		if ( ! isset( $_GET['almost_famous_refresh_platforms'] ) ) {
 			return;
 		}
 
-		if ( ! current_user_can( 'af_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'almost_famous_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
-		check_admin_referer( 'af_refresh_platforms', 'af_platforms_nonce' );
+		check_admin_referer( 'almost_famous_refresh_platforms', 'almost_famous_platforms_nonce' );
 
 		// Delete the cached data to force a fresh API call.
 		delete_transient( self::PLATFORMS_CACHE_KEY );
 
-		wp_safe_redirect( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '&af_platforms_refreshed=1' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '&almost_famous_platforms_refreshed=1' ) );
 		exit;
 	}
 
@@ -603,9 +603,9 @@ class Settings {
 	 * @return void
 	 */
 	public function render_daily_budget_limit_field(): void {
-		$value = get_option( 'af_daily_budget_limit', 0 );
+		$value = get_option( 'almost_famous_daily_budget_limit', 0 );
 		printf(
-			'<input type="number" id="af_daily_budget_limit" name="af_daily_budget_limit" value="%s" min="0" step="0.01" class="regular-text" placeholder="0.00" />',
+			'<input type="number" id="almost_famous_daily_budget_limit" name="almost_famous_daily_budget_limit" value="%s" min="0" step="0.01" class="regular-text" placeholder="0.00" />',
 			esc_attr( (string) $value )
 		);
 		echo '<p class="description">' . esc_html__( 'Maximum daily budget allowed per campaign. Set to 0 to disable. Campaigns exceeding 10x this limit require manual review.', 'bushido-almost-famous' ) . '</p>';
@@ -647,9 +647,9 @@ class Settings {
 	 * @return void
 	 */
 	public function render_assume_consent_field(): void {
-		$value = get_option( 'af_assume_consent_no_cmp', '' );
+		$value = get_option( 'almost_famous_assume_consent_no_cmp', '' );
 		printf(
-			'<label><input type="checkbox" id="af_assume_consent_no_cmp" name="af_assume_consent_no_cmp" value="1" %s /> %s</label>',
+			'<label><input type="checkbox" id="almost_famous_assume_consent_no_cmp" name="almost_famous_assume_consent_no_cmp" value="1" %s /> %s</label>',
 			checked( '1', $value, false ),
 			esc_html__( 'Assume visitor consent when no CMP plugin is active', 'bushido-almost-famous' )
 		);
@@ -666,7 +666,7 @@ class Settings {
 	}
 
 	/**
-	 * Render a standalone number field (not nested in af_settings array).
+	 * Render a standalone number field (not nested in almost_famous_settings array).
 	 *
 	 * @param array $args Field arguments with option_name, default, description.
 	 * @return void
@@ -702,7 +702,7 @@ class Settings {
 	 * @return void
 	 */
 	public function render_test_connection_field(): void {
-		$nonce = wp_create_nonce( 'af_test_connection' );
+		$nonce = wp_create_nonce( 'almost_famous_test_connection' );
 		?>
 		<button
 			type="button"
@@ -712,39 +712,10 @@ class Settings {
 		>
 			<?php esc_html_e( 'Test Connection', 'bushido-almost-famous' ); ?>
 		</button>
-		<span id="af-connection-status" style="margin-left: 10px;"></span>
+		<span id="af-connection-status" class="af-connection-status"></span>
 		<p class="description">
 			<?php esc_html_e( 'Validate your API key by sending a test request to the Bushido API.', 'bushido-almost-famous' ); ?>
 		</p>
-		<script type="text/javascript">
-			(function() {
-				var btn = document.getElementById('af-test-connection');
-				var status = document.getElementById('af-connection-status');
-				if (!btn) return;
-				btn.addEventListener('click', function() {
-					status.textContent = '<?php echo esc_js( __( 'Testing...', 'bushido-almost-famous' ) ); ?>';
-					status.style.color = '#666';
-					var xhr = new XMLHttpRequest();
-					xhr.open('POST', ajaxurl);
-					xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-					xhr.onload = function() {
-						var resp = JSON.parse(xhr.responseText);
-						if (resp.success) {
-							status.textContent = resp.data.message;
-							status.style.color = '#00a32a';
-						} else {
-							status.textContent = resp.data.message || '<?php echo esc_js( __( 'Connection failed.', 'bushido-almost-famous' ) ); ?>';
-							status.style.color = '#d63638';
-						}
-					};
-					xhr.onerror = function() {
-						status.textContent = '<?php echo esc_js( __( 'Request failed.', 'bushido-almost-famous' ) ); ?>';
-						status.style.color = '#d63638';
-					};
-					xhr.send('action=af_test_connection&nonce=' + encodeURIComponent('<?php echo esc_js( $nonce ); ?>'));
-				});
-			})();
-		</script>
 		<?php
 	}
 
@@ -754,15 +725,15 @@ class Settings {
 	 * @return void
 	 */
 	public function render_webhook_log_field(): void {
-		$log = get_transient( 'af_webhook_event_log' );
+		$log = get_transient( 'almost_famous_webhook_event_log' );
 
 		if ( ! is_array( $log ) || empty( $log ) ) {
 			echo '<p>' . esc_html__( 'No webhook events recorded.', 'bushido-almost-famous' ) . '</p>';
 			return;
 		}
 
-		echo '<div class="af-webhook-log" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccd0d4; padding: 10px; background: #f6f7f7;">';
-		echo '<table class="widefat striped" style="margin: 0;">';
+		echo '<div class="af-webhook-log">';
+		echo '<table class="widefat striped af-webhook-log__table">';
 		echo '<thead><tr>';
 		echo '<th>' . esc_html__( 'Time', 'bushido-almost-famous' ) . '</th>';
 		echo '<th>' . esc_html__( 'Event Type', 'bushido-almost-famous' ) . '</th>';
@@ -799,9 +770,9 @@ class Settings {
 	 * @return void
 	 */
 	public function ajax_test_connection(): void {
-		check_ajax_referer( 'af_test_connection', 'nonce' );
+		check_ajax_referer( 'almost_famous_test_connection', 'nonce' );
 
-		if ( ! current_user_can( 'af_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'almost_famous_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Insufficient permissions.', 'bushido-almost-famous' ) ) );
 		}
 
@@ -832,7 +803,7 @@ class Settings {
 	 * @return void
 	 */
 	public function render(): void {
-		if ( ! current_user_can( 'af_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'almost_famous_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Unauthorized.', 'bushido-almost-famous' ) );
 		}
 

@@ -85,7 +85,7 @@ class Test_Wp_Connect_Api_Client extends Api_Client {
 		parent::__construct( new Api_Auth() );
 		$this->exchange_result = array(
 			'data'   => array(
-				'apiKey'         => 'af_new_plaintext',
+				'apiKey'         => 'almost_famous_new_plaintext',
 				'apiKeyId'       => 'key-new',
 				'orgId'          => 'org-new',
 				'channelId'      => 'channel-new',
@@ -151,7 +151,7 @@ class Test_Wp_Connect_Controller extends TestCase {
 		try {
 			$this->controller()->start();
 		} catch ( RuntimeException $exception ) {
-			$this->assertStringStartsWith( 'af_test_redirect:', $exception->getMessage() );
+			$this->assertStringStartsWith( 'almost_famous_test_redirect:', $exception->getMessage() );
 		}
 
 		global $af_test_redirects;
@@ -203,7 +203,7 @@ class Test_Wp_Connect_Controller extends TestCase {
 			public bool $saw_durable_record = false;
 
 			public function exchange_setup_code( string $code ): array {
-				$this->saw_durable_record = is_array( get_option( 'af_wp_connect_pending_delivery', false ) );
+				$this->saw_durable_record = is_array( get_option( 'almost_famous_wp_connect_pending_delivery', false ) );
 				$this->exchanged[]        = $code;
 				if ( 1 === count( $this->exchanged ) ) {
 					return array(
@@ -215,25 +215,25 @@ class Test_Wp_Connect_Controller extends TestCase {
 			}
 		};
 		$state = 'retryable-state';
-		set_transient( 'af_wp_connect_state_' . md5( $state ), '1', 600 );
+		set_transient( 'almost_famous_wp_connect_state_' . md5( $state ), '1', 600 );
 		$auth = new Api_Auth();
 		$controller = new Wp_Connect_Controller( $api, $auth );
 
 		$this->invoke_callback( $controller, 'code-value', $state );
 
-		$pending = get_option( 'af_wp_connect_pending_delivery', false );
+		$pending = get_option( 'almost_famous_wp_connect_pending_delivery', false );
 		$this->assertTrue( $api->saw_durable_record );
 		$this->assertIsArray( $pending );
 		$this->assertSame( 'exchange', $pending['action'] );
 		$this->assertNotSame( 'code-value', $pending['encrypted_code'] );
 		$this->assertSame( 'code-value', $auth->decrypt( $pending['encrypted_code'] ) );
-		$this->assertFalse( get_transient( 'af_wp_connect_state_' . md5( $state ) ) );
-		$this->assertFalse( get_option( 'af_setup_complete', false ) );
+		$this->assertFalse( get_transient( 'almost_famous_wp_connect_state_' . md5( $state ) ) );
+		$this->assertFalse( get_option( 'almost_famous_setup_complete', false ) );
 
 		$this->assertTrue( $controller->retry_pending_delivery() );
 		$this->assertSame( array( 'code-value', 'code-value' ), $api->exchanged );
-		$this->assertFalse( get_option( 'af_wp_connect_pending_delivery', false ) );
-		$this->assertSame( 'af_new_plaintext', $auth->decrypt_api_key() );
+		$this->assertFalse( get_option( 'almost_famous_wp_connect_pending_delivery', false ) );
+		$this->assertSame( 'almost_famous_new_plaintext', $auth->decrypt_api_key() );
 	}
 
 	public function test_terminal_ack_restores_previous_key_when_delivered_key_is_revoked(): void {
@@ -249,14 +249,14 @@ class Test_Wp_Connect_Controller extends TestCase {
 			),
 		);
 		$auth = new Api_Auth();
-		$this->assertTrue( $auth->store_api_key( 'af_previous_key' ) );
-		update_option( 'af_setup_complete', true );
-		update_option( 'af_org_id', 'org-old' );
-		update_option( 'af_org_channel_id', 'channel-old' );
-		update_option( 'af_org_channel_name', 'Old Channel' );
-		update_option( 'af_org_credential_mode', 'own' );
+		$this->assertTrue( $auth->store_api_key( 'almost_famous_previous_key' ) );
+		update_option( 'almost_famous_setup_complete', true );
+		update_option( 'almost_famous_org_id', 'org-old' );
+		update_option( 'almost_famous_org_channel_id', 'channel-old' );
+		update_option( 'almost_famous_org_channel_name', 'Old Channel' );
+		update_option( 'almost_famous_org_credential_mode', 'own' );
 		$state = 'terminal-ack-state';
-		set_transient( 'af_wp_connect_state_' . md5( $state ), '1', 600 );
+		set_transient( 'almost_famous_wp_connect_state_' . md5( $state ), '1', 600 );
 
 		$this->invoke_callback(
 			new Wp_Connect_Controller( $api, $auth ),
@@ -264,9 +264,9 @@ class Test_Wp_Connect_Controller extends TestCase {
 			$state
 		);
 
-		$this->assertSame( 'af_previous_key', $auth->decrypt_api_key() );
-		$this->assertSame( 'org-old', get_option( 'af_org_id' ) );
-		$this->assertFalse( get_option( 'af_wp_connect_pending_delivery', false ) );
+		$this->assertSame( 'almost_famous_previous_key', $auth->decrypt_api_key() );
+		$this->assertSame( 'org-old', get_option( 'almost_famous_org_id' ) );
+		$this->assertFalse( get_option( 'almost_famous_wp_connect_pending_delivery', false ) );
 	}
 
 	public function test_terminal_ack_keeps_new_key_when_current_key_probe_succeeds(): void {
@@ -279,7 +279,7 @@ class Test_Wp_Connect_Controller extends TestCase {
 		);
 		$auth  = new Api_Auth();
 		$state = 'terminal-ack-probe-state';
-		set_transient( 'af_wp_connect_state_' . md5( $state ), '1', 600 );
+		set_transient( 'almost_famous_wp_connect_state_' . md5( $state ), '1', 600 );
 
 		$this->invoke_callback(
 			new Wp_Connect_Controller( $api, $auth ),
@@ -287,8 +287,8 @@ class Test_Wp_Connect_Controller extends TestCase {
 			$state
 		);
 
-		$this->assertSame( 'af_new_plaintext', $auth->decrypt_api_key() );
-		$this->assertFalse( get_option( 'af_wp_connect_pending_delivery', false ) );
+		$this->assertSame( 'almost_famous_new_plaintext', $auth->decrypt_api_key() );
+		$this->assertFalse( get_option( 'almost_famous_wp_connect_pending_delivery', false ) );
 	}
 
 	public function test_storage_failure_aborts_exact_exchange_and_fails_closed(): void {
@@ -303,7 +303,7 @@ class Test_Wp_Connect_Controller extends TestCase {
 				unset( $code );
 				return array(
 					'data'   => array(
-						'apiKey'        => 'af_plaintext',
+						'apiKey'        => 'almost_famous_plaintext',
 						'apiKeyId'      => 'key-123',
 						'orgId'         => 'org-1',
 						'channelId'     => 'channel-1',
@@ -326,32 +326,32 @@ class Test_Wp_Connect_Controller extends TestCase {
 			}
 		};
 		$state = 'storage-failure-state';
-		set_transient( 'af_wp_connect_state_' . md5( $state ), '1', 600 );
+		set_transient( 'almost_famous_wp_connect_state_' . md5( $state ), '1', 600 );
 
 		$this->invoke_callback( new Wp_Connect_Controller( $api, $auth ), 'consumed-code', $state );
 
 		$this->assertSame( array( 'consumed-code', 'key-123' ), $api->aborted );
-		$this->assertFalse( get_transient( 'af_wp_connect_state_' . md5( $state ) ) );
-		$this->assertFalse( get_option( 'af_setup_complete', false ) );
+		$this->assertFalse( get_transient( 'almost_famous_wp_connect_state_' . md5( $state ) ) );
+		$this->assertFalse( get_option( 'almost_famous_setup_complete', false ) );
 	}
 
 	public function test_success_persists_all_metadata_and_acknowledges_exact_delivery(): void {
 		$api   = new Test_Wp_Connect_Api_Client();
 		$auth  = new Api_Auth();
 		$state = 'successful-state';
-		set_transient( 'af_wp_connect_state_' . md5( $state ), '1', 600 );
+		set_transient( 'almost_famous_wp_connect_state_' . md5( $state ), '1', 600 );
 
 		$this->invoke_callback( new Wp_Connect_Controller( $api, $auth ), 'delivered-code', $state );
 
 		$this->assertSame( array( array( 'delivered-code', 'key-new' ) ), $api->acknowledged );
-		$this->assertSame( 'af_new_plaintext', $auth->decrypt_api_key() );
-		$this->assertTrue( get_option( 'af_setup_complete' ) );
-		$this->assertSame( 'org-new', get_option( 'af_org_id' ) );
-		$this->assertSame( 'channel-new', get_option( 'af_org_channel_id' ) );
-		$this->assertSame( 'New Channel', get_option( 'af_org_channel_name' ) );
-		$this->assertSame( 'agency', get_option( 'af_org_credential_mode' ) );
-		$this->assertFalse( get_option( 'af_wp_connect_pending_delivery', false ) );
-		$this->assertFalse( get_transient( 'af_wp_connect_state_' . md5( $state ) ) );
+		$this->assertSame( 'almost_famous_new_plaintext', $auth->decrypt_api_key() );
+		$this->assertTrue( get_option( 'almost_famous_setup_complete' ) );
+		$this->assertSame( 'org-new', get_option( 'almost_famous_org_id' ) );
+		$this->assertSame( 'channel-new', get_option( 'almost_famous_org_channel_id' ) );
+		$this->assertSame( 'New Channel', get_option( 'almost_famous_org_channel_name' ) );
+		$this->assertSame( 'agency', get_option( 'almost_famous_org_credential_mode' ) );
+		$this->assertFalse( get_option( 'almost_famous_wp_connect_pending_delivery', false ) );
+		$this->assertFalse( get_transient( 'almost_famous_wp_connect_state_' . md5( $state ) ) );
 	}
 
 	public function test_acknowledgement_response_loss_keeps_encrypted_retry_until_confirmed(): void {
@@ -365,47 +365,47 @@ class Test_Wp_Connect_Controller extends TestCase {
 		);
 		$auth  = new Api_Auth();
 		$state = 'ack-retry-state';
-		set_transient( 'af_wp_connect_state_' . md5( $state ), '1', 600 );
+		set_transient( 'almost_famous_wp_connect_state_' . md5( $state ), '1', 600 );
 
 		$controller = new Wp_Connect_Controller( $api, $auth );
 		$this->invoke_callback( $controller, 'ack-retry-code', $state );
 
-		$pending = get_option( 'af_wp_connect_pending_delivery', false );
+		$pending = get_option( 'almost_famous_wp_connect_pending_delivery', false );
 		$this->assertIsArray( $pending );
 		$this->assertSame( 'ack', $pending['action'] );
 		$this->assertNotSame( 'ack-retry-code', $pending['encrypted_code'] );
 		$this->assertSame( 'ack-retry-code', $auth->decrypt( $pending['encrypted_code'] ) );
-		$this->assertFalse( get_transient( 'af_wp_connect_state_' . md5( $state ) ) );
+		$this->assertFalse( get_transient( 'almost_famous_wp_connect_state_' . md5( $state ) ) );
 
 		$this->assertTrue( $controller->retry_pending_delivery() );
 		$this->assertCount( 2, $api->acknowledged );
-		$this->assertFalse( get_option( 'af_wp_connect_pending_delivery', false ) );
-		$this->assertSame( 'af_new_plaintext', $auth->decrypt_api_key() );
+		$this->assertFalse( get_option( 'almost_famous_wp_connect_pending_delivery', false ) );
+		$this->assertSame( 'almost_famous_new_plaintext', $auth->decrypt_api_key() );
 	}
 
 	public function test_metadata_failure_aborts_and_restores_previous_connection(): void {
 		$api  = new Test_Wp_Connect_Api_Client();
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( 'af_previous_key' ) );
-		update_option( 'af_setup_complete', true );
-		update_option( 'af_org_id', 'org-old' );
-		update_option( 'af_org_channel_id', 'channel-old' );
-		update_option( 'af_org_channel_name', 'Old Channel' );
-		update_option( 'af_org_credential_mode', 'own' );
-		af_test_fail_option_updates( 'af_org_channel_name' );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( 'almost_famous_previous_key' ) );
+		update_option( 'almost_famous_setup_complete', true );
+		update_option( 'almost_famous_org_id', 'org-old' );
+		update_option( 'almost_famous_org_channel_id', 'channel-old' );
+		update_option( 'almost_famous_org_channel_name', 'Old Channel' );
+		update_option( 'almost_famous_org_credential_mode', 'own' );
+		af_test_fail_option_updates( 'almost_famous_org_channel_name' );
 
 		$state = 'metadata-failure-state';
-		set_transient( 'af_wp_connect_state_' . md5( $state ), '1', 600 );
+		set_transient( 'almost_famous_wp_connect_state_' . md5( $state ), '1', 600 );
 		$this->invoke_callback( new Wp_Connect_Controller( $api, $auth ), 'metadata-code', $state );
 
 		$this->assertSame( array( array( 'metadata-code', 'key-new' ) ), $api->aborted );
-		$this->assertSame( 'af_previous_key', $auth->decrypt_api_key() );
-		$this->assertTrue( get_option( 'af_setup_complete' ) );
-		$this->assertSame( 'org-old', get_option( 'af_org_id' ) );
-		$this->assertSame( 'channel-old', get_option( 'af_org_channel_id' ) );
-		$this->assertSame( 'Old Channel', get_option( 'af_org_channel_name' ) );
-		$this->assertSame( 'own', get_option( 'af_org_credential_mode' ) );
-		$this->assertFalse( get_option( 'af_wp_connect_pending_delivery', false ) );
+		$this->assertSame( 'almost_famous_previous_key', $auth->decrypt_api_key() );
+		$this->assertTrue( get_option( 'almost_famous_setup_complete' ) );
+		$this->assertSame( 'org-old', get_option( 'almost_famous_org_id' ) );
+		$this->assertSame( 'channel-old', get_option( 'almost_famous_org_channel_id' ) );
+		$this->assertSame( 'Old Channel', get_option( 'almost_famous_org_channel_name' ) );
+		$this->assertSame( 'own', get_option( 'almost_famous_org_credential_mode' ) );
+		$this->assertFalse( get_option( 'almost_famous_wp_connect_pending_delivery', false ) );
 	}
 
 	public function test_abort_response_loss_keeps_retry_then_restores_previous_connection(): void {
@@ -424,57 +424,57 @@ class Test_Wp_Connect_Controller extends TestCase {
 			}
 		};
 		$state = 'abort-retry-state';
-		set_transient( 'af_wp_connect_state_' . md5( $state ), '1', 600 );
+		set_transient( 'almost_famous_wp_connect_state_' . md5( $state ), '1', 600 );
 
 		$controller = new Wp_Connect_Controller( $api, $auth );
 		$this->invoke_callback( $controller, 'abort-retry-code', $state );
 
-		$pending = get_option( 'af_wp_connect_pending_delivery', false );
+		$pending = get_option( 'almost_famous_wp_connect_pending_delivery', false );
 		$this->assertIsArray( $pending );
 		$this->assertSame( 'abort', $pending['action'] );
-		$this->assertFalse( get_transient( 'af_wp_connect_state_' . md5( $state ) ) );
+		$this->assertFalse( get_transient( 'almost_famous_wp_connect_state_' . md5( $state ) ) );
 
 		$this->assertTrue( $controller->retry_pending_delivery() );
 		$this->assertCount( 2, $api->aborted );
-		$this->assertFalse( get_option( 'af_wp_connect_pending_delivery', false ) );
-		$this->assertFalse( get_option( 'af_api_key', false ) );
+		$this->assertFalse( get_option( 'almost_famous_wp_connect_pending_delivery', false ) );
+		$this->assertFalse( get_option( 'almost_famous_api_key', false ) );
 	}
 
 	public function test_delivery_record_failure_compensates_before_any_local_write(): void {
 		$api   = new Test_Wp_Connect_Api_Client();
 		$auth  = new Api_Auth();
 		$state = 'delivery-storage-failure';
-		set_transient( 'af_wp_connect_state_' . md5( $state ), '1', 600 );
-		af_test_fail_option_updates( 'af_wp_connect_pending_delivery' );
+		set_transient( 'almost_famous_wp_connect_state_' . md5( $state ), '1', 600 );
+		af_test_fail_option_updates( 'almost_famous_wp_connect_pending_delivery' );
 
 		$this->invoke_callback( new Wp_Connect_Controller( $api, $auth ), 'delivery-code', $state );
 
 		$this->assertSame( array(), $api->exchanged );
 		$this->assertSame( array(), $api->aborted );
-		$this->assertFalse( get_option( 'af_wp_connect_pending_delivery', false ) );
-		$this->assertFalse( get_option( 'af_api_key', false ) );
-		$this->assertSame( '1', get_transient( 'af_wp_connect_state_' . md5( $state ) ) );
+		$this->assertFalse( get_option( 'almost_famous_wp_connect_pending_delivery', false ) );
+		$this->assertFalse( get_option( 'almost_famous_api_key', false ) );
+		$this->assertSame( '1', get_transient( 'almost_famous_wp_connect_state_' . md5( $state ) ) );
 	}
 
 	public function test_missing_required_exchange_ids_abort_without_replacing_previous_key(): void {
 		$api = new Test_Wp_Connect_Api_Client();
 		unset( $api->exchange_result['data']['orgId'] );
 		$auth = new Api_Auth();
-		$this->assertTrue( $auth->store_api_key( 'af_previous_key' ) );
-		update_option( 'af_setup_complete', true );
-		update_option( 'af_org_id', 'org-old' );
-		update_option( 'af_org_channel_id', 'channel-old' );
-		update_option( 'af_org_channel_name', 'Old Channel' );
-		update_option( 'af_org_credential_mode', 'own' );
+		$this->assertTrue( $auth->store_api_key( 'almost_famous_previous_key' ) );
+		update_option( 'almost_famous_setup_complete', true );
+		update_option( 'almost_famous_org_id', 'org-old' );
+		update_option( 'almost_famous_org_channel_id', 'channel-old' );
+		update_option( 'almost_famous_org_channel_name', 'Old Channel' );
+		update_option( 'almost_famous_org_credential_mode', 'own' );
 
 		$state = 'missing-id-state';
-		set_transient( 'af_wp_connect_state_' . md5( $state ), '1', 600 );
+		set_transient( 'almost_famous_wp_connect_state_' . md5( $state ), '1', 600 );
 		$this->invoke_callback( new Wp_Connect_Controller( $api, $auth ), 'missing-id-code', $state );
 
 		$this->assertSame( array( array( 'missing-id-code', 'key-new' ) ), $api->aborted );
-		$this->assertSame( 'af_previous_key', $auth->decrypt_api_key() );
-		$this->assertSame( 'org-old', get_option( 'af_org_id' ) );
-		$this->assertFalse( get_option( 'af_wp_connect_pending_delivery', false ) );
+		$this->assertSame( 'almost_famous_previous_key', $auth->decrypt_api_key() );
+		$this->assertSame( 'org-old', get_option( 'almost_famous_org_id' ) );
+		$this->assertFalse( get_option( 'almost_famous_wp_connect_pending_delivery', false ) );
 	}
 
 	public function test_delivery_encryption_failure_makes_no_http_request(): void {
@@ -486,18 +486,18 @@ class Test_Wp_Connect_Controller extends TestCase {
 			}
 		};
 		$state = 'encryption-failure-state';
-		set_transient( 'af_wp_connect_state_' . md5( $state ), '1', 600 );
+		set_transient( 'almost_famous_wp_connect_state_' . md5( $state ), '1', 600 );
 
 		$this->invoke_callback( new Wp_Connect_Controller( $api, $auth ), 'never-sent-code', $state );
 
 		$this->assertSame( array(), $api->exchanged );
-		$this->assertFalse( get_option( 'af_wp_connect_pending_delivery', false ) );
-		$this->assertSame( '1', get_transient( 'af_wp_connect_state_' . md5( $state ) ) );
+		$this->assertFalse( get_option( 'almost_famous_wp_connect_pending_delivery', false ) );
+		$this->assertSame( '1', get_transient( 'almost_famous_wp_connect_state_' . md5( $state ) ) );
 	}
 
 	public function test_expired_delivery_lock_is_reacquired_in_same_retry(): void {
 		update_option(
-			'af_wp_connect_delivery_lock',
+			'almost_famous_wp_connect_delivery_lock',
 			array(
 				'token'      => 'stale-owner',
 				'expires_at' => time() - 1,
@@ -505,14 +505,14 @@ class Test_Wp_Connect_Controller extends TestCase {
 		);
 
 		$this->assertTrue( $this->controller()->retry_pending_delivery() );
-		$this->assertFalse( get_option( 'af_wp_connect_delivery_lock', false ) );
+		$this->assertFalse( get_option( 'almost_famous_wp_connect_delivery_lock', false ) );
 	}
 
 	public function test_malformed_delivery_lock_is_recovered_in_same_retry(): void {
-		update_option( 'af_wp_connect_delivery_lock', 'corrupt-lock-data' );
+		update_option( 'almost_famous_wp_connect_delivery_lock', 'corrupt-lock-data' );
 
 		$this->assertTrue( $this->controller()->retry_pending_delivery() );
-		$this->assertFalse( get_option( 'af_wp_connect_delivery_lock', false ) );
+		$this->assertFalse( get_option( 'almost_famous_wp_connect_delivery_lock', false ) );
 	}
 
 	private function invoke_callback( Wp_Connect_Controller $controller, string $code, string $state ): void {
@@ -523,7 +523,7 @@ class Test_Wp_Connect_Controller extends TestCase {
 		try {
 			$controller->callback( $request );
 		} catch ( RuntimeException $exception ) {
-			$this->assertStringStartsWith( 'af_test_redirect:', $exception->getMessage() );
+			$this->assertStringStartsWith( 'almost_famous_test_redirect:', $exception->getMessage() );
 		}
 	}
 }

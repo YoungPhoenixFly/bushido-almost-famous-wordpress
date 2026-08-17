@@ -13,7 +13,7 @@ const wpCli = ( ...args ) =>
 test.describe( 'OAuth Connect — Meta', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
 		await requestUtils.activatePlugin( 'bushido-almost-famous' );
-		wpCli( 'eval', 'af_e2e_seed_connected_site("own");' );
+		wpCli( 'eval', 'almost_famous_e2e_seed_connected_site("own");' );
 	} );
 
 	test( 'Connect Meta button starts OAuth and renders the Connected banner', async ( {
@@ -23,7 +23,7 @@ test.describe( 'OAuth Connect — Meta', () => {
 		// The plugin's REST start endpoint normally bounces through the backend.
 		// We intercept it to keep the redirect inside wp-env.
 		const bounceUrl =
-			'http://localhost:8992/wp-admin/admin.php?page=af-accounts&af_connected=meta';
+			'http://localhost:8992/wp-admin/admin.php?page=almost-famous-accounts&almost_famous_connected=meta';
 
 		await page.route( '**/almost-famous/v1/oauth/start', ( route ) =>
 			route.fulfill( {
@@ -34,7 +34,7 @@ test.describe( 'OAuth Connect — Meta', () => {
 		);
 
 		// Visit the Accounts page.
-		await admin.visitAdminPage( 'admin.php?page=af-accounts' );
+		await admin.visitAdminPage( 'admin.php?page=almost-famous-accounts' );
 		await expect( page.getByLabel( 'My own ad accounts' ) ).toBeChecked();
 
 		// Click the Connect button for Meta.
@@ -44,7 +44,7 @@ test.describe( 'OAuth Connect — Meta', () => {
 		await expect( connectMeta ).toBeVisible();
 
 		await Promise.all( [
-			page.waitForURL( /af_connected=meta/ ),
+			page.waitForURL( /almost_famous_connected=meta/ ),
 			connectMeta.click(),
 		] );
 

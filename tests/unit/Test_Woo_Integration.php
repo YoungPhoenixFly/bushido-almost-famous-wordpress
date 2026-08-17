@@ -1,6 +1,6 @@
 <?php
 /**
- * Tests that Woo_Integration captures attribution from the af_attribution
+ * Tests that Woo_Integration captures attribution from the almost_famous_attribution
  * cookie or UTM query parameters into order meta. Validates the precedence
  * (cookie wins over UTM), that the buyer's marketing-consent verdict is
  * captured as order meta at order-creation time (the buyer's own request
@@ -45,7 +45,7 @@ class Test_Woo_Integration extends TestCase {
 	}
 
 	public function test_cookie_attribution_stored_on_order_creation(): void {
-		$_COOKIE['af_attribution'] = wp_json_encode(
+		$_COOKIE['almost_famous_attribution'] = wp_json_encode(
 			array(
 				'platform'    => 'meta',
 				'campaign_id' => 'cmp_42',
@@ -60,14 +60,14 @@ class Test_Woo_Integration extends TestCase {
 
 		$this->integration->on_order_created( $order );
 
-		$this->assertArrayHasKey( 'af_attribution', $order->meta );
-		$this->assertSame( 'meta', $order->meta['af_attribution']['platform'] );
-		$this->assertSame( 'cmp_42', $order->meta['af_attribution']['campaign_id'] );
-		$this->assertSame( 'Spring Push', $order->meta['af_attribution']['campaign'] );
-		$this->assertSame( 'facebook', $order->meta['af_attribution']['source'] );
-		$this->assertSame( 'cpc', $order->meta['af_attribution']['medium'] );
-		$this->assertSame( 'fbclid_xyz', $order->meta['af_attribution']['click_id'] );
-		$this->assertArrayHasKey( 'timestamp', $order->meta['af_attribution'] );
+		$this->assertArrayHasKey( 'almost_famous_attribution', $order->meta );
+		$this->assertSame( 'meta', $order->meta['almost_famous_attribution']['platform'] );
+		$this->assertSame( 'cmp_42', $order->meta['almost_famous_attribution']['campaign_id'] );
+		$this->assertSame( 'Spring Push', $order->meta['almost_famous_attribution']['campaign'] );
+		$this->assertSame( 'facebook', $order->meta['almost_famous_attribution']['source'] );
+		$this->assertSame( 'cpc', $order->meta['almost_famous_attribution']['medium'] );
+		$this->assertSame( 'fbclid_xyz', $order->meta['almost_famous_attribution']['click_id'] );
+		$this->assertArrayHasKey( 'timestamp', $order->meta['almost_famous_attribution'] );
 		$this->assertTrue( $order->saved );
 	}
 
@@ -80,16 +80,16 @@ class Test_Woo_Integration extends TestCase {
 
 		$this->integration->on_order_created( $order );
 
-		$this->assertSame( 'newsletter', $order->meta['af_attribution']['source'] );
-		$this->assertSame( 'email', $order->meta['af_attribution']['medium'] );
-		$this->assertSame( 'launch', $order->meta['af_attribution']['campaign'] );
+		$this->assertSame( 'newsletter', $order->meta['almost_famous_attribution']['source'] );
+		$this->assertSame( 'email', $order->meta['almost_famous_attribution']['medium'] );
+		$this->assertSame( 'launch', $order->meta['almost_famous_attribution']['campaign'] );
 		// Cookie-only fields are blank when falling back to UTM.
-		$this->assertSame( '', $order->meta['af_attribution']['platform'] );
-		$this->assertSame( '', $order->meta['af_attribution']['click_id'] );
+		$this->assertSame( '', $order->meta['almost_famous_attribution']['platform'] );
+		$this->assertSame( '', $order->meta['almost_famous_attribution']['click_id'] );
 	}
 
 	public function test_cookie_takes_precedence_over_utm_params(): void {
-		$_COOKIE['af_attribution'] = wp_json_encode(
+		$_COOKIE['almost_famous_attribution'] = wp_json_encode(
 			array(
 				'platform' => 'tiktok',
 				'source'   => 'tiktok',
@@ -106,10 +106,10 @@ class Test_Woo_Integration extends TestCase {
 		$this->integration->on_order_created( $order );
 
 		// Cookie wins.
-		$this->assertSame( 'tiktok', $order->meta['af_attribution']['platform'] );
-		$this->assertSame( 'tiktok', $order->meta['af_attribution']['source'] );
-		$this->assertSame( 'video', $order->meta['af_attribution']['medium'] );
-		$this->assertSame( 'CookieCampaign', $order->meta['af_attribution']['campaign'] );
+		$this->assertSame( 'tiktok', $order->meta['almost_famous_attribution']['platform'] );
+		$this->assertSame( 'tiktok', $order->meta['almost_famous_attribution']['source'] );
+		$this->assertSame( 'video', $order->meta['almost_famous_attribution']['medium'] );
+		$this->assertSame( 'CookieCampaign', $order->meta['almost_famous_attribution']['campaign'] );
 	}
 
 	public function test_no_attribution_meta_written_when_cookie_and_utm_missing(): void {
@@ -119,12 +119,12 @@ class Test_Woo_Integration extends TestCase {
 
 		// The consent verdict is always captured, but no attribution meta
 		// is invented when neither the cookie nor UTM params are present.
-		$this->assertArrayNotHasKey( 'af_attribution', $order->meta );
-		$this->assertSame( array( 'af_marketing_consent' => 'denied' ), $order->meta );
+		$this->assertArrayNotHasKey( 'almost_famous_attribution', $order->meta );
+		$this->assertSame( array( 'almost_famous_marketing_consent' => 'denied' ), $order->meta );
 	}
 
 	public function test_invalid_cookie_json_falls_back_to_utm(): void {
-		$_COOKIE['af_attribution'] = 'not-json{';
+		$_COOKIE['almost_famous_attribution'] = 'not-json{';
 		$_GET['utm_source']        = 'twitter';
 		$_GET['utm_medium']        = 'social';
 		$_GET['utm_campaign']      = 'organic';
@@ -133,7 +133,7 @@ class Test_Woo_Integration extends TestCase {
 
 		$this->integration->on_order_created( $order );
 
-		$this->assertSame( 'twitter', $order->meta['af_attribution']['source'] );
+		$this->assertSame( 'twitter', $order->meta['almost_famous_attribution']['source'] );
 	}
 
 	public function test_non_order_argument_is_ignored(): void {
@@ -184,7 +184,7 @@ class Test_Woo_Integration extends TestCase {
 
 		$order       = new \WC_Order();
 		$order->id   = 55;
-		$order->meta = array( 'af_attribution' => array( 'source' => 'existing' ) );
+		$order->meta = array( 'almost_famous_attribution' => array( 'source' => 'existing' ) );
 
 		global $af_test_orders;
 		$af_test_orders       = array();
@@ -193,7 +193,7 @@ class Test_Woo_Integration extends TestCase {
 		$this->integration->capture_attribution_data( 55 );
 
 		// Attribution untouched (double-fire guard), consent still captured.
-		$this->assertSame( array( 'source' => 'existing' ), $order->meta['af_attribution'] );
+		$this->assertSame( array( 'source' => 'existing' ), $order->meta['almost_famous_attribution'] );
 		$this->assertSame( Woo_Integration::CONSENT_GRANTED, $order->meta[ Woo_Integration::CONSENT_META_KEY ] );
 	}
 
@@ -201,7 +201,7 @@ class Test_Woo_Integration extends TestCase {
 		// Mirror exactly what the front-end capture script would write for
 		// ?gclid=abc123&utm_source=google&utm_medium=cpc&utm_campaign=summer
 		// (PHP has already urldecoded the cookie value into $_COOKIE).
-		$_COOKIE['af_attribution'] = wp_json_encode(
+		$_COOKIE['almost_famous_attribution'] = wp_json_encode(
 			array(
 				'platform'    => 'google',
 				'campaign_id' => 'summer',
@@ -216,12 +216,12 @@ class Test_Woo_Integration extends TestCase {
 
 		$this->integration->on_order_created( $order );
 
-		$this->assertSame( 'google', $order->meta['af_attribution']['platform'] );
-		$this->assertSame( 'summer', $order->meta['af_attribution']['campaign_id'] );
-		$this->assertSame( 'summer', $order->meta['af_attribution']['campaign'] );
-		$this->assertSame( 'google', $order->meta['af_attribution']['source'] );
-		$this->assertSame( 'cpc', $order->meta['af_attribution']['medium'] );
-		$this->assertSame( 'abc123', $order->meta['af_attribution']['click_id'] );
+		$this->assertSame( 'google', $order->meta['almost_famous_attribution']['platform'] );
+		$this->assertSame( 'summer', $order->meta['almost_famous_attribution']['campaign_id'] );
+		$this->assertSame( 'summer', $order->meta['almost_famous_attribution']['campaign'] );
+		$this->assertSame( 'google', $order->meta['almost_famous_attribution']['source'] );
+		$this->assertSame( 'cpc', $order->meta['almost_famous_attribution']['medium'] );
+		$this->assertSame( 'abc123', $order->meta['almost_famous_attribution']['click_id'] );
 	}
 
 	public function test_attribution_capture_script_enqueued_when_consent_granted(): void {
@@ -231,12 +231,12 @@ class Test_Woo_Integration extends TestCase {
 
 		$scripts = af_test_get_inline_scripts();
 		$this->assertCount( 1, $scripts );
-		$this->assertSame( 'af-attribution-capture', $scripts[0]['handle'] );
+		$this->assertSame( 'almost-famous-attribution-capture', $scripts[0]['handle'] );
 
 		// The script must write the cookie the checkout parser reads, with
 		// every key store_attribution_meta() expects, plus safe attributes.
 		$js = $scripts[0]['data'];
-		$this->assertStringContainsString( 'af_attribution=', $js );
+		$this->assertStringContainsString( 'almost_famous_attribution=', $js );
 		foreach ( array( 'platform', 'campaign_id', 'campaign', 'source', 'medium', 'click_id' ) as $key ) {
 			$this->assertStringContainsString( $key . ':', $js );
 		}

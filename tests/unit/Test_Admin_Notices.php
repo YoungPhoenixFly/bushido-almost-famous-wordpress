@@ -73,7 +73,7 @@ class Test_Admin_Notices extends TestCase {
 
 	public function test_check_platform_status_adds_warning_for_degraded(): void {
 		set_transient(
-			'af_platform_status',
+			'almost_famous_platform_status',
 			array(
 				array( 'name' => 'Meta', 'status' => 'degraded' ),
 				array( 'name' => 'TikTok', 'status' => 'ok' ),
@@ -93,14 +93,14 @@ class Test_Admin_Notices extends TestCase {
 
 	public function test_check_platform_status_skips_when_dismissed(): void {
 		set_transient(
-			'af_platform_status',
+			'almost_famous_platform_status',
 			array( array( 'name' => 'Meta', 'status' => 'degraded' ) ),
 			60
 		);
 
 		// Pre-derive the notice ID just like the source.
 		$notice_id = 'platform_degraded_' . md5( 'Meta' );
-		update_user_meta( get_current_user_id(), 'af_dismissed_notice_' . $notice_id, time() );
+		update_user_meta( get_current_user_id(), 'almost_famous_dismissed_notice_' . $notice_id, time() );
 
 		$this->notices->check_platform_status();
 		ob_start();
@@ -114,7 +114,7 @@ class Test_Admin_Notices extends TestCase {
 
 	public function test_check_upgrade_required_renders_error_notice(): void {
 		set_transient(
-			'af_upgrade_required',
+			'almost_famous_upgrade_required',
 			array(
 				'minimum_version' => '2.0.0',
 				'message'         => 'Please update.',
@@ -133,7 +133,7 @@ class Test_Admin_Notices extends TestCase {
 
 	public function test_check_upgrade_required_uses_default_message_when_blank(): void {
 		set_transient(
-			'af_upgrade_required',
+			'almost_famous_upgrade_required',
 			array( 'minimum_version' => '2.0.0' ),
 			60
 		);
@@ -147,8 +147,8 @@ class Test_Admin_Notices extends TestCase {
 	}
 
 	public function test_check_upgrade_required_skips_when_dismissed(): void {
-		set_transient( 'af_upgrade_required', array( 'message' => 'x' ), 60 );
-		update_user_meta( get_current_user_id(), 'af_dismissed_notice_upgrade_required', time() );
+		set_transient( 'almost_famous_upgrade_required', array( 'message' => 'x' ), 60 );
+		update_user_meta( get_current_user_id(), 'almost_famous_dismissed_notice_upgrade_required', time() );
 
 		$this->notices->check_upgrade_required();
 		ob_start();
@@ -200,7 +200,7 @@ class Test_Admin_Notices extends TestCase {
 	// -------------------------------------------------------------------
 
 	public function test_handle_dismiss_writes_user_meta(): void {
-		af_test_set_caps( array( 'af_view_campaigns' => true ) );
+		af_test_set_caps( array( 'almost_famous_view_campaigns' => true ) );
 
 		$_POST = array( 'nonce' => 'test-nonce', 'notice_id' => 'foo-bar' );
 
@@ -212,7 +212,7 @@ class Test_Admin_Notices extends TestCase {
 		}
 
 		$this->assertNotEmpty(
-			get_user_meta( get_current_user_id(), 'af_dismissed_notice_foo-bar', true )
+			get_user_meta( get_current_user_id(), 'almost_famous_dismissed_notice_foo-bar', true )
 		);
 	}
 
@@ -229,7 +229,7 @@ class Test_Admin_Notices extends TestCase {
 	}
 
 	public function test_handle_dismiss_rejects_missing_notice_id(): void {
-		af_test_set_caps( array( 'af_view_campaigns' => true ) );
+		af_test_set_caps( array( 'almost_famous_view_campaigns' => true ) );
 
 		$_POST = array( 'nonce' => 'test-nonce', 'notice_id' => '' );
 
@@ -244,17 +244,17 @@ class Test_Admin_Notices extends TestCase {
 	// dismiss script enqueue
 	// -------------------------------------------------------------------
 
-	public function test_enqueue_dismiss_script_attaches_inline_on_af_pages(): void {
+	public function test_enqueue_dismiss_script_attaches_inline_on_almost_famous_pages(): void {
 		$_GET['page'] = 'bushido-almost-famous';
 		$this->notices->enqueue_dismiss_script();
 
 		global $af_test_inline_scripts;
 		$this->assertNotEmpty( $af_test_inline_scripts );
-		$this->assertSame( 'common', $af_test_inline_scripts[0]['handle'] );
+		$this->assertSame( 'almost-famous-notice-dismiss', $af_test_inline_scripts[0]['handle'] );
 		$this->assertStringContainsString( 'af-admin-notice', $af_test_inline_scripts[0]['data'] );
 	}
 
-	public function test_enqueue_dismiss_script_skips_non_af_pages_without_notices(): void {
+	public function test_enqueue_dismiss_script_skips_non_almost_famous_pages_without_notices(): void {
 		$_GET['page'] = 'edit.php';
 		$this->notices->enqueue_dismiss_script();
 

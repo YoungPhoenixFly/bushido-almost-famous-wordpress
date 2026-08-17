@@ -20,7 +20,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
 
 
-const portalConfig = () => window.afPublicPortal || {};
+const portalConfig = () => window.almostFamousPublicPortal || {};
 const ep = () => portalConfig().endpoints || {};
 function buildHeaders(extraHeaders = {}) {
   const config = portalConfig();
@@ -183,7 +183,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 function portalConfig() {
-  return window.afPublicPortal || {};
+  return window.almostFamousPublicPortal || {};
 }
 
 /**
@@ -318,7 +318,7 @@ function formatCurrency(amount, currency = 'USD') {
   if (amount === null || amount === undefined) {
     return '—';
   }
-  const locale = window.afPublicPortal && window.afPublicPortal.locale || undefined;
+  const locale = window.almostFamousPublicPortal && window.almostFamousPublicPortal.locale || undefined;
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency
@@ -334,7 +334,7 @@ function formatDate(dateStr) {
   if (!dateStr) {
     return '—';
   }
-  const locale = window.afPublicPortal && window.afPublicPortal.locale || undefined;
+  const locale = window.almostFamousPublicPortal && window.almostFamousPublicPortal.locale || undefined;
   return new Date(dateStr).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'short',
@@ -2639,7 +2639,7 @@ function App() {
   });
 }
 _wordpress_dom_ready__WEBPACK_IMPORTED_MODULE_1___default()(() => {
-  const el = document.getElementById('af-public-portal');
+  const el = document.getElementById('almost-famous-public-portal');
   if (el) {
     (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.render)(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(App, {}), el);
   }

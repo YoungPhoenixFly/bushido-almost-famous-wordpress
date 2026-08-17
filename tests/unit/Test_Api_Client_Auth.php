@@ -22,7 +22,7 @@ class Test_Api_Client_Auth extends TestCase {
 		parent::setUp();
 		af_test_reset();
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( self::TEST_KEY ) );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( self::TEST_KEY ) );
 	}
 
 	private function client(): Api_Client {

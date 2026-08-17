@@ -169,7 +169,7 @@ $almost_famous_has_any_credential = ! empty( array_filter( $platform_choices, st
 				data-api-endpoint="/audiences"
 				data-api-method="POST">
 
-				<?php wp_nonce_field( 'af_audience_save', 'af_audience_nonce' ); ?>
+				<?php wp_nonce_field( 'almost_famous_audience_save', 'almost_famous_audience_nonce' ); ?>
 
 				<div class="af-form-notices" id="af-audience-notices"></div>
 
@@ -183,7 +183,7 @@ $almost_famous_has_any_credential = ! empty( array_filter( $platform_choices, st
 						<div class="notice notice-warning inline">
 							<p>
 								<?php esc_html_e( 'No platform credentials are connected yet, so audiences cannot be created. Connect a platform first.', 'bushido-almost-famous' ); ?>
-								<a href="<?php echo esc_url( admin_url( 'admin.php?page=af-accounts' ) ); ?>">
+								<a href="<?php echo esc_url( admin_url( 'admin.php?page=almost-famous-accounts' ) ); ?>">
 									<?php esc_html_e( 'Open Accounts', 'bushido-almost-famous' ); ?>
 								</a>
 							</p>

@@ -21,36 +21,36 @@ class Permissions {
 	/**
 	 * Check if the current user can manage campaigns.
 	 *
-	 * @return bool True if user has af_manage_campaigns or manage_options.
+	 * @return bool True if user has almost_famous_manage_campaigns or manage_options.
 	 */
 	public static function can_manage_campaigns(): bool {
-		return current_user_can( 'af_manage_campaigns' ) || current_user_can( 'manage_options' );
+		return current_user_can( 'almost_famous_manage_campaigns' ) || current_user_can( 'manage_options' );
 	}
 
 	/**
 	 * Check if the current user can manage settings.
 	 *
-	 * @return bool True if user has af_manage_settings or manage_options.
+	 * @return bool True if user has almost_famous_manage_settings or manage_options.
 	 */
 	public static function can_manage_settings(): bool {
-		return current_user_can( 'af_manage_settings' ) || current_user_can( 'manage_options' );
+		return current_user_can( 'almost_famous_manage_settings' ) || current_user_can( 'manage_options' );
 	}
 
 	/**
 	 * Check if the current user can view campaigns.
 	 *
-	 * @return bool True if user has af_view_campaigns, af_manage_campaigns, or manage_options.
+	 * @return bool True if user has almost_famous_view_campaigns, almost_famous_manage_campaigns, or manage_options.
 	 */
 	public static function can_view_campaigns(): bool {
-		return current_user_can( 'af_view_campaigns' )
-			|| current_user_can( 'af_manage_campaigns' )
+		return current_user_can( 'almost_famous_view_campaigns' )
+			|| current_user_can( 'almost_famous_manage_campaigns' )
 			|| current_user_can( 'manage_options' );
 	}
 
 	/**
 	 * Generic capability check for a Bushido Almost Famous capability.
 	 *
-	 * @param string $capability WordPress capability string (e.g. 'af_manage_campaigns').
+	 * @param string $capability WordPress capability string (e.g. 'almost_famous_manage_campaigns').
 	 * @return bool True if the current user has the given capability.
 	 */
 	public static function check_permission( string $capability ): bool {

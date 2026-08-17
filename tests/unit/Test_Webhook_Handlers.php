@@ -60,7 +60,7 @@ class Test_Webhook_Handlers extends TestCase {
 		af_test_reset();
 
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( 'bsh_test_key' ) );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( 'bsh_test_key' ) );
 
 		global $wpdb;
 		$wpdb = new \Af_Test_Wpdb_For_Handlers();
@@ -87,16 +87,16 @@ class Test_Webhook_Handlers extends TestCase {
 
 	public function test_dispatch_campaign_updated_invalidates_caches(): void {
 		// Seed two transients that the handler should remove via Api_Cache::delete().
-		set_transient( 'af_campaigns_acc_12', array( 'old' => true ), 300 );
-		set_transient( 'af_campaigns_cmp_42', array( 'old' => true ), 300 );
+		set_transient( 'almost_famous_campaigns_acc_12', array( 'old' => true ), 300 );
+		set_transient( 'almost_famous_campaigns_cmp_42', array( 'old' => true ), 300 );
 
 		$this->handlers->dispatch(
 			'campaign.updated',
 			array( 'account_id' => 'acc_12', 'campaign_id' => 'cmp_42' )
 		);
 
-		$this->assertFalse( get_transient( 'af_campaigns_acc_12' ) );
-		$this->assertFalse( get_transient( 'af_campaigns_cmp_42' ) );
+		$this->assertFalse( get_transient( 'almost_famous_campaigns_acc_12' ) );
+		$this->assertFalse( get_transient( 'almost_famous_campaigns_cmp_42' ) );
 		$this->assertGreaterThan( 0, did_action( 'almost_famous/campaign/updated' ) );
 	}
 
@@ -108,11 +108,11 @@ class Test_Webhook_Handlers extends TestCase {
 	// ------------------------------------------------------------------
 
 	public function test_dispatch_platform_status_changed_clears_status_cache(): void {
-		set_transient( 'af_platform_status', array( 'old' => true ), 3600 );
+		set_transient( 'almost_famous_platform_status', array( 'old' => true ), 3600 );
 
 		$this->handlers->dispatch( 'platform.status_changed', array( 'platform' => 'meta' ) );
 
-		$this->assertFalse( get_transient( 'af_platform_status' ) );
+		$this->assertFalse( get_transient( 'almost_famous_platform_status' ) );
 		$this->assertGreaterThan( 0, did_action( 'almost_famous/platform/status_changed' ) );
 
 		// status_changed must NOT trigger the /redistribute endpoint — that
@@ -140,7 +140,7 @@ class Test_Webhook_Handlers extends TestCase {
 	// ------------------------------------------------------------------
 
 	public function test_dispatch_platform_degraded_sets_notice_without_backend_call(): void {
-		set_transient( 'af_campaigns_cmp_99', array( 'stale' => true ), 3600 );
+		set_transient( 'almost_famous_campaigns_cmp_99', array( 'stale' => true ), 3600 );
 
 		$this->handlers->dispatch(
 			'platform.degraded',
@@ -149,7 +149,7 @@ class Test_Webhook_Handlers extends TestCase {
 
 		$this->assertSame( array(), $this->calls, 'platform.degraded must not call the backend' );
 
-		$notice = get_transient( 'af_redistribution_notice_cmp_99' );
+		$notice = get_transient( 'almost_famous_redistribution_notice_cmp_99' );
 		$this->assertIsArray( $notice );
 		$this->assertSame( 'cmp_99', $notice['campaign_id'] );
 		$this->assertSame( 'meta', $notice['platform'] );
@@ -180,7 +180,7 @@ class Test_Webhook_Handlers extends TestCase {
 
 		$this->assertSame( array(), $this->calls, 'organic.traction_detected must not call the backend' );
 
-		$notice = get_transient( 'af_retarget_notice_video_42' );
+		$notice = get_transient( 'almost_famous_retarget_notice_video_42' );
 		$this->assertIsArray( $notice );
 		$this->assertSame( 'tiktok', $notice['source_platform'] );
 		$this->assertSame( 'video_42', $notice['content_id'] );

@@ -45,7 +45,7 @@ class Test_Api_Cache extends TestCase {
 	 */
 	public function test_build_key_type_only(): void {
 		$key = $this->cache->build_key( 'campaigns' );
-		$this->assertSame( 'af_campaigns', $key );
+		$this->assertSame( 'almost_famous_campaigns', $key );
 	}
 
 	/**
@@ -55,7 +55,7 @@ class Test_Api_Cache extends TestCase {
 	 */
 	public function test_build_key_with_scope(): void {
 		$key = $this->cache->build_key( 'campaigns', 'acct_123' );
-		$this->assertSame( 'af_campaigns_acct_123', $key );
+		$this->assertSame( 'almost_famous_campaigns_acct_123', $key );
 	}
 
 	/**
@@ -65,7 +65,7 @@ class Test_Api_Cache extends TestCase {
 	 */
 	public function test_build_key_empty_scope(): void {
 		$key = $this->cache->build_key( 'analytics', '' );
-		$this->assertSame( 'af_analytics', $key );
+		$this->assertSame( 'almost_famous_analytics', $key );
 	}
 
 	/**
@@ -74,8 +74,8 @@ class Test_Api_Cache extends TestCase {
 	 * @return void
 	 */
 	public function test_build_key_various_types(): void {
-		$this->assertSame( 'af_platforms_list', $this->cache->build_key( 'platforms_list' ) );
-		$this->assertSame( 'af_campaigns_acct_1', $this->cache->build_key( 'campaigns', 'acct_1' ) );
+		$this->assertSame( 'almost_famous_platforms_list', $this->cache->build_key( 'platforms_list' ) );
+		$this->assertSame( 'almost_famous_campaigns_acct_1', $this->cache->build_key( 'campaigns', 'acct_1' ) );
 	}
 
 	/**
@@ -145,8 +145,8 @@ class Test_Api_Cache extends TestCase {
 	public function test_set_and_get_roundtrip(): void {
 		$data = array( 'id' => 'camp_1', 'name' => 'Test Campaign' );
 
-		$this->cache->set( 'af_campaigns_1', $data, 'campaigns' );
-		$result = $this->cache->get( 'af_campaigns_1' );
+		$this->cache->set( 'almost_famous_campaigns_1', $data, 'campaigns' );
+		$result = $this->cache->get( 'almost_famous_campaigns_1' );
 
 		$this->assertSame( $data, $result );
 	}
@@ -157,7 +157,7 @@ class Test_Api_Cache extends TestCase {
 	 * @return void
 	 */
 	public function test_get_returns_null_on_miss(): void {
-		$this->assertNull( $this->cache->get( 'af_nonexistent' ) );
+		$this->assertNull( $this->cache->get( 'almost_famous_nonexistent' ) );
 	}
 
 	/**
@@ -166,11 +166,11 @@ class Test_Api_Cache extends TestCase {
 	 * @return void
 	 */
 	public function test_delete_removes_entry(): void {
-		$this->cache->set( 'af_campaigns_1', array( 'test' => true ), 'campaigns' );
-		$this->assertNotNull( $this->cache->get( 'af_campaigns_1' ) );
+		$this->cache->set( 'almost_famous_campaigns_1', array( 'test' => true ), 'campaigns' );
+		$this->assertNotNull( $this->cache->get( 'almost_famous_campaigns_1' ) );
 
-		$this->cache->delete( 'af_campaigns_1' );
-		$this->assertNull( $this->cache->get( 'af_campaigns_1' ) );
+		$this->cache->delete( 'almost_famous_campaigns_1' );
+		$this->assertNull( $this->cache->get( 'almost_famous_campaigns_1' ) );
 	}
 
 	/**
@@ -179,7 +179,7 @@ class Test_Api_Cache extends TestCase {
 	 * @return void
 	 */
 	public function test_delete_nonexistent_returns_false(): void {
-		$this->assertFalse( $this->cache->delete( 'af_nope' ) );
+		$this->assertFalse( $this->cache->delete( 'almost_famous_nope' ) );
 	}
 
 	/**
@@ -188,8 +188,8 @@ class Test_Api_Cache extends TestCase {
 	 * @return void
 	 */
 	public function test_etag_roundtrip(): void {
-		$this->cache->set_etag( 'af_campaigns_1', '"abc123"' );
-		$this->assertSame( '"abc123"', $this->cache->get_etag( 'af_campaigns_1' ) );
+		$this->cache->set_etag( 'almost_famous_campaigns_1', '"abc123"' );
+		$this->assertSame( '"abc123"', $this->cache->get_etag( 'almost_famous_campaigns_1' ) );
 	}
 
 	/**
@@ -198,7 +198,7 @@ class Test_Api_Cache extends TestCase {
 	 * @return void
 	 */
 	public function test_get_etag_returns_empty_on_miss(): void {
-		$this->assertSame( '', $this->cache->get_etag( 'af_nonexistent' ) );
+		$this->assertSame( '', $this->cache->get_etag( 'almost_famous_nonexistent' ) );
 	}
 
 	/**
@@ -207,7 +207,7 @@ class Test_Api_Cache extends TestCase {
 	 * @return void
 	 */
 	public function test_set_returns_true(): void {
-		$result = $this->cache->set( 'af_test', 'value', 'campaigns' );
+		$result = $this->cache->set( 'almost_famous_test', 'value', 'campaigns' );
 		$this->assertTrue( $result );
 	}
 
@@ -217,7 +217,7 @@ class Test_Api_Cache extends TestCase {
 	 * @return void
 	 */
 	public function test_set_etag_returns_true(): void {
-		$result = $this->cache->set_etag( 'af_test', '"etag_value"' );
+		$result = $this->cache->set_etag( 'almost_famous_test', '"etag_value"' );
 		$this->assertTrue( $result );
 	}
 }

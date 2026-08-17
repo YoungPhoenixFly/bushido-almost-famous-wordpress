@@ -83,8 +83,8 @@ class Test_Config extends TestCase {
 		putenv( 'AF_BUSHIDO_APP_URL=https://from-env.example.test' );
 		$_ENV['AF_API_BASE_URL']    = 'https://from-env.example.test/api/v1';
 		$_SERVER['AF_API_BASE_URL'] = 'https://from-env.example.test/api/v1';
-		update_option( 'af_api_base_url', 'https://from-option.example.test/api/v1' );
-		update_option( 'af_bushido_app_url', 'https://from-option.example.test' );
+		update_option( 'almost_famous_api_base_url', 'https://from-option.example.test/api/v1' );
+		update_option( 'almost_famous_bushido_app_url', 'https://from-option.example.test' );
 
 		$this->assertSame(
 			'https://api.almost-famous.backend-bushidoco.de/api/v1',
@@ -137,8 +137,8 @@ class Test_Config extends TestCase {
 	 */
 	public function test_resolve_api_base_url_option_used_when_constant_and_env_missing(): void {
 		$this->assertFalse( defined( 'AF_API_BASE_URL' ) );
-		update_option( 'af_api_base_url', 'https://from-option.example.test/api/v1' );
-		update_option( 'af_bushido_app_url', 'https://from-option.example.test' );
+		update_option( 'almost_famous_api_base_url', 'https://from-option.example.test/api/v1' );
+		update_option( 'almost_famous_bushido_app_url', 'https://from-option.example.test' );
 
 		$this->assertSame(
 			'https://from-option.example.test/api/v1',
@@ -323,7 +323,7 @@ class Test_Config extends TestCase {
 	 */
 	public function test_is_demo_mode_enabled_env_falsy_overrides_option(): void {
 		putenv( 'AF_PUBLIC_PORTAL_DEMO_MODE=false' );
-		update_option( 'af_public_portal_demo_mode', true );
+		update_option( 'almost_famous_public_portal_demo_mode', true );
 
 		$this->assertFalse( Config::is_demo_mode_enabled() );
 	}
@@ -334,7 +334,7 @@ class Test_Config extends TestCase {
 	 * @return void
 	 */
 	public function test_is_demo_mode_enabled_via_option(): void {
-		update_option( 'af_public_portal_demo_mode', '1' );
+		update_option( 'almost_famous_public_portal_demo_mode', '1' );
 
 		$this->assertTrue( Config::is_demo_mode_enabled() );
 	}

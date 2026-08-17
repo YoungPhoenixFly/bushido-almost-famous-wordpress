@@ -48,7 +48,7 @@ class Test_Dashboard extends TestCase {
 		$this->assertCount( 2, $pages, 'Hub registers one top-level and one submenu alias.' );
 		$this->assertSame( 'top', $pages[0]['type'] );
 		$this->assertSame( Dashboard::PAGE_SLUG, $pages[0]['menu_slug'] );
-		$this->assertSame( 'af_view_campaigns', $pages[0]['capability'] );
+		$this->assertSame( 'almost_famous_view_campaigns', $pages[0]['capability'] );
 
 		$this->assertSame( 'sub', $pages[1]['type'] );
 		$this->assertSame( Dashboard::PAGE_SLUG, $pages[1]['menu_slug'] );
@@ -59,7 +59,7 @@ class Test_Dashboard extends TestCase {
 	public function test_enqueue_assets_skips_other_hooks(): void {
 		$this->dashboard->enqueue_assets( 'edit.php' );
 		$this->assertNotContains(
-			'af-admin',
+			'almost-famous-admin',
 			af_test_get_enqueued_styles(),
 			'Should not enqueue on a non-hub hook.'
 		);
@@ -67,7 +67,7 @@ class Test_Dashboard extends TestCase {
 
 	public function test_enqueue_assets_runs_on_hub_hook(): void {
 		$this->dashboard->enqueue_assets( 'toplevel_page_' . Dashboard::PAGE_SLUG );
-		$this->assertContains( 'af-admin', af_test_get_enqueued_styles() );
+		$this->assertContains( 'almost-famous-admin', af_test_get_enqueued_styles() );
 	}
 
 	public function test_render_dies_without_capability(): void {
@@ -80,17 +80,17 @@ class Test_Dashboard extends TestCase {
 	}
 
 	public function test_is_connected_false_when_setup_incomplete(): void {
-		update_option( 'af_setup_complete', false );
+		update_option( 'almost_famous_setup_complete', false );
 		$this->assertFalse( $this->dashboard->is_connected() );
 	}
 
 	public function test_render_not_connected_shows_connect_cta(): void {
-		update_option( 'af_setup_complete', false );
+		update_option( 'almost_famous_setup_complete', false );
 
 		$html = $this->render_to_string();
 
 		$this->assertStringContainsString( 'Connect your Bushido account', $html );
-		$this->assertStringContainsString( 'page=af-setup-wizard', $html );
+		$this->assertStringContainsString( 'page=almost-famous-setup-wizard', $html );
 		$this->assertStringContainsString( 'https://bushido.is/signup', $html );
 		$this->assertStringNotContainsString( 'staging.bushido.is/signup', $html );
 		$this->assertStringContainsString( 'utm_source=wordpress-plugin', $html );
@@ -105,7 +105,7 @@ class Test_Dashboard extends TestCase {
 	public function test_render_not_connected_honors_app_url_override(): void {
 		define( 'AF_API_BASE_URL', 'https://api.example.test/api/v1' );
 		define( 'AF_BUSHIDO_APP_URL', 'https://connect.example.test/custom/' );
-		update_option( 'af_setup_complete', false );
+		update_option( 'almost_famous_setup_complete', false );
 
 		$html = $this->render_to_string();
 
@@ -114,35 +114,35 @@ class Test_Dashboard extends TestCase {
 	}
 
 	public function test_render_connected_shows_config_links(): void {
-		update_option( 'af_setup_complete', true );
-		update_option( 'af_api_key', 'stored-encrypted-key' );
+		update_option( 'almost_famous_setup_complete', true );
+		update_option( 'almost_famous_api_key', 'stored-encrypted-key' );
 
 		$html = $this->render_to_string();
 
-		$this->assertStringContainsString( 'page=af-audiences', $html );
-		$this->assertStringContainsString( 'page=af-creatives', $html );
-		$this->assertStringContainsString( 'page=af-pixels', $html );
-		$this->assertStringContainsString( 'page=af-accounts', $html );
-		$this->assertStringContainsString( 'page=af-settings', $html );
+		$this->assertStringContainsString( 'page=almost-famous-audiences', $html );
+		$this->assertStringContainsString( 'page=almost-famous-creatives', $html );
+		$this->assertStringContainsString( 'page=almost-famous-pixels', $html );
+		$this->assertStringContainsString( 'page=almost-famous-accounts', $html );
+		$this->assertStringContainsString( 'page=almost-famous-settings', $html );
 		$this->assertStringContainsString( 'Conversions', $html );
 		// Guided connect CTA must not appear once connected.
 		$this->assertStringNotContainsString( 'Connect your Bushido account', $html );
 	}
 
 	public function test_render_connected_without_console_page_shows_create_form(): void {
-		update_option( 'af_setup_complete', true );
-		update_option( 'af_api_key', 'stored-encrypted-key' );
+		update_option( 'almost_famous_setup_complete', true );
+		update_option( 'almost_famous_api_key', 'stored-encrypted-key' );
 
 		$html = $this->render_to_string();
 
 		$this->assertStringContainsString( 'Create console page', $html );
-		$this->assertStringContainsString( 'action=af_create_console_page', $html );
+		$this->assertStringContainsString( 'action=almost_famous_create_console_page', $html );
 		$this->assertStringNotContainsString( 'Open campaign console', $html );
 	}
 
 	public function test_render_connected_with_console_page_links_to_permalink(): void {
-		update_option( 'af_setup_complete', true );
-		update_option( 'af_api_key', 'stored-encrypted-key' );
+		update_option( 'almost_famous_setup_complete', true );
+		update_option( 'almost_famous_api_key', 'stored-encrypted-key' );
 		af_test_add_post(
 			array(
 				'post_type'    => 'page',
@@ -186,7 +186,7 @@ class Test_Dashboard extends TestCase {
 
 	public function test_is_degraded_true_when_platform_status_degraded(): void {
 		set_transient(
-			'af_platform_status',
+			'almost_famous_platform_status',
 			array( array( 'status' => 'degraded', 'name' => 'meta' ) ),
 			60
 		);

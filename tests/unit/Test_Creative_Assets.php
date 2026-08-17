@@ -8,11 +8,11 @@
  *       PUT  uploadUrl -> stream file
  *       POST /assets/{id}/confirm -> finalize
  *     including the local source-metadata persistence in
- *     `af_creative_asset_sources` option.
+ *     `almost_famous_creative_asset_sources` option.
  *   - upload_asset_from_file error paths (missing file, unsupported MIME,
  *     missing uploadUrl, signed-URL failure, confirm failure).
  *   - update_approval_state approve / approve_all / unapprove persistence
- *     via the `af_creative_asset_approvals` option.
+ *     via the `almost_famous_creative_asset_approvals` option.
  *   - transform_asset_to_creative shape + status normalization.
  *   - infer_asset_type matrix.
  *
@@ -37,7 +37,7 @@ class Test_Creative_Assets extends TestCase {
 		af_test_reset();
 
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( 'bsh_test' ) );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( 'bsh_test' ) );
 		$this->client = new Api_Client( $auth );
 
 		$this->tmp_file = tempnam( sys_get_temp_dir(), 'af-test-' );
@@ -149,7 +149,7 @@ class Test_Creative_Assets extends TestCase {
 		$this->assertContains( 'PUT', $methods );
 
 		// Local source metadata persisted.
-		$sources = get_option( 'af_creative_asset_sources', array() );
+		$sources = get_option( 'almost_famous_creative_asset_sources', array() );
 		$this->assertArrayHasKey( 'asset_42', $sources );
 		$this->assertSame( 'My Creative', $sources['asset_42']['name'] );
 		$this->assertSame( 'image', $sources['asset_42']['asset_type'] );
@@ -387,7 +387,7 @@ class Test_Creative_Assets extends TestCase {
 
 	public function test_store_source_meta_noop_on_empty_asset_id(): void {
 		Creative_Assets::store_source_meta( '', array( 'name' => 'x' ) );
-		$this->assertSame( array(), get_option( 'af_creative_asset_sources', array() ) );
+		$this->assertSame( array(), get_option( 'almost_famous_creative_asset_sources', array() ) );
 	}
 
 	// -------------------------------------------------------------------

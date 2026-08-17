@@ -61,7 +61,7 @@ class Test_Api_Proxy_Write extends TestCase {
 		af_test_reset();
 
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( 'bsh_test_proxy_write' ) );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( 'bsh_test_proxy_write' ) );
 
 		$this->cache = new Api_Cache();
 		$this->proxy = new Api_Proxy( new Api_Client( $auth ), $this->cache );
@@ -102,7 +102,7 @@ class Test_Api_Proxy_Write extends TestCase {
 	public function test_create_campaign_posts_to_backend_and_invalidates_list_cache(): void {
 		// Pre-seed a "campaigns_list" cache entry so we can observe invalidation
 		// happen via the fake $wpdb LIKE pattern recording.
-		$this->cache->set( 'af_campaigns_listkey', array( 'id' => 'cmp_seed' ), 'campaigns' );
+		$this->cache->set( 'almost_famous_campaigns_listkey', array( 'id' => 'cmp_seed' ), 'campaigns' );
 
 		af_test_register_http_response(
 			'/public/campaigns',
@@ -153,7 +153,7 @@ class Test_Api_Proxy_Write extends TestCase {
 				'name'             => 'Identity Test',
 				'orgId'            => 'org_evil',
 				'organizationId'   => 'org_evil2',
-				'apiKey'           => 'af_live_stolen',
+				'apiKey'           => 'almost_famous_live_stolen',
 				'stripeCustomerId' => 'cus_evil',
 				'credentialId'     => 'cred_legit',
 			)
@@ -225,7 +225,7 @@ class Test_Api_Proxy_Write extends TestCase {
 		);
 
 		// Pre-cache the single-campaign entry so we can verify it gets dropped.
-		$this->cache->set( 'af_campaigns_cmp_42', array( 'id' => 'cmp_42' ), 'campaigns' );
+		$this->cache->set( 'almost_famous_campaigns_cmp_42', array( 'id' => 'cmp_42' ), 'campaigns' );
 
 		$req  = $this->request_with_json( 'PATCH', array( 'status' => 'PAUSED' ), array( 'id' => 'cmp_42' ) );
 		$resp = $this->proxy->update_campaign( $req );
@@ -234,12 +234,12 @@ class Test_Api_Proxy_Write extends TestCase {
 		$this->assertSame( 'PATCH', $this->last_request_args()['method'] );
 		$this->assertStringContainsString( '/public/campaigns/cmp_42', $this->last_request_url() );
 
-		$this->assertNull( $this->cache->get( 'af_campaigns_cmp_42' ) );
+		$this->assertNull( $this->cache->get( 'almost_famous_campaigns_cmp_42' ) );
 		$this->assertNotEmpty( $this->wpdb->like_patterns );
 	}
 
 	public function test_update_campaign_budget_safety_blocks_when_over_limit(): void {
-		update_option( 'af_daily_budget_limit', 50 );
+		update_option( 'almost_famous_daily_budget_limit', 50 );
 
 		$req  = $this->request_with_json( 'PATCH', array( 'budgetDaily' => 75 ), array( 'id' => 'cmp_42' ) );
 		$resp = $this->proxy->update_campaign( $req );
@@ -648,7 +648,7 @@ class Test_Api_Proxy_Write extends TestCase {
 	}
 
 	public function test_delete_audience_forwards_delete_and_invalidates_cache(): void {
-		set_transient( 'af_audiences_list', array( 'stale' => true ), 3600 );
+		set_transient( 'almost_famous_audiences_list', array( 'stale' => true ), 3600 );
 		af_test_register_http_response(
 			'/public/audiences/aud_1',
 			array(

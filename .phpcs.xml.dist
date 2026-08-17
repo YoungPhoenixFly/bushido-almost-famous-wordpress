@@ -18,11 +18,11 @@
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
-				<element value="af_"/>
 				<element value="almost_famous"/>
+				<element value="almostFamous"/>
 				<element value="AlmostFamous"/>
 				<element value="ALMOST_FAMOUS"/>
-				<element value="AF_"/>
+				<element value="bushido"/>
 				<element value="BUSHIDO_ALMOST_FAMOUS_"/>
 			</property>
 		</properties>
@@ -39,15 +39,15 @@
 	<!--
 		Tell phpcs about the four custom capabilities the plugin registers
 		via includes/roles/class-roles.php. Without these the WordPress
-		ruleset flags every current_user_can('af_*') as "unknown capability."
+		ruleset flags every current_user_can('almost_famous_*') as "unknown capability."
 	-->
 	<rule ref="WordPress.WP.Capabilities">
 		<properties>
 			<property name="custom_capabilities" type="array">
-				<element value="af_view_campaigns"/>
-				<element value="af_manage_campaigns"/>
-				<element value="af_manage_settings"/>
-				<element value="af_manage_accounts"/>
+				<element value="almost_famous_view_campaigns"/>
+				<element value="almost_famous_manage_campaigns"/>
+				<element value="almost_famous_manage_settings"/>
+				<element value="almost_famous_manage_accounts"/>
 			</property>
 		</properties>
 	</rule>
@@ -70,11 +70,6 @@
 	<rule ref="WordPress.Files.FileName">
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
-	</rule>
-
-	<!-- Short-prefix shortcodes like `af-*` are documented + intentional. -->
-	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed">
-		<severity>0</severity>
 	</rule>
 
 	<!--

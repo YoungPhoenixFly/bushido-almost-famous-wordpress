@@ -45,15 +45,15 @@ class Test_Site_Manager extends TestCase {
 
 	public function test_source_is_site_on_single_site_when_site_key_present(): void {
 		af_test_set_multisite( false );
-		update_option( 'af_api_key', $this->auth->encrypt_api_key( 'bsh_site_solo' ) );
+		update_option( 'almost_famous_api_key', $this->auth->encrypt_api_key( 'bsh_site_solo' ) );
 
 		$this->assertSame( 'site', $this->manager()->get_api_key_source() );
 	}
 
 	public function test_source_is_site_on_multisite_when_override_allowed_and_site_key_present(): void {
 		af_test_set_multisite( true );
-		update_site_option( 'af_allow_site_override', '1' );
-		update_option( 'af_api_key', $this->auth->encrypt_api_key( 'bsh_site_ms' ) );
+		update_site_option( 'almost_famous_allow_site_override', '1' );
+		update_option( 'almost_famous_api_key', $this->auth->encrypt_api_key( 'bsh_site_ms' ) );
 		update_site_option(
 			Network_Admin::NETWORK_API_KEY_OPTION,
 			$this->auth->encrypt_api_key( 'bsh_network_ms' )
@@ -64,8 +64,8 @@ class Test_Site_Manager extends TestCase {
 
 	public function test_source_is_network_when_override_disabled_even_with_site_key(): void {
 		af_test_set_multisite( true );
-		update_site_option( 'af_allow_site_override', '0' );
-		update_option( 'af_api_key', $this->auth->encrypt_api_key( 'bsh_site_ignored' ) );
+		update_site_option( 'almost_famous_allow_site_override', '0' );
+		update_option( 'almost_famous_api_key', $this->auth->encrypt_api_key( 'bsh_site_ignored' ) );
 		update_site_option(
 			Network_Admin::NETWORK_API_KEY_OPTION,
 			$this->auth->encrypt_api_key( 'bsh_network_pref' )
@@ -76,15 +76,15 @@ class Test_Site_Manager extends TestCase {
 
 	public function test_source_falls_back_to_site_when_override_disabled_but_network_missing(): void {
 		af_test_set_multisite( true );
-		update_site_option( 'af_allow_site_override', '0' );
-		update_option( 'af_api_key', $this->auth->encrypt_api_key( 'bsh_site_only' ) );
+		update_site_option( 'almost_famous_allow_site_override', '0' );
+		update_option( 'almost_famous_api_key', $this->auth->encrypt_api_key( 'bsh_site_only' ) );
 
 		$this->assertSame( 'site', $this->manager()->get_api_key_source() );
 	}
 
 	public function test_source_is_none_when_multisite_and_no_keys_anywhere(): void {
 		af_test_set_multisite( true );
-		update_site_option( 'af_allow_site_override', '1' );
+		update_site_option( 'almost_famous_allow_site_override', '1' );
 
 		$this->assertSame( 'none', $this->manager()->get_api_key_source() );
 	}
@@ -95,7 +95,7 @@ class Test_Site_Manager extends TestCase {
 
 	public function test_get_site_campaigns_adds_site_url_and_site_id_params(): void {
 		af_test_set_multisite( true );
-		update_option( 'af_api_key', $this->auth->encrypt_api_key( 'bsh_for_campaigns' ) );
+		update_option( 'almost_famous_api_key', $this->auth->encrypt_api_key( 'bsh_for_campaigns' ) );
 
 		af_test_register_http_response(
 			'/campaigns',
@@ -131,7 +131,7 @@ class Test_Site_Manager extends TestCase {
 
 	public function test_get_site_campaigns_returns_empty_array_when_response_has_error(): void {
 		af_test_set_multisite( true );
-		update_option( 'af_api_key', $this->auth->encrypt_api_key( 'bsh_err' ) );
+		update_option( 'almost_famous_api_key', $this->auth->encrypt_api_key( 'bsh_err' ) );
 
 		af_test_register_http_response(
 			'/campaigns',
@@ -150,7 +150,7 @@ class Test_Site_Manager extends TestCase {
 		// When the HTTP layer returns a WP_Error, Api_Client populates
 		// $response['error'] which Site_Manager then short-circuits to [].
 		af_test_set_multisite( true );
-		update_option( 'af_api_key', $this->auth->encrypt_api_key( 'bsh_dead' ) );
+		update_option( 'almost_famous_api_key', $this->auth->encrypt_api_key( 'bsh_dead' ) );
 
 		af_test_register_http_response(
 			'/campaigns',
@@ -189,10 +189,10 @@ class Test_Site_Manager extends TestCase {
 	public function test_can_manage_site_key_follows_override_flag_in_multisite(): void {
 		af_test_set_multisite( true );
 
-		update_site_option( 'af_allow_site_override', '1' );
+		update_site_option( 'almost_famous_allow_site_override', '1' );
 		$this->assertTrue( $this->manager()->can_manage_site_key() );
 
-		update_site_option( 'af_allow_site_override', '0' );
+		update_site_option( 'almost_famous_allow_site_override', '0' );
 		$this->assertFalse( $this->manager()->can_manage_site_key() );
 	}
 }

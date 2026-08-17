@@ -49,7 +49,7 @@ class Test_Api_Proxy_Csrf extends TestCase {
 		$result = $this->proxy->check_public_permission( $req );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'af_csrf_missing', $result->get_error_code() );
+		$this->assertSame( 'almost_famous_csrf_missing', $result->get_error_code() );
 	}
 
 	public function test_logged_in_admin_post_with_valid_nonce_passes(): void {
@@ -65,7 +65,7 @@ class Test_Api_Proxy_Csrf extends TestCase {
 		$result = $this->proxy->check_public_permission( $req );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'af_csrf_invalid', $result->get_error_code() );
+		$this->assertSame( 'almost_famous_csrf_invalid', $result->get_error_code() );
 	}
 
 	public function test_anonymous_post_is_write_forbidden(): void {
@@ -74,21 +74,21 @@ class Test_Api_Proxy_Csrf extends TestCase {
 		$result = $this->proxy->check_public_permission( $req );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'af_portal_write_forbidden', $result->get_error_code() );
+		$this->assertSame( 'almost_famous_portal_write_forbidden', $result->get_error_code() );
 	}
 
 	public function test_read_only_user_post_is_forbidden_even_with_nonce(): void {
 		// A user with view-but-not-manage capability cannot write.
-		af_test_set_caps( array( 'af_view_campaigns' => true ) );
+		af_test_set_caps( array( 'almost_famous_view_campaigns' => true ) );
 		$req    = $this->build_request( 'POST', array( 'X-WP-Nonce' => 'test-nonce' ) );
 		$result = $this->proxy->check_public_permission( $req );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'af_forbidden', $result->get_error_code() );
+		$this->assertSame( 'almost_famous_forbidden', $result->get_error_code() );
 	}
 
 	public function test_read_only_user_get_passes(): void {
-		af_test_set_caps( array( 'af_view_campaigns' => true ) );
+		af_test_set_caps( array( 'almost_famous_view_campaigns' => true ) );
 		$req = $this->build_request( 'GET' );
 		$this->assertTrue( $this->proxy->check_public_permission( $req ) );
 	}

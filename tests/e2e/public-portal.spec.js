@@ -33,7 +33,7 @@ test.describe( 'Public Portal', () => {
 		await page.goto( `/?p=${ postId }` );
 
 		// Check if the portal wrapper rendered
-		await page.waitForSelector( '#af-public-portal', {
+		await page.waitForSelector( '#almost-famous-public-portal', {
 			state: 'attached',
 		} );
 

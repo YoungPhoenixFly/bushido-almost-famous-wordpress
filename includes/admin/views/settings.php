@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $almost_famous_platforms = $settings->get_platforms();
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-$almost_famous_refreshed = isset( $_GET['af_platforms_refreshed'] );
+$almost_famous_refreshed = isset( $_GET['almost_famous_platforms_refreshed'] );
 ?>
 <div class="wrap">
 	<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
@@ -88,13 +88,13 @@ $almost_famous_refreshed = isset( $_GET['af_platforms_refreshed'] );
 		<p class="af-refresh-platforms">
 			<?php
 			$almost_famous_refresh_url = wp_nonce_url(
-				admin_url( 'admin.php?page=af-settings&af_refresh_platforms=1' ),
-				'af_refresh_platforms',
-				'af_platforms_nonce'
+				admin_url( 'admin.php?page=almost-famous-settings&almost_famous_refresh_platforms=1' ),
+				'almost_famous_refresh_platforms',
+				'almost_famous_platforms_nonce'
 			);
 			?>
 			<a href="<?php echo esc_url( $almost_famous_refresh_url ); ?>" class="button button-secondary">
-				<span class="dashicons dashicons-update" aria-hidden="true" style="vertical-align: text-bottom;"></span>
+				<span class="dashicons dashicons-update af-icon-align" aria-hidden="true"></span>
 				<?php esc_html_e( 'Check for New Platforms', 'bushido-almost-famous' ); ?>
 			</a>
 		</p>
@@ -105,37 +105,10 @@ $almost_famous_refreshed = isset( $_GET['af_platforms_refreshed'] );
 	<!-- General Settings Form -->
 	<form method="post" action="options.php">
 		<?php
-		settings_fields( 'af_settings_group' );
-		do_settings_sections( 'af-settings' );
+		settings_fields( 'almost_famous_settings_group' );
+		do_settings_sections( 'almost-famous-settings' );
 		submit_button();
 		?>
 	</form>
 </div>
 
-<style>
-	.af-settings-section {
-		background: #fff;
-		padding: 20px;
-		border: 1px solid #c3c4c7;
-		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
-		margin-bottom: 20px;
-	}
-	.af-platforms-table {
-		margin: 16px 0;
-	}
-	.af-status--connected .dashicons {
-		color: #46b450;
-	}
-	.af-status--degraded .dashicons {
-		color: #f0b849;
-	}
-	.af-status--disconnected .dashicons {
-		color: #dc3232;
-	}
-	.af-refresh-platforms {
-		margin-top: 12px;
-	}
-	.af-refresh-platforms .dashicons {
-		margin-right: 4px;
-	}
-</style>

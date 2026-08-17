@@ -13,14 +13,14 @@ const wpCli = ( ...args ) =>
 test.describe( 'Creative Upload', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
 		await requestUtils.activatePlugin( 'bushido-almost-famous' );
-		wpCli( 'eval', 'af_e2e_seed_connected_site("agency");' );
+		wpCli( 'eval', 'almost_famous_e2e_seed_connected_site("agency");' );
 	} );
 
 	test( 'uploads bytes through create, signed PUT, and confirm', async ( {
 		admin,
 		page,
 	} ) => {
-		await admin.visitAdminPage( 'admin.php?page=af-creatives' );
+		await admin.visitAdminPage( 'admin.php?page=almost-famous-creatives' );
 		await page.locator( '#af-creative-name' ).fill( 'E2E Uploaded Asset' );
 		await page.locator( '#af-source-asset' ).setInputFiles( {
 			name: 'e2e-upload.png',
@@ -52,7 +52,7 @@ test.describe( 'Creative Upload', () => {
 	} ) => {
 		const creativeId = 'cre_e2e_poll';
 
-		await admin.visitAdminPage( 'admin.php?page=af-creatives' );
+		await admin.visitAdminPage( 'admin.php?page=almost-famous-creatives' );
 
 		const card = page.locator( `[data-af-creative-id="${ creativeId }"]` );
 		await expect( card.locator( '[data-af-creative-badge]' ) ).toHaveText(

@@ -435,7 +435,7 @@ class Api_Client {
 	 * @return array<int, array{id?: string, platform?: string, status?: string}>
 	 */
 	public function list_system_credentials(): array {
-		$cached = get_transient( 'af_system_credentials' );
+		$cached = get_transient( 'almost_famous_system_credentials' );
 		if ( is_array( $cached ) ) {
 			return $cached;
 		}
@@ -460,7 +460,7 @@ class Api_Client {
 			}
 		}
 
-		set_transient( 'af_system_credentials', $rows, 15 * MINUTE_IN_SECONDS );
+		set_transient( 'almost_famous_system_credentials', $rows, 15 * MINUTE_IN_SECONDS );
 
 		return $rows;
 	}
@@ -493,8 +493,8 @@ class Api_Client {
 	 *
 	 * @return array<string, mixed> Config array, or empty array when unavailable.
 	 */
-	public function get_af_config(): array {
-		$cached = get_transient( 'af_runtime_config' );
+	public function get_almost_famous_config(): array {
+		$cached = get_transient( 'almost_famous_runtime_config' );
 		if ( is_array( $cached ) ) {
 			return $cached;
 		}
@@ -505,7 +505,7 @@ class Api_Client {
 			return array();
 		}
 
-		set_transient( 'af_runtime_config', $response['data'], HOUR_IN_SECONDS );
+		set_transient( 'almost_famous_runtime_config', $response['data'], HOUR_IN_SECONDS );
 
 		return $response['data'];
 	}
@@ -651,7 +651,7 @@ class Api_Client {
 
 		// Handle 426 Upgrade Required — set transient for admin notice.
 		if ( 426 === $status_code ) {
-			set_transient( 'af_upgrade_required', $response_body, DAY_IN_SECONDS );
+			set_transient( 'almost_famous_upgrade_required', $response_body, DAY_IN_SECONDS );
 		}
 
 		// Error responses (4xx, 5xx).
@@ -717,7 +717,7 @@ class Api_Client {
 	 * @return string
 	 */
 	private function base_with_api_version(): string {
-		$base = defined( 'AF_API_BASE_URL' ) ? AF_API_BASE_URL : Config::resolve_api_base_url();
+		$base = Config::resolve_api_base_url();
 		$base = rtrim( (string) $base, '/' );
 		$path = wp_parse_url( $base, PHP_URL_PATH );
 
@@ -868,7 +868,7 @@ class Api_Client {
 			$success_url = isset( $data['successUrl'] ) && is_string( $data['successUrl'] ) ? $data['successUrl'] : home_url( '/' );
 			return $this->demo_success(
 				array(
-					'checkoutUrl' => add_query_arg( 'af_demo_checkout', '1', $success_url ),
+					'checkoutUrl' => add_query_arg( 'almost_famous_demo_checkout', '1', $success_url ),
 					'sessionId'   => 'cs_demo_123',
 					'paymentId'   => $payment['id'],
 				),

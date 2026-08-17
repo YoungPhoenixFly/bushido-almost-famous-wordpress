@@ -32,7 +32,7 @@ use WP_REST_Server;
  * registers a site's callback URL/secret, so the REST route is not
  * registered unless the `almost_famous/enable_webhooks` filter returns
  * true. Once a backend dispatcher and site-registration flow exist (they
- * must seal the shared secret into the `af_webhook_secret` option via
+ * must seal the shared secret into the `almost_famous_webhook_secret` option via
  * Api_Auth), enable the route with:
  *
  *     add_filter( 'almost_famous/enable_webhooks', '__return_true' );
@@ -110,6 +110,19 @@ class Webhook_Receiver {
 	}
 
 	/**
+	 * Incoming webhooks are authenticated with HMAC-SHA256, not cookies.
+	 *
+	 * Bushido cannot present a WordPress nonce, so this callback is
+	 * intentionally public. handle_webhook() rejects unsigned, stale, or
+	 * replayed requests before any state is changed.
+	 *
+	 * @return bool
+	 */
+	public function allow_incoming_webhook(): bool {
+		return true;
+	}
+
+	/**
 	 * Register the incoming webhook REST route.
 	 *
 	 * Self-gates on the `almost_famous/enable_webhooks` filter so the route
@@ -137,7 +150,7 @@ class Webhook_Receiver {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'handle_webhook' ),
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this, 'allow_incoming_webhook' ),
 			)
 		);
 	}
@@ -254,7 +267,7 @@ class Webhook_Receiver {
 		// Mark the event as seen only after it was handled successfully, so a
 		// retry after a failure is processed rather than deduplicated away.
 		if ( ! empty( $idempotency_key ) ) {
-			set_transient( 'af_webhook_seen_' . $idempotency_key, true, self::IDEMPOTENCY_TTL );
+			set_transient( 'almost_famous_webhook_seen_' . $idempotency_key, true, self::IDEMPOTENCY_TTL );
 		}
 
 		return new WP_REST_Response(
@@ -279,7 +292,7 @@ class Webhook_Receiver {
 			return false;
 		}
 
-		$encrypted_secret = get_option( 'af_webhook_secret', '' );
+		$encrypted_secret = get_option( 'almost_famous_webhook_secret', '' );
 
 		if ( empty( $encrypted_secret ) ) {
 			return false;
@@ -303,7 +316,7 @@ class Webhook_Receiver {
 	 * @return bool True if the event has already been seen.
 	 */
 	private function is_duplicate( string $idempotency_key ): bool {
-		return false !== get_transient( 'af_webhook_seen_' . $idempotency_key );
+		return false !== get_transient( 'almost_famous_webhook_seen_' . $idempotency_key );
 	}
 
 	/**
@@ -316,7 +329,7 @@ class Webhook_Receiver {
 	 * @return void
 	 */
 	private function log_event( string $event_type, array $payload ): void {
-		$log = get_transient( 'af_webhook_event_log' );
+		$log = get_transient( 'almost_famous_webhook_event_log' );
 
 		if ( ! is_array( $log ) ) {
 			$log = array();
@@ -337,6 +350,6 @@ class Webhook_Receiver {
 		$log = array_slice( $log, 0, self::MAX_LOG_ENTRIES );
 
 		// Store for 7 days.
-		set_transient( 'af_webhook_event_log', $log, 7 * DAY_IN_SECONDS );
+		set_transient( 'almost_famous_webhook_event_log', $log, 7 * DAY_IN_SECONDS );
 	}
 }

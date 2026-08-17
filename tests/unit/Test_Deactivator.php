@@ -110,24 +110,24 @@ class Test_Deactivator extends TestCase {
 	}
 
 	/**
-	 * Deactivation purges every `_transient_af_*` row from the options store
+	 * Deactivation purges every `_transient_almost_famous_*` row from the options store
 	 * but leaves unrelated options untouched.
 	 *
 	 * @return void
 	 */
-	public function test_deactivate_purges_af_transients(): void {
+	public function test_deactivate_purges_almost_famous_transients(): void {
 		global $af_test_options;
-		$af_test_options['_transient_af_campaigns']            = array( 'id' => 1 );
-		$af_test_options['_transient_timeout_af_campaigns']    = time() + 60;
-		$af_test_options['_transient_af_analytics_acct_1']     = array( 'foo' => 'bar' );
+		$af_test_options['_transient_almost_famous_campaigns']            = array( 'id' => 1 );
+		$af_test_options['_transient_timeout_almost_famous_campaigns']    = time() + 60;
+		$af_test_options['_transient_almost_famous_analytics_acct_1']     = array( 'foo' => 'bar' );
 		$af_test_options['_transient_other_plugin']            = 'keep';
-		$af_test_options['af_api_key']                         = 'should-remain';
+		$af_test_options['almost_famous_api_key']                         = 'should-remain';
 
 		Deactivator::deactivate();
 
-		$this->assertArrayNotHasKey( '_transient_af_campaigns', $af_test_options );
-		$this->assertArrayNotHasKey( '_transient_timeout_af_campaigns', $af_test_options );
-		$this->assertArrayNotHasKey( '_transient_af_analytics_acct_1', $af_test_options );
+		$this->assertArrayNotHasKey( '_transient_almost_famous_campaigns', $af_test_options );
+		$this->assertArrayNotHasKey( '_transient_timeout_almost_famous_campaigns', $af_test_options );
+		$this->assertArrayNotHasKey( '_transient_almost_famous_analytics_acct_1', $af_test_options );
 		$this->assertArrayHasKey( '_transient_other_plugin', $af_test_options );
 	}
 
@@ -137,15 +137,15 @@ class Test_Deactivator extends TestCase {
 	 * @return void
 	 */
 	public function test_deactivate_preserves_plugin_options(): void {
-		update_option( 'af_api_key', 'secret-token' );
-		update_option( 'af_settings', array( 'cache_ttl_active' => 60 ) );
-		update_option( 'af_setup_complete', true );
+		update_option( 'almost_famous_api_key', 'secret-token' );
+		update_option( 'almost_famous_settings', array( 'cache_ttl_active' => 60 ) );
+		update_option( 'almost_famous_setup_complete', true );
 
 		Deactivator::deactivate();
 
-		$this->assertSame( 'secret-token', get_option( 'af_api_key' ) );
-		$this->assertSame( array( 'cache_ttl_active' => 60 ), get_option( 'af_settings' ) );
-		$this->assertSame( true, get_option( 'af_setup_complete' ) );
+		$this->assertSame( 'secret-token', get_option( 'almost_famous_api_key' ) );
+		$this->assertSame( array( 'cache_ttl_active' => 60 ), get_option( 'almost_famous_settings' ) );
+		$this->assertSame( true, get_option( 'almost_famous_setup_complete' ) );
 	}
 
 	/**
@@ -155,13 +155,13 @@ class Test_Deactivator extends TestCase {
 	 * @return void
 	 */
 	public function test_deactivate_preserves_role_mapping(): void {
-		update_option( 'af_role_mapping', array( 'administrator' => 'bushido_admin' ) );
+		update_option( 'almost_famous_role_mapping', array( 'administrator' => 'bushido_admin' ) );
 
 		Deactivator::deactivate();
 
 		$this->assertSame(
 			array( 'administrator' => 'bushido_admin' ),
-			get_option( 'af_role_mapping', false )
+			get_option( 'almost_famous_role_mapping', false )
 		);
 	}
 

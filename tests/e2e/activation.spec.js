@@ -13,7 +13,7 @@ const wpCli = ( ...args ) =>
 test.describe( 'Bushido Almost Famous Plugin', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
 		await requestUtils.activatePlugin( 'bushido-almost-famous' );
-		wpCli( 'eval', 'af_e2e_reset_connection();' );
+		wpCli( 'eval', 'almost_famous_e2e_reset_connection();' );
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {

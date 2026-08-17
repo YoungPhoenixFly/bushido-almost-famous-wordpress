@@ -27,7 +27,7 @@ class Test_Api_Client extends TestCase {
 		unset( $_SERVER['HTTP_X_AF_DEMO_MODE'] );
 
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( self::TEST_KEY ) );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( self::TEST_KEY ) );
 	}
 
 	protected function tearDown(): void {
@@ -286,7 +286,7 @@ class Test_Api_Client extends TestCase {
 		$this->assertSame( 426, $result['status'] );
 		$this->assertInstanceOf( Api_Error::class, $result['error'] );
 
-		$stored = get_transient( 'af_upgrade_required' );
+		$stored = get_transient( 'almost_famous_upgrade_required' );
 		$this->assertIsArray( $stored );
 		$this->assertSame( 'upgrade_required', $stored['error']['code'] );
 	}
@@ -307,7 +307,7 @@ class Test_Api_Client extends TestCase {
 
 	public function test_missing_api_key_returns_403_api_error_without_calling_backend(): void {
 		// Wipe the configured key so decrypt_api_key returns ''.
-		delete_option( 'af_api_key' );
+		delete_option( 'almost_famous_api_key' );
 
 		$result = $this->client()->get( '/campaigns' );
 

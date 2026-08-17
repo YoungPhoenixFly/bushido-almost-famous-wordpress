@@ -37,7 +37,7 @@ class Api_Cache {
 	 *
 	 * @var string
 	 */
-	private const PREFIX = 'af_';
+	private const PREFIX = 'almost_famous_';
 
 	/**
 	 * ETag key suffix.
@@ -90,9 +90,9 @@ class Api_Cache {
 	 * Delete all transients matching a given prefix.
 	 *
 	 * Uses a direct database query to find and remove all transients
-	 * whose option_name matches _transient_af_{prefix}*.
+	 * whose option_name matches _transient_almost_famous_{prefix}*.
 	 *
-	 * @param string $prefix The prefix to match (without the af_ part).
+	 * @param string $prefix The prefix to match (without the almost_famous_ part).
 	 * @return void
 	 */
 	public function delete_by_prefix( string $prefix ): void {
@@ -185,7 +185,7 @@ class Api_Cache {
 	 *
 	 * @param string $data_type The data type (e.g., 'campaigns', 'analytics').
 	 * @param string $scope_id  Optional scope identifier (e.g., account ID, campaign ID).
-	 * @return string The full cache key in the format af_{type}_{scope}.
+	 * @return string The full cache key in the format almost_famous_{type}_{scope}.
 	 */
 	public function build_key( string $data_type, string $scope_id = '' ): string {
 		$key = self::PREFIX . $data_type;

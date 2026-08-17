@@ -25,7 +25,7 @@ test.describe( 'Block render', () => {
 
 	test.beforeAll( async ( { requestUtils } ) => {
 		await requestUtils.activatePlugin( 'bushido-almost-famous' );
-		wpCli( 'eval', 'af_e2e_seed_connected_site("agency");' );
+		wpCli( 'eval', 'almost_famous_e2e_seed_connected_site("agency");' );
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {

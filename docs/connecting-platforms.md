@@ -46,11 +46,11 @@ Accounts page is rendered. This means:
 
 ## What's stored locally
 
-Only the `af_accounts` WP option (auto-reconciled from
+Only the `almost_famous_accounts` WP option (auto-reconciled from
 `/auth/connections`):
 
 ```
-'af_accounts' => [
+'almost_famous_accounts' => [
   'meta'    => [ credentialId, accountId, accountName, status, connectedAt ],
   'google'  => [ ... ],
   'tiktok'  => [ ... ],
@@ -58,16 +58,16 @@ Only the `af_accounts` WP option (auto-reconciled from
 ]
 ```
 
-Plus a short-lived `af_oauth_state_{user_id}` transient (10 min) used
+Plus a short-lived `almost_famous_oauth_state_{user_id}` transient (10 min) used
 to CSRF-protect the legacy `/oauth/callback` REST route. New flows
 don't depend on the callback any more, but the route stays in place
 for backward compatibility with any in-flight tabs.
 
 ## Capabilities
 
-- **Connect / Disconnect:** requires `af_manage_accounts` (or
+- **Connect / Disconnect:** requires `almost_famous_manage_accounts` (or
   `manage_options`).
-- **View Accounts page:** requires `af_manage_accounts`.
+- **View Accounts page:** requires `almost_famous_manage_accounts`.
 
 The custom capabilities are registered by `Roles::register_roles()` on
 plugin activation and granted to the WordPress `administrator` role

@@ -72,7 +72,7 @@ class Test_Settings extends TestCase {
 		$af_test_settings_fields     = array();
 
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( 'bsh_test' ) );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( 'bsh_test' ) );
 		$this->client   = new Api_Client( $auth );
 		$this->cache    = new Api_Cache();
 		$this->settings = new Settings( $this->client, $this->cache );
@@ -85,7 +85,7 @@ class Test_Settings extends TestCase {
 	public function test_register_page_uses_manage_settings_capability(): void {
 		$this->settings->register_page();
 		$pages = af_test_get_menu_pages();
-		$this->assertSame( 'af_manage_settings', $pages[0]['capability'] );
+		$this->assertSame( 'almost_famous_manage_settings', $pages[0]['capability'] );
 		$this->assertSame( Settings::PAGE_SLUG, $pages[0]['menu_slug'] );
 	}
 
@@ -93,9 +93,9 @@ class Test_Settings extends TestCase {
 		$this->settings->register_settings();
 
 		global $af_test_registered_settings;
-		$this->assertArrayHasKey( 'af_settings', $af_test_registered_settings );
-		$this->assertArrayHasKey( 'af_daily_budget_limit', $af_test_registered_settings );
-		$this->assertArrayHasKey( 'af_cache_ttl_platform_status', $af_test_registered_settings );
+		$this->assertArrayHasKey( 'almost_famous_settings', $af_test_registered_settings );
+		$this->assertArrayHasKey( 'almost_famous_daily_budget_limit', $af_test_registered_settings );
+		$this->assertArrayHasKey( 'almost_famous_cache_ttl_platform_status', $af_test_registered_settings );
 	}
 
 	public function test_register_settings_registers_default_destination(): void {
@@ -103,7 +103,7 @@ class Test_Settings extends TestCase {
 
 		global $af_test_registered_settings, $af_test_settings_sections;
 
-		$this->assertArrayHasKey( 'af_campaign_defaults_section', $af_test_settings_sections );
+		$this->assertArrayHasKey( 'almost_famous_campaign_defaults_section', $af_test_settings_sections );
 		$this->assertArrayHasKey( \AlmostFamous\Config::DESTINATION_PAGE_OPTION, $af_test_registered_settings );
 		$this->assertSame(
 			'absint',
@@ -148,10 +148,10 @@ class Test_Settings extends TestCase {
 		// No backend counterparty exists for either surface: the webhook
 		// secret has nothing to verify against (the receiver is dormant) and
 		// business rules were never synced or evaluated anywhere.
-		$this->assertArrayNotHasKey( 'af_webhook_secret', $af_test_registered_settings );
-		$this->assertArrayNotHasKey( 'af_business_rules', $af_test_registered_settings );
-		$this->assertArrayNotHasKey( 'af_webhook_section', $af_test_settings_sections );
-		$this->assertArrayNotHasKey( 'af_rules_section', $af_test_settings_sections );
+		$this->assertArrayNotHasKey( 'almost_famous_webhook_secret', $af_test_registered_settings );
+		$this->assertArrayNotHasKey( 'almost_famous_business_rules', $af_test_registered_settings );
+		$this->assertArrayNotHasKey( 'almost_famous_webhook_section', $af_test_settings_sections );
+		$this->assertArrayNotHasKey( 'almost_famous_rules_section', $af_test_settings_sections );
 	}
 
 	// -------------------------------------------------------------------

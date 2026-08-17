@@ -22,14 +22,14 @@
   'use strict';
 
   /**
-   * Look up a localized admin string (from afAdminData.i18n) with a fallback.
+   * Look up a localized admin string (from almostFamousAdminData.i18n) with a fallback.
    *
    * @param {string} key      i18n key.
    * @param {string} fallback Default English string.
    * @return {string} Localized string.
    */
   function afI18n(key, fallback) {
-    const data = window.afAdminData || {};
+    const data = window.almostFamousAdminData || {};
     const i18n = data.i18n || {};
     return i18n[key] || fallback;
   }
@@ -466,7 +466,7 @@
         replaceTextNotice(notices, 'success', afI18n('campaignSaved', 'Campaign saved successfully.'));
         if (payload.id) {
           /* Navigating away — leave the buttons disabled. */
-          window.location.href = 'admin.php?page=af-campaigns&action=edit&campaign_id=' + encodeURIComponent(payload.id);
+          window.location.href = 'admin.php?page=almost-famous-campaigns&action=edit&campaign_id=' + encodeURIComponent(payload.id);
           return;
         }
         setSubmitting(false);
@@ -783,7 +783,7 @@
      * @return {string|null|undefined} Own id, null for agency, or undefined.
      */
     function credentialFor(platform) {
-      const data = window.afAudienceData || {};
+      const data = window.almostFamousAudienceData || {};
       const credentials = data.credentials || {};
       return Object.prototype.hasOwnProperty.call(credentials, platform) ? credentials[platform] : undefined;
     }
@@ -908,7 +908,7 @@
           replaceTextNotice(notices, 'success', afI18n('audienceSaved', 'Audience saved successfully.'));
           /* Audiences are immutable — return to the saved list.
             Navigating away, so leave the button disabled. */
-          window.location.href = 'admin.php?page=af-audiences';
+          window.location.href = 'admin.php?page=almost-famous-audiences';
         }).catch(function (err) {
           replaceTextNotice(notices, 'error', getResponseErrorMessage(err));
           setSubmitting(false);
@@ -1002,7 +1002,7 @@
         }).then(function () {
           replaceTextNotice(notices, 'success', afI18n('lookalikeCreated', 'Lookalike audience created.'));
           /* Navigating away — leave the button disabled. */
-          window.location.href = 'admin.php?page=af-audiences';
+          window.location.href = 'admin.php?page=almost-famous-audiences';
         }).catch(function (err) {
           replaceTextNotice(notices, 'error', getResponseErrorMessage(err));
           setLookalikeSubmitting(false);
@@ -1246,6 +1246,154 @@
   }();
 
   /* ---------------------------------------------------------------
+   * Accounts page — credential mode + platform OAuth.
+   * --------------------------------------------------------------- */
+
+  const AfAccountsPage = function () {
+    function disable(button, label) {
+      button.disabled = true;
+      button.dataset.originalLabel = button.textContent;
+      button.textContent = label;
+    }
+    function reenable(button) {
+      button.disabled = false;
+      if (button.dataset.originalLabel) {
+        button.textContent = button.dataset.originalLabel;
+      }
+    }
+    function init() {
+      if (typeof wp === 'undefined' || !wp.apiFetch) {
+        return;
+      }
+      if (window.wpApiSettings && wp.apiFetch.createNonceMiddleware) {
+        wp.apiFetch.use(wp.apiFetch.createNonceMiddleware(window.wpApiSettings.nonce));
+      }
+      if (window.wpApiSettings && wp.apiFetch.createRootURLMiddleware) {
+        wp.apiFetch.use(wp.apiFetch.createRootURLMiddleware(window.wpApiSettings.root));
+      }
+      const rest = '/almost-famous/v1/oauth';
+      document.querySelectorAll('input[name="almost_famous_credential_mode"]').forEach(function (radio) {
+        radio.addEventListener('change', async function () {
+          const mode = radio.value;
+          radio.disabled = true;
+          try {
+            await wp.apiFetch({
+              path: '/almost-famous/v1/org/credential-mode',
+              method: 'POST',
+              data: {
+                mode: mode
+              }
+            });
+            window.location.reload();
+          } catch (err) {
+            radio.disabled = false;
+            const msg = err && err.message || 'unknown_error';
+            window.alert(afI18n('credentialModeFail', 'Could not update credential mode:') + ' ' + msg);
+          }
+        });
+      });
+      document.querySelectorAll('.af-platform-connect').forEach(function (button) {
+        button.addEventListener('click', async function () {
+          const platform = button.dataset.platform;
+          disable(button, afI18n('redirecting', 'Redirecting…'));
+          try {
+            const resp = await wp.apiFetch({
+              path: rest + '/start',
+              method: 'POST',
+              data: {
+                platform: platform
+              }
+            });
+            if (resp && resp.authorizationUrl) {
+              window.location = resp.authorizationUrl;
+              return;
+            }
+            throw new Error(resp && resp.error && resp.error.message || 'oauth_failed');
+          } catch (err) {
+            reenable(button);
+            const msg = err && err.message || 'oauth_failed';
+            window.alert(afI18n('connectFail', 'Could not start the connection:') + ' ' + msg);
+          }
+        });
+      });
+      document.querySelectorAll('.af-platform-disconnect').forEach(function (button) {
+        button.addEventListener('click', async function () {
+          const platform = button.dataset.platform;
+          if (!window.confirm(afI18n('disconnectConfirm', 'Disconnect this platform? Active campaigns may pause.'))) {
+            return;
+          }
+          disable(button, afI18n('disconnecting', 'Disconnecting…'));
+          try {
+            await wp.apiFetch({
+              path: rest + '/disconnect',
+              method: 'POST',
+              data: {
+                platform: platform
+              }
+            });
+            window.location.reload();
+          } catch (err) {
+            reenable(button);
+            const msg = err && err.message || 'unknown_error';
+            window.alert(afI18n('disconnectFail', 'Could not disconnect:') + ' ' + msg);
+          }
+        });
+      });
+    }
+    return {
+      init: init
+    };
+  }();
+
+  /* ---------------------------------------------------------------
+   * Settings — test API connection.
+   * --------------------------------------------------------------- */
+
+  const AfTestConnection = function () {
+    function init() {
+      const btn = document.getElementById('af-test-connection');
+      const status = document.getElementById('af-connection-status');
+      if (!btn || !status) {
+        return;
+      }
+      const data = window.almostFamousAdminData || {};
+      const ajaxUrl = data.ajaxUrl || '';
+      const action = data.testAction || 'almost_famous_test_connection';
+      btn.addEventListener('click', function () {
+        status.textContent = afI18n('testingConnection', 'Testing...');
+        status.style.color = '#666';
+        const body = new URLSearchParams();
+        body.append('action', action);
+        body.append('nonce', btn.getAttribute('data-nonce') || '');
+        fetch(ajaxUrl, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: body.toString()
+        }).then(function (response) {
+          return response.json();
+        }).then(function (resp) {
+          if (resp && resp.success) {
+            status.textContent = resp.data.message;
+            status.style.color = '#00a32a';
+            return;
+          }
+          status.textContent = resp && resp.data && resp.data.message || afI18n('connectionFailed', 'Connection failed.');
+          status.style.color = '#d63638';
+        }).catch(function () {
+          status.textContent = afI18n('requestFailed', 'Request failed.');
+          status.style.color = '#d63638';
+        });
+      });
+    }
+    return {
+      init: init
+    };
+  }();
+
+  /* ---------------------------------------------------------------
    * Initialization — DOM ready.
    * --------------------------------------------------------------- */
 
@@ -1253,6 +1401,8 @@
     AfCampaignForm.init();
     AfAudienceBuilder.init();
     AfCreativeManager.init();
+    AfAccountsPage.init();
+    AfTestConnection.init();
   });
 
   /* Expose modules globally. */

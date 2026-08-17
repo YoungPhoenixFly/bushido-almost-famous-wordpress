@@ -11,13 +11,13 @@ const wpCli = ( ...args ) =>
 	).toString();
 
 test.describe( 'Uninstall', () => {
-	test( 'removes all af_* options and the bushido_admin role', () => {
+	test( 'removes all almost_famous_* options and the bushido_admin role', () => {
 		// Activate, then plant a couple of options so we can prove they get cleared.
 		try {
 			wpCli( 'plugin', 'activate', 'bushido-almost-famous' );
 		} catch ( _ ) {}
-		wpCli( 'option', 'update', 'af_setup_complete', '1' );
-		wpCli( 'option', 'update', 'af_e2e_marker', 'present' );
+		wpCli( 'option', 'update', 'almost_famous_setup_complete', '1' );
+		wpCli( 'option', 'update', 'almost_famous_e2e_marker', 'present' );
 
 		// Run uninstall.php directly after deactivation. The plugin is bind-mounted
 		// in wp-env, so `wp plugin uninstall` would delete the repository source.
@@ -36,7 +36,7 @@ test.describe( 'Uninstall', () => {
 		const optionsJson = wpCli(
 			'option',
 			'list',
-			'--search=af_*',
+			'--search=almost_famous_*',
 			'--format=json'
 		).trim();
 		const options = optionsJson ? JSON.parse( optionsJson ) : [];

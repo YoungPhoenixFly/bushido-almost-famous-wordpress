@@ -4,11 +4,11 @@
  *
  * Verifies that a completed WooCommerce order is forwarded to the Bushido
  * `/pixels/{pixelId}/events` endpoint with PII hashed (SHA-256, lowercase,
- * trimmed), is deduplicated via af_conversion_event_id order meta, and
+ * trimmed), is deduplicated via almost_famous_conversion_event_id order meta, and
  * includes attribution context plus checkout/user-agent metadata in the
  * pixel-event payload shape.
  *
- * Also verifies the consent gate: the af_marketing_consent verdict stored
+ * Also verifies the consent gate: the almost_famous_marketing_consent verdict stored
  * on the order at checkout time (buyer's request context) wins over a live
  * consent evaluation at send time (admin/webhook/cron context); legacy
  * orders without a stored verdict fall back to the live check.
@@ -120,7 +120,7 @@ class Test_Conversion_Tracking extends TestCase {
 		$order->total        = $total;
 		$order->currency     = 'USD';
 		$order->meta         = array(
-			'af_attribution' => array(
+			'almost_famous_attribution' => array(
 				'platform'    => 'meta',
 				'campaign_id' => 'cmp_42',
 				'campaign'    => 'Spring',
@@ -163,12 +163,12 @@ class Test_Conversion_Tracking extends TestCase {
 		$expected_hash = hash( 'sha256', 'buyer@example.com' );
 		$this->assertSame( array( $expected_hash ), $this->latest_post['data']['userData']['em'] );
 
-		$this->assertNotSame( 'evt_remote_1', $order->meta['af_conversion_event_id'] );
+		$this->assertNotSame( 'evt_remote_1', $order->meta['almost_famous_conversion_event_id'] );
 		$this->assertSame(
-			$order->meta['af_conversion_event_id'],
+			$order->meta['almost_famous_conversion_event_id'],
 			$this->latest_post['headers']['X-Idempotency-Key']
 		);
-		$this->assertSame( 'sent', $order->meta['af_conversion_event_status'] );
+		$this->assertSame( 'sent', $order->meta['almost_famous_conversion_event_status'] );
 		$this->assertTrue( $order->saved );
 	}
 
@@ -208,14 +208,14 @@ class Test_Conversion_Tracking extends TestCase {
 		);
 
 		$order                                  = $this->make_order( 102 );
-		$order->meta['af_conversion_event_id'] = 'evt_already_sent';
+		$order->meta['almost_famous_conversion_event_id'] = 'evt_already_sent';
 
 		$this->tracking->send_conversion( 102 );
 
 		// Filter should never have been called.
 		$this->assertNull( $this->latest_post );
 		// And the existing event id is untouched.
-		$this->assertSame( 'evt_already_sent', $order->meta['af_conversion_event_id'] );
+		$this->assertSame( 'evt_already_sent', $order->meta['almost_famous_conversion_event_id'] );
 	}
 
 	public function test_event_id_falls_back_to_generated_uuid_when_api_omits_one(): void {
@@ -230,8 +230,8 @@ class Test_Conversion_Tracking extends TestCase {
 
 		$this->tracking->send_conversion( 103 );
 
-		$this->assertArrayHasKey( 'af_conversion_event_id', $order->meta );
-		$this->assertNotEmpty( $order->meta['af_conversion_event_id'] );
+		$this->assertArrayHasKey( 'almost_famous_conversion_event_id', $order->meta );
+		$this->assertNotEmpty( $order->meta['almost_famous_conversion_event_id'] );
 	}
 
 	public function test_api_error_keeps_stable_pending_event_for_retry(): void {
@@ -246,14 +246,14 @@ class Test_Conversion_Tracking extends TestCase {
 
 		$this->tracking->send_conversion( 104 );
 
-		$this->assertArrayHasKey( 'af_conversion_event_id', $order->meta );
-		$this->assertSame( 'pending', $order->meta['af_conversion_event_status'] );
+		$this->assertArrayHasKey( 'almost_famous_conversion_event_id', $order->meta );
+		$this->assertSame( 'pending', $order->meta['almost_famous_conversion_event_status'] );
 		$this->assertSame(
-			$order->meta['af_conversion_event_id'],
+			$order->meta['almost_famous_conversion_event_id'],
 			$this->latest_post['headers']['X-Idempotency-Key']
 		);
 		$this->assertTrue( $order->saved );
-		$this->assertSame( 1, $order->meta['af_conversion_retry_attempts'] );
+		$this->assertSame( 1, $order->meta['almost_famous_conversion_retry_attempts'] );
 		global $af_test_scheduled_events;
 		$this->assertSame( array( 104 ), $af_test_scheduled_events['almost_famous_retry_conversion']['args'] );
 	}
@@ -269,8 +269,8 @@ class Test_Conversion_Tracking extends TestCase {
 		$order = $this->make_order( 115 );
 		$this->tracking->send_conversion( 115 );
 
-		$this->assertSame( 'pending', $order->meta['af_conversion_event_status'] );
-		$this->assertSame( 1, $order->meta['af_conversion_retry_attempts'] );
+		$this->assertSame( 'pending', $order->meta['almost_famous_conversion_event_status'] );
+		$this->assertSame( 1, $order->meta['almost_famous_conversion_retry_attempts'] );
 		$this->assertNotFalse(
 			wp_next_scheduled( 'almost_famous_retry_conversion', array( 115 ) )
 		);
@@ -283,8 +283,8 @@ class Test_Conversion_Tracking extends TestCase {
 			'almost_famous/api/mock_response',
 			function ( $existing, string $method, string $url ) use ( $order, &$persisted_before_get ) {
 				if ( 'GET' === $method && false !== strpos( $url, '/pixels' ) ) {
-					$persisted_before_get = ! empty( $order->meta['af_conversion_event_id'] )
-						&& 'pending' === ( $order->meta['af_conversion_event_status'] ?? '' )
+					$persisted_before_get = ! empty( $order->meta['almost_famous_conversion_event_id'] )
+						&& 'pending' === ( $order->meta['almost_famous_conversion_event_status'] ?? '' )
 						&& $order->saved;
 					return array(
 						'data'   => array( array( 'id' => self::PIXEL_ID, 'platform' => 'meta' ) ),
@@ -336,26 +336,26 @@ class Test_Conversion_Tracking extends TestCase {
 
 		$order = $this->make_order( 108 );
 		$this->tracking->send_conversion( 108 );
-		$pending_id = $order->meta['af_conversion_event_id'];
+		$pending_id = $order->meta['almost_famous_conversion_event_id'];
 		$this->tracking->send_conversion( 108 );
 
 		$this->assertCount( 2, $event_headers );
 		$this->assertSame( $event_headers[0], $event_headers[1] );
 		$this->assertSame( $pending_id, $event_headers[0] );
-		$this->assertSame( 'sent', $order->meta['af_conversion_event_status'] );
+		$this->assertSame( 'sent', $order->meta['almost_famous_conversion_event_status'] );
 	}
 
 	public function test_active_order_lock_prevents_concurrent_send(): void {
 		$this->register_api_mock( array( 'data' => array(), 'status' => 200 ) );
 		$this->make_order( 109 );
 		$lock = ( time() + 300 ) . ':other-request';
-		update_option( 'af_conversion_lock_109', $lock );
+		update_option( 'almost_famous_conversion_lock_109', $lock );
 
 		$this->tracking->send_conversion( 109 );
 
 		global $af_test_wc_get_order_calls;
 		$this->assertNull( $this->latest_post );
-		$this->assertSame( $lock, get_option( 'af_conversion_lock_109' ) );
+		$this->assertSame( $lock, get_option( 'almost_famous_conversion_lock_109' ) );
 		$this->assertSame(
 			array(),
 			$af_test_wc_get_order_calls,
@@ -384,8 +384,8 @@ class Test_Conversion_Tracking extends TestCase {
 
 		$this->tracking->send_conversion( 113 );
 
-		$this->assertSame( 'pending', $order->meta['af_conversion_event_status'] );
-		$this->assertSame( 1, $order->meta['af_conversion_retry_attempts'] );
+		$this->assertSame( 'pending', $order->meta['almost_famous_conversion_event_status'] );
+		$this->assertSame( 1, $order->meta['almost_famous_conversion_retry_attempts'] );
 		$this->assertNotFalse(
 			wp_next_scheduled( 'almost_famous_retry_conversion', array( 113 ) )
 		);
@@ -397,7 +397,7 @@ class Test_Conversion_Tracking extends TestCase {
 			'almost_famous/api/mock_response',
 			function ( $existing, string $method, string $url ) {
 				if ( 'GET' === $method && false !== strpos( $url, '/pixels' ) ) {
-					update_option( 'af_conversion_lock_111', ( time() + 300 ) . ':successor' );
+					update_option( 'almost_famous_conversion_lock_111', ( time() + 300 ) . ':successor' );
 					return array(
 						'data'   => array( array( 'id' => self::PIXEL_ID, 'platform' => 'meta' ) ),
 						'status' => 200,
@@ -414,8 +414,8 @@ class Test_Conversion_Tracking extends TestCase {
 
 		$this->tracking->send_conversion( 111 );
 
-		$this->assertNotEmpty( $order->meta['af_conversion_event_id'] );
-		$this->assertStringEndsWith( ':successor', (string) get_option( 'af_conversion_lock_111' ) );
+		$this->assertNotEmpty( $order->meta['almost_famous_conversion_event_id'] );
+		$this->assertStringEndsWith( ':successor', (string) get_option( 'almost_famous_conversion_lock_111' ) );
 		$this->assertNull( $this->latest_post );
 	}
 
@@ -431,7 +431,7 @@ class Test_Conversion_Tracking extends TestCase {
 					);
 				}
 				if ( 'POST' === $method && false !== strpos( $url, '/events' ) ) {
-					update_option( 'af_conversion_lock_114', ( time() + 300 ) . ':successor' );
+					update_option( 'almost_famous_conversion_lock_114', ( time() + 300 ) . ':successor' );
 					return array( 'data' => array( 'eventId' => 'remote' ), 'status' => 200 );
 				}
 				return $existing;
@@ -442,8 +442,8 @@ class Test_Conversion_Tracking extends TestCase {
 
 		$this->tracking->send_conversion( 114 );
 
-		$this->assertSame( 'pending', $order->meta['af_conversion_event_status'] );
-		$this->assertStringEndsWith( ':successor', (string) get_option( 'af_conversion_lock_114' ) );
+		$this->assertSame( 'pending', $order->meta['almost_famous_conversion_event_status'] );
+		$this->assertStringEndsWith( ':successor', (string) get_option( 'almost_famous_conversion_lock_114' ) );
 		$this->assertNotFalse(
 			wp_next_scheduled( 'almost_famous_retry_conversion', array( 114 ) )
 		);
@@ -466,9 +466,9 @@ class Test_Conversion_Tracking extends TestCase {
 			}
 		}
 
-		$this->assertSame( 5, $order->meta['af_conversion_retry_attempts'] );
+		$this->assertSame( 5, $order->meta['almost_famous_conversion_retry_attempts'] );
 		$this->assertFalse( wp_next_scheduled( 'almost_famous_retry_conversion', array( 112 ) ) );
-		$this->assertSame( 'pending', $order->meta['af_conversion_event_status'] );
+		$this->assertSame( 'pending', $order->meta['almost_famous_conversion_event_status'] );
 	}
 
 	public function test_unknown_order_id_is_a_noop(): void {
@@ -493,13 +493,13 @@ class Test_Conversion_Tracking extends TestCase {
 
 		// …but the verdict captured in the buyer's own checkout request says granted.
 		$order                                = $this->make_order( 105 );
-		$order->meta['af_marketing_consent'] = 'granted';
+		$order->meta['almost_famous_marketing_consent'] = 'granted';
 
 		$this->tracking->send_conversion( 105 );
 
 		$this->assertNotNull( $this->latest_post );
-		$this->assertNotEmpty( $order->meta['af_conversion_event_id'] );
-		$this->assertSame( 'sent', $order->meta['af_conversion_event_status'] );
+		$this->assertNotEmpty( $order->meta['almost_famous_conversion_event_id'] );
+		$this->assertSame( 'sent', $order->meta['almost_famous_conversion_event_status'] );
 		$this->assertSame( 0, did_action( 'almost_famous/conversion/skipped_consent' ) );
 	}
 
@@ -513,12 +513,12 @@ class Test_Conversion_Tracking extends TestCase {
 
 		// Live consent grants (setUp filter), but the buyer said no at checkout.
 		$order                                = $this->make_order( 106 );
-		$order->meta['af_marketing_consent'] = 'denied';
+		$order->meta['almost_famous_marketing_consent'] = 'denied';
 
 		$this->tracking->send_conversion( 106 );
 
 		$this->assertNull( $this->latest_post );
-		$this->assertArrayNotHasKey( 'af_conversion_event_id', $order->meta );
+		$this->assertArrayNotHasKey( 'almost_famous_conversion_event_id', $order->meta );
 		$this->assertSame( 1, did_action( 'almost_famous/conversion/skipped_consent' ) );
 	}
 
@@ -530,7 +530,7 @@ class Test_Conversion_Tracking extends TestCase {
 			)
 		);
 
-		// No af_marketing_consent meta on the order and live consent denies.
+		// No almost_famous_marketing_consent meta on the order and live consent denies.
 		add_filter( 'almost_famous_default_consent', '__return_false' );
 
 		$this->make_order( 107 );

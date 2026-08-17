@@ -94,27 +94,27 @@ class Test_Api_Cache_Extended extends TestCase {
 
 	public function test_delete_by_prefix_clears_matching_transients_and_runs_like_query(): void {
 		// Two transients exist; one under campaigns_acct_1, one under audiences.
-		set_transient( 'af_campaigns_acct_1_filterA', array( 'id' => 1 ) );
-		set_transient( 'af_campaigns_acct_1_filterB', array( 'id' => 2 ) );
-		set_transient( 'af_audiences_acct_1', array( 'id' => 99 ) );
+		set_transient( 'almost_famous_campaigns_acct_1_filterA', array( 'id' => 1 ) );
+		set_transient( 'almost_famous_campaigns_acct_1_filterB', array( 'id' => 2 ) );
+		set_transient( 'almost_famous_audiences_acct_1', array( 'id' => 99 ) );
 
 		// Tell the fake which option_names match the campaigns_acct_1 LIKE.
-		$this->wpdb->rows['_transient_af_campaigns_acct_1'] = array(
-			'_transient_af_campaigns_acct_1_filterA',
-			'_transient_af_campaigns_acct_1_filterB',
+		$this->wpdb->rows['_transient_almost_famous_campaigns_acct_1'] = array(
+			'_transient_almost_famous_campaigns_acct_1_filterA',
+			'_transient_almost_famous_campaigns_acct_1_filterB',
 		);
 
 		$this->cache->delete_by_prefix( 'campaigns_acct_1' );
 
 		// LIKE pattern captured.
 		$this->assertNotEmpty( $this->wpdb->captured_patterns );
-		$this->assertStringContainsString( '_transient_af_campaigns_acct_1', $this->wpdb->captured_patterns[0] );
+		$this->assertStringContainsString( '_transient_almost_famous_campaigns_acct_1', $this->wpdb->captured_patterns[0] );
 		$this->assertStringEndsWith( '%', $this->wpdb->captured_patterns[0] );
 
 		// Both campaign transients gone; unrelated audience transient survives.
-		$this->assertFalse( get_transient( 'af_campaigns_acct_1_filterA' ) );
-		$this->assertFalse( get_transient( 'af_campaigns_acct_1_filterB' ) );
-		$this->assertNotFalse( get_transient( 'af_audiences_acct_1' ) );
+		$this->assertFalse( get_transient( 'almost_famous_campaigns_acct_1_filterA' ) );
+		$this->assertFalse( get_transient( 'almost_famous_campaigns_acct_1_filterB' ) );
+		$this->assertNotFalse( get_transient( 'almost_famous_audiences_acct_1' ) );
 	}
 
 	public function test_delete_by_prefix_handles_empty_match_set(): void {
@@ -122,7 +122,7 @@ class Test_Api_Cache_Extended extends TestCase {
 
 		// Just confirms it does not throw and the LIKE query was attempted.
 		$this->assertNotEmpty( $this->wpdb->captured_patterns );
-		$this->assertStringContainsString( '_transient_af_no_matches_here', $this->wpdb->captured_patterns[0] );
+		$this->assertStringContainsString( '_transient_almost_famous_no_matches_here', $this->wpdb->captured_patterns[0] );
 	}
 
 
@@ -159,8 +159,8 @@ class Test_Api_Cache_Extended extends TestCase {
 
 		// We don't have a way to inspect TTL on a stubbed transient, but the
 		// filter call path must succeed and the data must still be readable.
-		$this->assertTrue( $this->cache->set( 'af_campaigns_filtered', array( 'ok' => true ), 'campaigns' ) );
-		$this->assertSame( array( 'ok' => true ), $this->cache->get( 'af_campaigns_filtered' ) );
+		$this->assertTrue( $this->cache->set( 'almost_famous_campaigns_filtered', array( 'ok' => true ), 'campaigns' ) );
+		$this->assertSame( array( 'ok' => true ), $this->cache->get( 'almost_famous_campaigns_filtered' ) );
 	}
 
 	// -----------------------------------------------------------------------
@@ -175,7 +175,7 @@ class Test_Api_Cache_Extended extends TestCase {
 		af_test_set_multisite( true );
 
 		$key = $this->cache->build_key( 'campaigns', 'scope' );
-		$this->assertSame( 'af_campaigns_scope', $key );
+		$this->assertSame( 'almost_famous_campaigns_scope', $key );
 
 		af_test_set_multisite( false );
 		$this->assertSame( $key, $this->cache->build_key( 'campaigns', 'scope' ) );

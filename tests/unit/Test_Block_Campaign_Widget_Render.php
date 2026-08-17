@@ -31,7 +31,7 @@ class Test_Block_Campaign_Widget_Render extends TestCase {
 	}
 
 	private function configure_api_key( string $key = 'bsh_widget' ): void {
-		update_option( 'af_api_key', ( new Api_Auth() )->encrypt_api_key( $key ) );
+		update_option( 'almost_famous_api_key', ( new Api_Auth() )->encrypt_api_key( $key ) );
 	}
 
 	public function test_short_circuits_when_api_key_hash_missing(): void {

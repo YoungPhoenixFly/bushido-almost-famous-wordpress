@@ -77,7 +77,7 @@ class Test_Creatives extends TestCase {
 		$af_test_attachment_mime = '';
 
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( 'bsh_test' ) );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( 'bsh_test' ) );
 
 		$this->client    = new Api_Client( $auth );
 		$this->cache     = new Api_Cache();
@@ -165,8 +165,8 @@ class Test_Creatives extends TestCase {
 	public function test_register_submenu_uses_view_capability(): void {
 		$this->creatives->register_submenu();
 		$pages = af_test_get_menu_pages();
-		$this->assertSame( 'af_view_campaigns', $pages[0]['capability'] );
-		$this->assertSame( 'af-creatives', $pages[0]['menu_slug'] );
+		$this->assertSame( 'almost_famous_view_campaigns', $pages[0]['capability'] );
+		$this->assertSame( 'almost-famous-creatives', $pages[0]['menu_slug'] );
 	}
 
 	// -------------------------------------------------------------------
@@ -182,8 +182,8 @@ class Test_Creatives extends TestCase {
 
 	public function test_handle_upload_dies_on_invalid_nonce(): void {
 		$_POST = array(
-			'af_creative_upload_nonce' => 'bogus',
-			'af_creative_name'         => 'Cover',
+			'almost_famous_creative_upload_nonce' => 'bogus',
+			'almost_famous_creative_name'         => 'Cover',
 		);
 
 		$this->expectException( RuntimeException::class );
@@ -196,8 +196,8 @@ class Test_Creatives extends TestCase {
 		af_test_set_caps( array() );
 
 		$_POST = array(
-			'af_creative_upload_nonce' => 'test-nonce',
-			'af_creative_name'         => 'Cover',
+			'almost_famous_creative_upload_nonce' => 'test-nonce',
+			'almost_famous_creative_name'         => 'Cover',
 		);
 
 		$this->expectException( RuntimeException::class );
@@ -207,11 +207,11 @@ class Test_Creatives extends TestCase {
 	}
 
 	public function test_handle_upload_errors_when_no_source_asset_provided(): void {
-		af_test_set_caps( array( 'af_manage_campaigns' => true ) );
+		af_test_set_caps( array( 'almost_famous_manage_campaigns' => true ) );
 
 		$_POST = array(
-			'af_creative_upload_nonce' => 'test-nonce',
-			'af_creative_name'         => 'Cover',
+			'almost_famous_creative_upload_nonce' => 'test-nonce',
+			'almost_famous_creative_name'         => 'Cover',
 		);
 
 		try {
@@ -221,10 +221,10 @@ class Test_Creatives extends TestCase {
 			// redirect throw.
 		}
 
-		$this->assertSame( 'No source asset provided.', get_transient( 'af_creative_error' ) );
+		$this->assertSame( 'No source asset provided.', get_transient( 'almost_famous_creative_error' ) );
 
 		global $af_test_redirects;
-		$this->assertStringContainsString( 'page=af-creatives', $af_test_redirects[0]['url'] );
+		$this->assertStringContainsString( 'page=almost-famous-creatives', $af_test_redirects[0]['url'] );
 	}
 
 	// -------------------------------------------------------------------
@@ -232,13 +232,13 @@ class Test_Creatives extends TestCase {
 	// -------------------------------------------------------------------
 
 	public function test_handle_upload_runs_asset_pipeline_and_redirects_to_detail(): void {
-		af_test_set_caps( array( 'af_manage_campaigns' => true ) );
+		af_test_set_caps( array( 'almost_famous_manage_campaigns' => true ) );
 		$this->arm_attachment_upload( 'asset_7' );
 
 		$_POST = array(
-			'af_creative_upload_nonce' => 'test-nonce',
-			'af_creative_name'         => 'Summer Cover',
-			'af_source_attachment_id'  => '7',
+			'almost_famous_creative_upload_nonce' => 'test-nonce',
+			'almost_famous_creative_name'         => 'Summer Cover',
+			'almost_famous_source_attachment_id'  => '7',
 		);
 
 		try {
@@ -254,7 +254,7 @@ class Test_Creatives extends TestCase {
 		$this->assertNotEmpty( preg_grep( '#signed\.example/upload/asset_7#', $urls ), 'Signed S3 PUT must be called.' );
 		$this->assertNotEmpty( preg_grep( '#/assets/asset_7/confirm$#', $urls ), 'Confirm must be called.' );
 
-		$this->assertSame( 'Creative asset uploaded successfully.', get_transient( 'af_creative_success' ) );
+		$this->assertSame( 'Creative asset uploaded successfully.', get_transient( 'almost_famous_creative_success' ) );
 
 		global $af_test_redirects;
 		$this->assertStringContainsString( 'creative_id=asset_7', $af_test_redirects[0]['url'] );

@@ -1,6 +1,6 @@
 <?php
 /**
- * Tests Permissions cap checks honour the right af_* cap and fall back to
+ * Tests Permissions cap checks honour the right almost_famous_* cap and fall back to
  * manage_options for administrators.
  *
  * @package AlmostFamous
@@ -28,7 +28,7 @@ class Test_Permissions extends TestCase {
 		af_test_set_caps( array() );
 		$this->assertFalse( Permissions::can_manage_campaigns() );
 
-		af_test_set_caps( array( 'af_manage_campaigns' => true ) );
+		af_test_set_caps( array( 'almost_famous_manage_campaigns' => true ) );
 		$this->assertTrue( Permissions::can_manage_campaigns() );
 
 		af_test_set_caps( array( 'manage_options' => true ) );
@@ -43,7 +43,7 @@ class Test_Permissions extends TestCase {
 		af_test_set_caps( array() );
 		$this->assertFalse( Permissions::can_manage_settings() );
 
-		af_test_set_caps( array( 'af_manage_settings' => true ) );
+		af_test_set_caps( array( 'almost_famous_manage_settings' => true ) );
 		$this->assertTrue( Permissions::can_manage_settings() );
 
 		af_test_set_caps( array( 'manage_options' => true ) );
@@ -58,10 +58,10 @@ class Test_Permissions extends TestCase {
 		af_test_set_caps( array() );
 		$this->assertFalse( Permissions::can_view_campaigns() );
 
-		af_test_set_caps( array( 'af_view_campaigns' => true ) );
+		af_test_set_caps( array( 'almost_famous_view_campaigns' => true ) );
 		$this->assertTrue( Permissions::can_view_campaigns() );
 
-		af_test_set_caps( array( 'af_manage_campaigns' => true ) );
+		af_test_set_caps( array( 'almost_famous_manage_campaigns' => true ) );
 		$this->assertTrue( Permissions::can_view_campaigns() );
 
 		af_test_set_caps( array( 'manage_options' => true ) );
@@ -74,13 +74,13 @@ class Test_Permissions extends TestCase {
 
 	public function test_check_permission_for_arbitrary_capability_with_options_fallback(): void {
 		af_test_set_caps( array() );
-		$this->assertFalse( Permissions::check_permission( 'af_manage_accounts' ) );
+		$this->assertFalse( Permissions::check_permission( 'almost_famous_manage_accounts' ) );
 
-		af_test_set_caps( array( 'af_manage_accounts' => true ) );
-		$this->assertTrue( Permissions::check_permission( 'af_manage_accounts' ) );
+		af_test_set_caps( array( 'almost_famous_manage_accounts' => true ) );
+		$this->assertTrue( Permissions::check_permission( 'almost_famous_manage_accounts' ) );
 
 		af_test_set_caps( array( 'manage_options' => true ) );
-		$this->assertTrue( Permissions::check_permission( 'af_manage_accounts' ) );
+		$this->assertTrue( Permissions::check_permission( 'almost_famous_manage_accounts' ) );
 		// manage_options bypasses unrelated caps as well.
 		$this->assertTrue( Permissions::check_permission( 'nonexistent_cap' ) );
 	}
@@ -91,14 +91,14 @@ class Test_Permissions extends TestCase {
 
 	public function test_has_any_capability_returns_true_for_manage_options_admin(): void {
 		af_test_set_caps( array( 'manage_options' => true ) );
-		$this->assertTrue( Permissions::has_any_capability( array( 'af_view_campaigns' ) ) );
+		$this->assertTrue( Permissions::has_any_capability( array( 'almost_famous_view_campaigns' ) ) );
 	}
 
 	public function test_has_any_capability_returns_true_when_at_least_one_matches(): void {
-		af_test_set_caps( array( 'af_view_campaigns' => true ) );
+		af_test_set_caps( array( 'almost_famous_view_campaigns' => true ) );
 		$this->assertTrue(
 			Permissions::has_any_capability(
-				array( 'af_manage_campaigns', 'af_view_campaigns' )
+				array( 'almost_famous_manage_campaigns', 'almost_famous_view_campaigns' )
 			)
 		);
 	}
@@ -106,7 +106,7 @@ class Test_Permissions extends TestCase {
 	public function test_has_any_capability_returns_false_when_no_match(): void {
 		af_test_set_caps( array() );
 		$this->assertFalse(
-			Permissions::has_any_capability( array( 'af_manage_campaigns', 'af_view_campaigns' ) )
+			Permissions::has_any_capability( array( 'almost_famous_manage_campaigns', 'almost_famous_view_campaigns' ) )
 		);
 	}
 

@@ -51,7 +51,7 @@ class Test_Api_Proxy_Public_Portal extends TestCase {
 		$result = $this->proxy->check_public_permission( $this->request( 'GET' ) );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'af_portal_auth_required', $result->get_error_code() );
+		$this->assertSame( 'almost_famous_portal_auth_required', $result->get_error_code() );
 		$this->assertSame( 401, $result->get_error_data()['status'] );
 	}
 
@@ -69,13 +69,13 @@ class Test_Api_Proxy_Public_Portal extends TestCase {
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'af_portal_auth_required', $result->get_error_code() );
+		$this->assertSame( 'almost_famous_portal_auth_required', $result->get_error_code() );
 	}
 
 	public function test_demo_mode_allows_anonymous_read(): void {
 		// Demo mode serves only synthetic fixtures, so it is safe to preview
 		// without a login.
-		update_option( 'af_public_portal_demo_mode', true );
+		update_option( 'almost_famous_public_portal_demo_mode', true );
 
 		$result = $this->proxy->check_public_permission( $this->request( 'GET' ) );
 
@@ -90,7 +90,7 @@ class Test_Api_Proxy_Public_Portal extends TestCase {
 		$result = $this->proxy->check_public_permission( $this->request( 'POST' ) );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'af_portal_write_forbidden', $result->get_error_code() );
+		$this->assertSame( 'almost_famous_portal_write_forbidden', $result->get_error_code() );
 		$this->assertSame( 401, $result->get_error_data()['status'] );
 	}
 
@@ -98,22 +98,22 @@ class Test_Api_Proxy_Public_Portal extends TestCase {
 		$result = $this->proxy->check_public_permission( $this->request( 'PATCH' ) );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'af_portal_write_forbidden', $result->get_error_code() );
+		$this->assertSame( 'almost_famous_portal_write_forbidden', $result->get_error_code() );
 	}
 
 	public function test_guest_delete_is_write_forbidden(): void {
 		$result = $this->proxy->check_public_permission( $this->request( 'DELETE' ) );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'af_portal_write_forbidden', $result->get_error_code() );
+		$this->assertSame( 'almost_famous_portal_write_forbidden', $result->get_error_code() );
 	}
 
 	public function test_demo_mode_does_not_allow_guest_writes(): void {
-		update_option( 'af_public_portal_demo_mode', true );
+		update_option( 'almost_famous_public_portal_demo_mode', true );
 
 		$result = $this->proxy->check_public_permission( $this->request( 'POST' ) );
 
 		$this->assertInstanceOf( WP_Error::class, $result );
-		$this->assertSame( 'af_portal_write_forbidden', $result->get_error_code() );
+		$this->assertSame( 'almost_famous_portal_write_forbidden', $result->get_error_code() );
 	}
 }
