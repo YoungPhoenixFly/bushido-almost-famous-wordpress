@@ -42,7 +42,7 @@ class Config {
 	 *
 	 * @var string
 	 */
-	public const DESTINATION_PAGE_OPTION = 'af_default_destination_page_id';
+	public const DESTINATION_PAGE_OPTION = 'almost_famous_default_destination_page_id';
 
 	/**
 	 * Resolve the default click-through destination for campaign ads.
@@ -98,36 +98,39 @@ class Config {
 	 * @throws \UnexpectedValueException When a service pair is partial, invalid, or unknown.
 	 */
 	public static function resolve_service_endpoints(): array {
-		$constant_api = defined( 'AF_API_BASE_URL' ) && is_string( AF_API_BASE_URL )
-			? trim( AF_API_BASE_URL )
-			: '';
-		$constant_app = defined( 'AF_BUSHIDO_APP_URL' ) && is_string( AF_BUSHIDO_APP_URL )
-			? trim( AF_BUSHIDO_APP_URL )
-			: '';
+		$constant_api = self::defined_string( 'ALMOST_FAMOUS_API_BASE_URL' );
+		$constant_app = self::defined_string( 'ALMOST_FAMOUS_BUSHIDO_APP_URL' );
 		if ( '' !== $constant_api || '' !== $constant_app ) {
 			return self::require_pair( $constant_api, $constant_app, 'wp-config.php constants' );
 		}
 
+		// Legacy wp-config.php names kept for existing local overrides.
+		$legacy_api = self::defined_string( 'AF_API_BASE_URL' );
+		$legacy_app = self::defined_string( 'AF_BUSHIDO_APP_URL' );
+		if ( '' !== $legacy_api || '' !== $legacy_app ) {
+			return self::require_pair( $legacy_api, $legacy_app, 'wp-config.php constants' );
+		}
+
 		$environment_api = self::get_env_value(
 			array(
-				'AF_API_BASE_URL',
 				'ALMOST_FAMOUS_API_BASE_URL',
 				'WP_ALMOST_FAMOUS_API_BASE_URL',
+				'AF_API_BASE_URL',
 			)
 		);
 		$environment_app = self::get_env_value(
 			array(
-				'AF_BUSHIDO_APP_URL',
 				'ALMOST_FAMOUS_BUSHIDO_APP_URL',
 				'WP_ALMOST_FAMOUS_BUSHIDO_APP_URL',
+				'AF_BUSHIDO_APP_URL',
 			)
 		);
 		if ( '' !== $environment_api || '' !== $environment_app ) {
 			return self::require_pair( $environment_api, $environment_app, 'environment variables' );
 		}
 
-		$option_api = get_option( 'af_api_base_url', '' );
-		$option_app = get_option( 'af_bushido_app_url', '' );
+		$option_api = get_option( 'almost_famous_api_base_url', '' );
+		$option_app = get_option( 'almost_famous_bushido_app_url', '' );
 		$option_api = is_string( $option_api ) ? trim( $option_api ) : '';
 		$option_app = is_string( $option_app ) ? trim( $option_app ) : '';
 		if ( '' !== $option_api || '' !== $option_app ) {
@@ -184,7 +187,7 @@ class Config {
 		);
 
 		if ( '' === $raw ) {
-			$option = get_option( 'af_public_portal_demo_mode', false );
+			$option = get_option( 'almost_famous_public_portal_demo_mode', false );
 			return rest_sanitize_boolean( $option );
 		}
 
@@ -301,5 +304,21 @@ class Config {
 		}
 
 		return '';
+	}
+
+	/**
+	 * Return a trimmed string constant value when it is defined.
+	 *
+	 * @param string $name Constant name.
+	 * @return string
+	 */
+	private static function defined_string( string $name ): string {
+		if ( ! defined( $name ) ) {
+			return '';
+		}
+
+		$value = constant( $name );
+
+		return is_string( $value ) ? trim( $value ) : '';
 	}
 }

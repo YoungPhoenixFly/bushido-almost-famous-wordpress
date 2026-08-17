@@ -76,7 +76,7 @@ class Test_Admin_Menu extends TestCase {
 
 		$this->assertCount( 1, $top_level );
 		$this->assertSame( Dashboard::PAGE_SLUG, $top_level[0]['menu_slug'] );
-		$this->assertSame( 'af_view_campaigns', $top_level[0]['capability'] );
+		$this->assertSame( 'almost_famous_view_campaigns', $top_level[0]['capability'] );
 	}
 
 	public function test_register_all_submenus_under_almost_famous_parent(): void {
@@ -93,8 +93,8 @@ class Test_Admin_Menu extends TestCase {
 
 		// Dashboard registers itself as a submenu alias of the top-level.
 		$this->assertContains( Dashboard::PAGE_SLUG, $slugs );
-		$this->assertContains( 'af-creatives', $slugs );
-		$this->assertContains( 'af-audiences', $slugs );
+		$this->assertContains( 'almost-famous-creatives', $slugs );
+		$this->assertContains( 'almost-famous-audiences', $slugs );
 		$this->assertContains( Accounts::PAGE_SLUG, $slugs );
 		$this->assertContains( Settings::PAGE_SLUG, $slugs );
 	}
@@ -110,7 +110,7 @@ class Test_Admin_Menu extends TestCase {
 			}
 		}
 		$this->assertNotNull( $settings_entry );
-		$this->assertSame( 'af_manage_settings', $settings_entry['capability'] );
+		$this->assertSame( 'almost_famous_manage_settings', $settings_entry['capability'] );
 	}
 
 	public function test_accounts_submenu_uses_manage_accounts_capability(): void {
@@ -124,7 +124,7 @@ class Test_Admin_Menu extends TestCase {
 			}
 		}
 		$this->assertNotNull( $accounts_entry );
-		$this->assertSame( 'af_manage_accounts', $accounts_entry['capability'] );
+		$this->assertSame( 'almost_famous_manage_accounts', $accounts_entry['capability'] );
 	}
 
 	public function test_dashboard_returns_same_instance_on_repeated_call(): void {

@@ -57,13 +57,13 @@ class Test_Consent_Default extends TestCase {
 	}
 
 	public function test_settings_checkbox_opts_into_assumed_consent(): void {
-		update_option( 'af_assume_consent_no_cmp', '1' );
+		update_option( 'almost_famous_assume_consent_no_cmp', '1' );
 		$this->assertTrue( $this->consent->has_consent() );
 	}
 
 	public function test_filter_can_override_settings_checkbox(): void {
 		// The filter receives the option-derived default and wins.
-		update_option( 'af_assume_consent_no_cmp', '1' );
+		update_option( 'almost_famous_assume_consent_no_cmp', '1' );
 		add_filter(
 			'almost_famous_default_consent',
 			static function (): bool {

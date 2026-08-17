@@ -56,7 +56,7 @@ class Test_Audiences extends TestCase {
 		$wpdb = new Af_Audiences_Wpdb();
 
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( 'bsh_test' ) );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( 'bsh_test' ) );
 		$this->client    = new Api_Client( $auth );
 		$this->cache     = new Api_Cache();
 		$this->audiences = new Audiences( $this->client, $this->cache );
@@ -148,8 +148,8 @@ class Test_Audiences extends TestCase {
 		$this->audiences->register_submenu();
 		$pages = af_test_get_menu_pages();
 		$this->assertCount( 1, $pages );
-		$this->assertSame( 'af_view_campaigns', $pages[0]['capability'] );
-		$this->assertSame( 'af-audiences', $pages[0]['menu_slug'] );
+		$this->assertSame( 'almost_famous_view_campaigns', $pages[0]['capability'] );
+		$this->assertSame( 'almost-famous-audiences', $pages[0]['menu_slug'] );
 	}
 
 	// -------------------------------------------------------------------
@@ -251,9 +251,9 @@ class Test_Audiences extends TestCase {
 	public function test_enqueue_page_data_localizes_credential_map_on_audiences_page(): void {
 		$this->mock_credential_fixtures();
 
-		$this->audiences->enqueue_page_data( 'almost-famous_page_af-audiences' );
+		$this->audiences->enqueue_page_data( 'bushido-almost-famous_page_almost-famous-audiences' );
 
-		$localized = get_option( '__localized_afAudienceData' );
+		$localized = get_option( '__localized_almostFamousAudienceData' );
 		$this->assertIsArray( $localized );
 		$this->assertSame( 'cred_meta', $localized['credentials']['meta'] );
 		$this->assertArrayHasKey( 'google', $localized['credentials'] );
@@ -263,6 +263,6 @@ class Test_Audiences extends TestCase {
 	public function test_enqueue_page_data_skips_other_admin_pages(): void {
 		$this->audiences->enqueue_page_data( 'index.php' );
 
-		$this->assertFalse( get_option( '__localized_afAudienceData' ) );
+		$this->assertFalse( get_option( '__localized_almostFamousAudienceData' ) );
 	}
 }

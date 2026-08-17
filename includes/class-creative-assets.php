@@ -24,14 +24,14 @@ class Creative_Assets {
 	 *
 	 * @var string
 	 */
-	private const SOURCE_META_OPTION = 'af_creative_asset_sources';
+	private const SOURCE_META_OPTION = 'almost_famous_creative_asset_sources';
 
 	/**
 	 * Option key for locally persisted approval state.
 	 *
 	 * @var string
 	 */
-	private const APPROVALS_OPTION = 'af_creative_asset_approvals';
+	private const APPROVALS_OPTION = 'almost_famous_creative_asset_approvals';
 
 	/**
 	 * Default maximum local creative size (25 MiB).

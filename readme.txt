@@ -1,5 +1,5 @@
 === Bushido Almost Famous ===
-Contributors: bushido
+Contributors: bushidoalmostfamous, bushido
 Tags: advertising, marketing, music, woocommerce, campaigns
 Requires at least: 6.4
 Tested up to: 7.0
@@ -97,7 +97,7 @@ No. Source and WordPress.org builds default to the production API and production
 
 = Can I configure a local or private Bushido environment? =
 
-Yes. Define both `AF_API_BASE_URL` and `AF_BUSHIDO_APP_URL` in `wp-config.php`. Partial, invalid, or mixed-layer overrides fail closed so a code cannot be minted in one environment and exchanged in another. Plain HTTP is accepted only for loopback development hosts.
+Yes. Define both `ALMOST_FAMOUS_API_BASE_URL` and `ALMOST_FAMOUS_BUSHIDO_APP_URL` in `wp-config.php`. The legacy `AF_API_BASE_URL` and `AF_BUSHIDO_APP_URL` names are still accepted. Partial, invalid, or mixed-layer overrides fail closed so a code cannot be minted in one environment and exchanged in another. Plain HTTP is accepted only for loopback development hosts.
 
 = Does the plugin store advertising-platform passwords or OAuth tokens? =
 

@@ -85,11 +85,11 @@ class Test_Uninstall extends TestCase {
 	 */
 	public function test_uninstall_no_constant_is_a_noop(): void {
 		$initial_options = array(
-			'af_api_key'                => 'secret',
-			'af_settings'               => array( 'cache_ttl_active' => 60 ),
-			'af_role_mapping'           => array( 'administrator' => 'bushido_admin' ),
-			'_transient_af_campaigns'   => array( 'id' => 1 ),
-			'_transient_timeout_af_x'   => 9999,
+			'almost_famous_api_key'                => 'secret',
+			'almost_famous_settings'               => array( 'cache_ttl_active' => 60 ),
+			'almost_famous_role_mapping'           => array( 'administrator' => 'bushido_admin' ),
+			'_transient_almost_famous_campaigns'   => array( 'id' => 1 ),
+			'_transient_timeout_almost_famous_x'   => 9999,
 			'_transient_other'          => 'keep',
 		);
 		$initial_roles = array( 'bushido_admin', 'administrator' );
@@ -101,49 +101,49 @@ class Test_Uninstall extends TestCase {
 	}
 
 	/**
-	 * With WP_UNINSTALL_PLUGIN defined, every `af_*` option is removed.
+	 * With WP_UNINSTALL_PLUGIN defined, every `almost_famous_*` option is removed.
 	 *
 	 * @return void
 	 */
-	public function test_uninstall_removes_af_options(): void {
+	public function test_uninstall_removes_almost_famous_options(): void {
 		$result = $this->run_uninstall(
 			true,
 			array(
-				'af_api_key'      => 'secret',
-				'af_settings'     => array( 'x' => 1 ),
-				'af_role_mapping' => array( 'administrator' => 'bushido_admin' ),
+				'almost_famous_api_key'      => 'secret',
+				'almost_famous_settings'     => array( 'x' => 1 ),
+				'almost_famous_role_mapping' => array( 'administrator' => 'bushido_admin' ),
 				'other_plugin'    => 'keep',
 			),
 			array( 'bushido_admin' )
 		);
 
-		$this->assertArrayNotHasKey( 'af_api_key', $result['options'] );
-		$this->assertArrayNotHasKey( 'af_settings', $result['options'] );
-		$this->assertArrayNotHasKey( 'af_role_mapping', $result['options'] );
+		$this->assertArrayNotHasKey( 'almost_famous_api_key', $result['options'] );
+		$this->assertArrayNotHasKey( 'almost_famous_settings', $result['options'] );
+		$this->assertArrayNotHasKey( 'almost_famous_role_mapping', $result['options'] );
 		$this->assertArrayHasKey( 'other_plugin', $result['options'] );
 	}
 
 	/**
-	 * With WP_UNINSTALL_PLUGIN defined, every `_transient_af_*` and
-	 * `_transient_timeout_af_*` row is removed.
+	 * With WP_UNINSTALL_PLUGIN defined, every `_transient_almost_famous_*` and
+	 * `_transient_timeout_almost_famous_*` row is removed.
 	 *
 	 * @return void
 	 */
-	public function test_uninstall_removes_af_transients(): void {
+	public function test_uninstall_removes_almost_famous_transients(): void {
 		$result = $this->run_uninstall(
 			true,
 			array(
-				'_transient_af_campaigns'         => array( 'id' => 1 ),
-				'_transient_timeout_af_campaigns' => time() + 60,
-				'_transient_af_analytics'         => array(),
+				'_transient_almost_famous_campaigns'         => array( 'id' => 1 ),
+				'_transient_timeout_almost_famous_campaigns' => time() + 60,
+				'_transient_almost_famous_analytics'         => array(),
 				'_transient_other'                => 'keep',
 			),
 			array()
 		);
 
-		$this->assertArrayNotHasKey( '_transient_af_campaigns', $result['options'] );
-		$this->assertArrayNotHasKey( '_transient_timeout_af_campaigns', $result['options'] );
-		$this->assertArrayNotHasKey( '_transient_af_analytics', $result['options'] );
+		$this->assertArrayNotHasKey( '_transient_almost_famous_campaigns', $result['options'] );
+		$this->assertArrayNotHasKey( '_transient_timeout_almost_famous_campaigns', $result['options'] );
+		$this->assertArrayNotHasKey( '_transient_almost_famous_analytics', $result['options'] );
 		$this->assertArrayHasKey( '_transient_other', $result['options'] );
 	}
 

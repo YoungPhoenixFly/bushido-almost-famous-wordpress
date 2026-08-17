@@ -1033,7 +1033,7 @@ if ( ! function_exists( 'wp_safe_redirect' ) ) {
 			'status' => $status,
 		);
 		if ( ! empty( $af_test_redirect_throws ) ) {
-			throw new RuntimeException( 'af_test_redirect:' . $url );
+			throw new RuntimeException( 'almost_famous_test_redirect:' . $url );
 		}
 		return true;
 	}

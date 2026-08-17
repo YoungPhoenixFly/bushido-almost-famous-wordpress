@@ -38,7 +38,7 @@ class Test_Consent_Integration extends TestCase {
 
 		// Most cookie/email tests need a stored key so requests actually fire.
 		update_option(
-			'af_api_key',
+			'almost_famous_api_key',
 			$this->auth->encrypt_api_key( 'bsh_consent_tests' )
 		);
 	}
@@ -203,7 +203,7 @@ class Test_Consent_Integration extends TestCase {
 				array(
 					'utm_source'   => 'meta',
 					'utm_campaign' => 'spring-promo',
-					'af_click_id'  => 'clk_1',
+					'almost_famous_click_id'  => 'clk_1',
 				)
 			),
 			new Af_Test_Wc_Order( 102, array() ),
@@ -213,12 +213,12 @@ class Test_Consent_Integration extends TestCase {
 
 		$this->assertTrue( $result['done'] );
 		$this->assertCount( 1, $result['data'] );
-		$this->assertSame( 'af-attribution', $result['data'][0]['group_id'] );
-		$this->assertSame( 'af-attribution-101', $result['data'][0]['item_id'] );
+		$this->assertSame( 'almost-famous-attribution', $result['data'][0]['group_id'] );
+		$this->assertSame( 'almost-famous-attribution-101', $result['data'][0]['item_id'] );
 
 		$names = array_column( $result['data'][0]['data'], 'name' );
 		$this->assertContains( 'utm_source', $names );
-		$this->assertContains( 'af_click_id', $names );
+		$this->assertContains( 'almost_famous_click_id', $names );
 
 		// Local-only processing — no backend request may fire.
 		$this->assertSame( array(), af_test_get_http_requests() );
@@ -258,7 +258,7 @@ class Test_Consent_Integration extends TestCase {
 
 		$this->assertTrue( $result['done'] );
 		$this->assertCount( 1, $result['data'] );
-		$this->assertSame( 'af-attribution-750', $result['data'][0]['item_id'] );
+		$this->assertSame( 'almost-famous-attribution-750', $result['data'][0]['item_id'] );
 		$this->assertSame( 'paged@example.test', $af_test_wc_order_queries[0]['billing_email'] );
 		$this->assertSame( 50, $af_test_wc_order_queries[0]['limit'] );
 		$this->assertSame( 2, $af_test_wc_order_queries[0]['paged'] );
@@ -278,7 +278,7 @@ class Test_Consent_Integration extends TestCase {
 		$this->assertTrue( $result['done'] );
 		$this->assertNotEmpty( $result['messages'] );
 
-		$this->assertNull( $order_with->get_meta( 'af_attribution' ) ?: null );
+		$this->assertNull( $order_with->get_meta( 'almost_famous_attribution' ) ?: null );
 		$this->assertTrue( $order_with->saved );
 		$this->assertFalse( $order_without->saved );
 
@@ -332,11 +332,11 @@ class Af_Test_Wc_Order {
 	 * Constructor.
 	 *
 	 * @param int   $id          Order id.
-	 * @param array $attribution af_attribution meta value (empty = none).
+	 * @param array $attribution almost_famous_attribution meta value (empty = none).
 	 */
 	public function __construct( int $id, array $attribution ) {
 		$this->id   = $id;
-		$this->meta = empty( $attribution ) ? array() : array( 'af_attribution' => $attribution );
+		$this->meta = empty( $attribution ) ? array() : array( 'almost_famous_attribution' => $attribution );
 	}
 
 	/**

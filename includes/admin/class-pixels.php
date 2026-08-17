@@ -32,14 +32,14 @@ class Pixels {
 	 *
 	 * @var string
 	 */
-	public const PAGE_SLUG = 'af-pixels';
+	public const PAGE_SLUG = 'almost-famous-pixels';
 
 	/**
 	 * Nonce action for the set-default form.
 	 *
 	 * @var string
 	 */
-	private const NONCE_ACTION = 'af_pixels_nonce';
+	private const NONCE_ACTION = 'almost_famous_pixels_nonce';
 
 	/**
 	 * API client instance.
@@ -86,7 +86,7 @@ class Pixels {
 			'bushido-almost-famous',
 			__( 'Pixels', 'bushido-almost-famous' ),
 			__( 'Pixels', 'bushido-almost-famous' ),
-			'af_view_campaigns',
+			'almost_famous_view_campaigns',
 			self::PAGE_SLUG,
 			array( $this, 'render' )
 		);
@@ -99,19 +99,19 @@ class Pixels {
 	 */
 	public function handle_set_default(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( ! isset( $_POST['af_set_default_pixel'] ) ) {
+		if ( ! isset( $_POST['almost_famous_set_default_pixel'] ) ) {
 			return;
 		}
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Unauthorized.', 'bushido-almost-famous' ) );
 		}
-		check_admin_referer( self::NONCE_ACTION, 'af_pixels_nonce' );
+		check_admin_referer( self::NONCE_ACTION, 'almost_famous_pixels_nonce' );
 
-		$pixel_id = sanitize_text_field( wp_unslash( $_POST['af_default_pixel_id'] ?? '' ) );
-		update_option( 'af_default_pixel_id', $pixel_id );
-		delete_transient( 'af_default_pixel_id_cache' );
+		$pixel_id = sanitize_text_field( wp_unslash( $_POST['almost_famous_default_pixel_id'] ?? '' ) );
+		update_option( 'almost_famous_default_pixel_id', $pixel_id );
+		delete_transient( 'almost_famous_default_pixel_id_cache' );
 
-		wp_safe_redirect( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '&af_pinned=1' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '&almost_famous_pinned=1' ) );
 		exit;
 	}
 
@@ -121,15 +121,15 @@ class Pixels {
 	 * @return void
 	 */
 	public function render(): void {
-		if ( ! current_user_can( 'af_view_campaigns' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'almost_famous_view_campaigns' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Unauthorized.', 'bushido-almost-famous' ) );
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$pinned_notice = ! empty( $_GET['af_pinned'] );
+		$pinned_notice = ! empty( $_GET['almost_famous_pinned'] );
 
 		$pixels  = $this->client->get_pixels();
-		$default = (string) get_option( 'af_default_pixel_id', '' );
+		$default = (string) get_option( 'almost_famous_default_pixel_id', '' );
 		?>
 		<div class="wrap af-pixels">
 			<h1><?php esc_html_e( 'Pixels', 'bushido-almost-famous' ); ?></h1>
@@ -148,8 +148,8 @@ class Pixels {
 				<p><?php esc_html_e( 'No pixels configured yet. Create one from the Bushido dashboard.', 'bushido-almost-famous' ); ?></p>
 			<?php else : ?>
 				<form method="post">
-					<?php wp_nonce_field( self::NONCE_ACTION, 'af_pixels_nonce' ); ?>
-					<input type="hidden" name="af_set_default_pixel" value="1" />
+					<?php wp_nonce_field( self::NONCE_ACTION, 'almost_famous_pixels_nonce' ); ?>
+					<input type="hidden" name="almost_famous_set_default_pixel" value="1" />
 
 					<table class="widefat striped">
 						<thead>
@@ -174,7 +174,7 @@ class Pixels {
 									<td>
 										<input
 											type="radio"
-											name="af_default_pixel_id"
+											name="almost_famous_default_pixel_id"
 											value="<?php echo esc_attr( $id ); ?>"
 											<?php checked( $id, $default ); ?>
 										/>

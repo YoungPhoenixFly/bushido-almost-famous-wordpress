@@ -42,8 +42,8 @@ class Test_Webhook_Receiver extends TestCase {
 		af_test_reset();
 
 		$this->auth = new Api_Auth();
-		update_option( 'af_webhook_secret', $this->auth->encrypt( self::SECRET ) );
-		update_option( 'af_api_key', $this->auth->encrypt_api_key( 'bsh_test_key' ) );
+		update_option( 'almost_famous_webhook_secret', $this->auth->encrypt( self::SECRET ) );
+		update_option( 'almost_famous_api_key', $this->auth->encrypt_api_key( 'bsh_test_key' ) );
 
 		$handlers       = new Webhook_Handlers( new Api_Cache() );
 		$this->receiver = new Webhook_Receiver( $handlers, $this->auth );
@@ -110,7 +110,7 @@ class Test_Webhook_Receiver extends TestCase {
 	}
 
 	public function test_missing_secret_option_rejects_all_signatures(): void {
-		delete_option( 'af_webhook_secret' );
+		delete_option( 'almost_famous_webhook_secret' );
 
 		$body      = wp_json_encode( array( 'event_type' => 'campaign.updated' ) );
 		$ts        = (string) time();
@@ -203,12 +203,12 @@ class Test_Webhook_Receiver extends TestCase {
 		// First delivery fails (500) and must NOT record the idempotency key.
 		$first = $receiver->handle_webhook( $this->build_request( $body, $signature, $ts ) );
 		$this->assertSame( 500, $first->get_status() );
-		$this->assertFalse( get_transient( 'af_webhook_seen_retry-me' ) );
+		$this->assertFalse( get_transient( 'almost_famous_webhook_seen_retry-me' ) );
 
 		// The retry is processed (200), not deduplicated to 409.
 		$second = $receiver->handle_webhook( $this->build_request( $body, $signature, $ts ) );
 		$this->assertSame( 200, $second->get_status() );
-		$this->assertNotFalse( get_transient( 'af_webhook_seen_retry-me' ) );
+		$this->assertNotFalse( get_transient( 'almost_famous_webhook_seen_retry-me' ) );
 		$this->assertSame( 2, $flaky->calls );
 	}
 
@@ -228,7 +228,7 @@ class Test_Webhook_Receiver extends TestCase {
 			$this->assertSame( 200, $resp->get_status() );
 		}
 
-		$log = get_transient( 'af_webhook_event_log' );
+		$log = get_transient( 'almost_famous_webhook_event_log' );
 		$this->assertIsArray( $log );
 		$this->assertCount( 50, $log );
 

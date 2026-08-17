@@ -1,7 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
-const portalConfig = () => window.afPublicPortal || {};
+const portalConfig = () => window.almostFamousPublicPortal || {};
 const ep = () => portalConfig().endpoints || {};
 
 function buildHeaders( extraHeaders = {} ) {

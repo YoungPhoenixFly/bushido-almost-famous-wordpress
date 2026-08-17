@@ -4,7 +4,7 @@
 > these webhooks or registers a site's callback URL and secret, so the plugin's
 > receiver route is **not registered by default**. Enable it ahead of a backend
 > dispatcher with `add_filter( 'almost_famous/enable_webhooks', '__return_true' );`
-> and seed the shared secret into the `af_webhook_secret` option. Until then,
+> and seed the shared secret into the `almost_famous_webhook_secret` option. Until then,
 > data freshness comes from cache TTLs and manual refresh. This document
 > specifies the contract a future dispatcher must implement.
 
@@ -59,7 +59,7 @@ await fetch(url, {
 
 ## Secret rotation
 
-The secret is stored encrypted in the `af_webhook_secret` WP option, set by
+The secret is stored encrypted in the `almost_famous_webhook_secret` WP option, set by
 the site admin via Settings → Webhooks. Rotating the secret requires the
 backend to coordinate the cutover (publish to both old and new secret for
 the rotation window).

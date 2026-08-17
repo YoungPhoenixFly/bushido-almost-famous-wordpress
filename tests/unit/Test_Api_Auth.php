@@ -29,8 +29,8 @@ class Test_Api_Auth extends TestCase {
 			}
 		};
 
-		$this->assertSame( '', $auth->encrypt( 'af_secret' ) );
-		$this->assertFalse( $auth->store_api_key( 'af_secret' ) );
+		$this->assertSame( '', $auth->encrypt( 'almost_famous_secret' ) );
+		$this->assertFalse( $auth->store_api_key( 'almost_famous_secret' ) );
 	}
 
 	/**
@@ -126,11 +126,11 @@ class Test_Api_Auth extends TestCase {
 	 */
 	public function test_decrypt_api_key_migrates_legacy_cbc_value(): void {
 		$legacy = $this->encrypt_legacy( 'bsh_legacy_key' );
-		update_option( 'af_api_key', $legacy );
+		update_option( 'almost_famous_api_key', $legacy );
 
 		$this->assertSame( 'bsh_legacy_key', $this->auth->decrypt_api_key() );
 
-		$migrated = (string) get_option( 'af_api_key', '' );
+		$migrated = (string) get_option( 'almost_famous_api_key', '' );
 		$this->assertStringStartsWith( 'v2:', $migrated );
 		$this->assertSame( 'bsh_legacy_key', $this->auth->decrypt( $migrated ) );
 	}
@@ -142,11 +142,11 @@ class Test_Api_Auth extends TestCase {
 	 */
 	public function test_decrypt_api_key_preserves_legacy_value_when_migration_write_fails(): void {
 		$legacy = $this->encrypt_legacy( 'bsh_legacy_survivor' );
-		update_option( 'af_api_key', $legacy );
-		af_test_fail_option_updates( 'af_api_key' );
+		update_option( 'almost_famous_api_key', $legacy );
+		af_test_fail_option_updates( 'almost_famous_api_key' );
 
 		$this->assertSame( 'bsh_legacy_survivor', $this->auth->decrypt_api_key() );
-		$this->assertSame( $legacy, get_option( 'af_api_key', '' ) );
+		$this->assertSame( $legacy, get_option( 'almost_famous_api_key', '' ) );
 		$this->assertSame( 'bsh_legacy_survivor', $this->auth->decrypt_api_key() );
 	}
 

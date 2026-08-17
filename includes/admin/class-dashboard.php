@@ -42,21 +42,21 @@ class Dashboard {
 	 *
 	 * @var string
 	 */
-	private const CREATE_CONSOLE_ACTION = 'af_create_console_page';
+	private const CREATE_CONSOLE_ACTION = 'almost_famous_create_console_page';
 
 	/**
 	 * Nonce action for the create-console-page form.
 	 *
 	 * @var string
 	 */
-	private const CREATE_CONSOLE_NONCE = 'af_create_console_page_nonce';
+	private const CREATE_CONSOLE_NONCE = 'almost_famous_create_console_page_nonce';
 
 	/**
 	 * Option that caches the resolved console page id.
 	 *
 	 * @var string
 	 */
-	private const CONSOLE_PAGE_OPTION = 'af_console_page_id';
+	private const CONSOLE_PAGE_OPTION = 'almost_famous_console_page_id';
 
 	/**
 	 * Register hooks.
@@ -78,7 +78,7 @@ class Dashboard {
 		add_menu_page(
 			__( 'Bushido Almost Famous', 'bushido-almost-famous' ),
 			__( 'Bushido Almost Famous', 'bushido-almost-famous' ),
-			'af_view_campaigns',
+			'almost_famous_view_campaigns',
 			self::PAGE_SLUG,
 			array( $this, 'render' ),
 			'dashicons-megaphone',
@@ -90,7 +90,7 @@ class Dashboard {
 			self::PAGE_SLUG,
 			__( 'Home', 'bushido-almost-famous' ),
 			__( 'Home', 'bushido-almost-famous' ),
-			'af_view_campaigns',
+			'almost_famous_view_campaigns',
 			self::PAGE_SLUG,
 			array( $this, 'render' )
 		);
@@ -110,7 +110,7 @@ class Dashboard {
 		}
 
 		wp_enqueue_style(
-			'af-admin',
+			'almost-famous-admin',
 			ALMOST_FAMOUS_PLUGIN_URL . 'assets/css/admin.css',
 			array(),
 			ALMOST_FAMOUS_VERSION
@@ -123,7 +123,7 @@ class Dashboard {
 	 * @return bool True when setup is complete and an API key is stored.
 	 */
 	public function is_connected(): bool {
-		return (bool) get_option( 'af_setup_complete', false ) && ( new Api_Auth() )->has_api_key();
+		return (bool) get_option( 'almost_famous_setup_complete', false ) && ( new Api_Auth() )->has_api_key();
 	}
 
 	/**
@@ -146,7 +146,7 @@ class Dashboard {
 	/**
 	 * Platform health rows, refreshed from the backend when stale.
 	 *
-	 * The af_platform_status transient (also consumed by Admin_Notices) had no
+	 * The almost_famous_platform_status transient (also consumed by Admin_Notices) had no
 	 * producer, so the degraded banner could never fire. Rebuild it here from
 	 * the org's platform connections: the backend reports lastHealthStatus as
 	 * healthy/unhealthy, which we map to this surface's degraded flag.
@@ -154,7 +154,7 @@ class Dashboard {
 	 * @return array<int, array{id: string, name: string, status: string}>
 	 */
 	private function get_platform_status(): array {
-		$cached = get_transient( 'af_platform_status' );
+		$cached = get_transient( 'almost_famous_platform_status' );
 		if ( is_array( $cached ) ) {
 			return $cached;
 		}
@@ -174,7 +174,7 @@ class Dashboard {
 			);
 		}
 
-		set_transient( 'af_platform_status', $rows, 15 * MINUTE_IN_SECONDS );
+		set_transient( 'almost_famous_platform_status', $rows, 15 * MINUTE_IN_SECONDS );
 
 		return $rows;
 	}
@@ -244,11 +244,11 @@ class Dashboard {
 	 * @return void
 	 */
 	public function handle_create_console_page(): void {
-		if ( ! current_user_can( 'af_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'almost_famous_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Unauthorized.', 'bushido-almost-famous' ) );
 		}
 
-		check_admin_referer( self::CREATE_CONSOLE_NONCE, 'af_console_nonce' );
+		check_admin_referer( self::CREATE_CONSOLE_NONCE, 'almost_famous_console_nonce' );
 
 		$page_id = wp_insert_post(
 			array(
@@ -291,14 +291,14 @@ class Dashboard {
 	 * @return void
 	 */
 	public function render(): void {
-		if ( ! current_user_can( 'af_view_campaigns' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'almost_famous_view_campaigns' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Unauthorized.', 'bushido-almost-famous' ) );
 		}
 
 		$hub             = $this;
 		$is_connected    = $this->is_connected();
 		$degraded        = $this->is_degraded();
-		$credential_mode = (string) get_option( 'af_org_credential_mode', 'agency' );
+		$credential_mode = (string) get_option( 'almost_famous_org_credential_mode', 'agency' );
 		$console_url     = $is_connected ? $this->get_console_url() : '';
 
 		include ALMOST_FAMOUS_PLUGIN_DIR . 'includes/admin/views/home.php';

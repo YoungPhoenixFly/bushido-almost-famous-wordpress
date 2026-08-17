@@ -14,7 +14,7 @@
  *      ?status=success&credentialId=...&client_state=...
  *   5. Plugin validates client_state via hash_equals, consumes the transient,
  *      fetches the connection detail from backend, persists it as
- *      af_accounts[platform], and redirects to wp-admin with a success flag.
+ *      almost_famous_accounts[platform], and redirects to wp-admin with a success flag.
  *
  * Disconnect calls DELETE /auth/connections/:id, then drops the local row.
  *
@@ -85,8 +85,7 @@ class Oauth_Controller {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'callback' ),
-				// Authenticated via the signed client_state nonce, not WP auth.
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this, 'allow_oauth_callback' ),
 			)
 		);
 
@@ -108,13 +107,26 @@ class Oauth_Controller {
 	}
 
 	/**
-	 * Permission callback for start/disconnect: requires af_manage_accounts
+	 * Permission callback for start/disconnect: requires almost_famous_manage_accounts
 	 * (with manage_options falling through for full admins).
 	 *
 	 * @return bool
 	 */
 	public function can_manage_accounts(): bool {
-		return current_user_can( 'af_manage_accounts' ) || current_user_can( 'manage_options' );
+		return current_user_can( 'almost_famous_manage_accounts' ) || current_user_can( 'manage_options' );
+	}
+
+	/**
+	 * OAuth callback is a browser redirect from Bushido / the ad platform.
+	 *
+	 * WordPress cookie auth cannot be required: the redirect never carries a
+	 * WP REST nonce. The handler authenticates the request with the signed
+	 * client_state nonce stored in a user transient.
+	 *
+	 * @return bool
+	 */
+	public function allow_oauth_callback(): bool {
+		return true;
 	}
 
 	/**
@@ -142,7 +154,7 @@ class Oauth_Controller {
 		$user_id = get_current_user_id();
 
 		set_transient(
-			'af_oauth_state_' . $user_id,
+			'almost_famous_oauth_state_' . $user_id,
 			array(
 				'state'    => $state,
 				'platform' => $platform,
@@ -216,31 +228,31 @@ class Oauth_Controller {
 	 */
 	public function callback( \WP_REST_Request $req ): \WP_REST_Response {
 		$user_id   = get_current_user_id();
-		$stored    = get_transient( 'af_oauth_state_' . $user_id );
-		$admin_url = admin_url( 'admin.php?page=af-accounts' );
+		$stored    = get_transient( 'almost_famous_oauth_state_' . $user_id );
+		$admin_url = admin_url( 'admin.php?page=almost-famous-accounts' );
 
 		if ( ! is_array( $stored ) || empty( $stored['state'] ) ) {
-			return $this->redirect( add_query_arg( 'af_connect_error', 'missing_state', $admin_url ) );
+			return $this->redirect( add_query_arg( 'almost_famous_connect_error', 'missing_state', $admin_url ) );
 		}
 
 		// Consume the state immediately to prevent replay regardless of outcome.
-		delete_transient( 'af_oauth_state_' . $user_id );
+		delete_transient( 'almost_famous_oauth_state_' . $user_id );
 
 		$client_state = (string) $req->get_param( 'client_state' );
 		if ( ! hash_equals( (string) $stored['state'], $client_state ) ) {
-			return $this->redirect( add_query_arg( 'af_connect_error', 'invalid_state', $admin_url ) );
+			return $this->redirect( add_query_arg( 'almost_famous_connect_error', 'invalid_state', $admin_url ) );
 		}
 
 		$status = (string) $req->get_param( 'status' );
 		if ( 'success' !== $status ) {
 			$reason = (string) $req->get_param( 'error' );
 			$reason = '' !== $reason ? $reason : 'oauth_failed';
-			return $this->redirect( add_query_arg( 'af_connect_error', $reason, $admin_url ) );
+			return $this->redirect( add_query_arg( 'almost_famous_connect_error', $reason, $admin_url ) );
 		}
 
 		$credential_id = (string) $req->get_param( 'credentialId' );
 		if ( '' === $credential_id ) {
-			return $this->redirect( add_query_arg( 'af_connect_error', 'missing_credential', $admin_url ) );
+			return $this->redirect( add_query_arg( 'almost_famous_connect_error', 'missing_credential', $admin_url ) );
 		}
 
 		// The backend has no GET /auth/connections/{id} route; get_connection()
@@ -249,10 +261,10 @@ class Oauth_Controller {
 		$platform = strtolower( (string) ( $conn?->platform ?? $stored['platform'] ?? '' ) );
 
 		if ( '' === $platform ) {
-			return $this->redirect( add_query_arg( 'af_connect_error', 'backend_error', $admin_url ) );
+			return $this->redirect( add_query_arg( 'almost_famous_connect_error', 'backend_error', $admin_url ) );
 		}
 
-		$accounts              = (array) get_option( 'af_accounts', array() );
+		$accounts              = (array) get_option( 'almost_famous_accounts', array() );
 		$accounts[ $platform ] = array(
 			'credentialId' => $credential_id,
 			'accountId'    => (string) ( $conn?->accountId ?? '' ),
@@ -260,9 +272,9 @@ class Oauth_Controller {
 			'status'       => '' !== (string) ( $conn?->status ?? '' ) ? (string) $conn->status : 'active',
 			'connectedAt'  => time(),
 		);
-		update_option( 'af_accounts', $accounts );
+		update_option( 'almost_famous_accounts', $accounts );
 
-		return $this->redirect( add_query_arg( 'af_connected', $platform, $admin_url ) );
+		return $this->redirect( add_query_arg( 'almost_famous_connected', $platform, $admin_url ) );
 	}
 
 	/**
@@ -273,7 +285,7 @@ class Oauth_Controller {
 	 */
 	public function disconnect( \WP_REST_Request $req ): \WP_REST_Response {
 		$platform = strtolower( (string) $req->get_param( 'platform' ) );
-		$accounts = (array) get_option( 'af_accounts', array() );
+		$accounts = (array) get_option( 'almost_famous_accounts', array() );
 
 		if ( ! isset( $accounts[ $platform ] ) ) {
 			return new \WP_REST_Response( array( 'ok' => true ), 200 );
@@ -298,7 +310,7 @@ class Oauth_Controller {
 		}
 
 		unset( $accounts[ $platform ] );
-		update_option( 'af_accounts', $accounts );
+		update_option( 'almost_famous_accounts', $accounts );
 
 		return new \WP_REST_Response( array( 'ok' => true ), 200 );
 	}

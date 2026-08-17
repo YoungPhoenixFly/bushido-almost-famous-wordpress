@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * WordPress admin notice management.
  *
  * On admin_init, checks:
- *   - af_platform_status transient for degraded platforms
- *   - af_upgrade_required transient for plugin update notices
+ *   - almost_famous_platform_status transient for degraded platforms
+ *   - almost_famous_upgrade_required transient for plugin update notices
  *
  * Notices are dismissible and stored in user meta to prevent re-display.
  */
@@ -33,14 +33,14 @@ class Admin_Notices {
 	 *
 	 * @var string
 	 */
-	private const DISMISSED_META_PREFIX = 'af_dismissed_notice_';
+	private const DISMISSED_META_PREFIX = 'almost_famous_dismissed_notice_';
 
 	/**
 	 * Nonce action for AJAX dismiss.
 	 *
 	 * @var string
 	 */
-	private const DISMISS_NONCE_ACTION = 'af_dismiss_notice';
+	private const DISMISS_NONCE_ACTION = 'almost_famous_dismiss_notice';
 
 	/**
 	 * Collected notices to display.
@@ -58,7 +58,7 @@ class Admin_Notices {
 		add_action( 'admin_init', array( $this, 'check_platform_status' ) );
 		add_action( 'admin_init', array( $this, 'check_upgrade_required' ) );
 		add_action( 'admin_notices', array( $this, 'display_notices' ) );
-		add_action( 'wp_ajax_af_dismiss_notice', array( $this, 'handle_dismiss' ) );
+		add_action( 'wp_ajax_almost_famous_dismiss_notice', array( $this, 'handle_dismiss' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_dismiss_script' ) );
 	}
 
@@ -68,7 +68,7 @@ class Admin_Notices {
 	 * @return void
 	 */
 	public function check_platform_status(): void {
-		$platform_status = get_transient( 'af_platform_status' );
+		$platform_status = get_transient( 'almost_famous_platform_status' );
 
 		if ( ! is_array( $platform_status ) || empty( $platform_status ) ) {
 			return;
@@ -107,14 +107,14 @@ class Admin_Notices {
 	}
 
 	/**
-	 * Check af_upgrade_required transient and display upgrade notice.
+	 * Check almost_famous_upgrade_required transient and display upgrade notice.
 	 *
 	 * Set by Api_Client when the API returns HTTP 426 Upgrade Required.
 	 *
 	 * @return void
 	 */
 	public function check_upgrade_required(): void {
-		$upgrade_data = get_transient( 'af_upgrade_required' );
+		$upgrade_data = get_transient( 'almost_famous_upgrade_required' );
 
 		if ( ! is_array( $upgrade_data ) || empty( $upgrade_data ) ) {
 			return;
@@ -206,7 +206,7 @@ class Admin_Notices {
 	public function handle_dismiss(): void {
 		check_ajax_referer( self::DISMISS_NONCE_ACTION, 'nonce' );
 
-		if ( ! current_user_can( 'af_view_campaigns' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'almost_famous_view_campaigns' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Unauthorized.', 'bushido-almost-famous' ) ), 403 );
 			return;
 		}
@@ -248,15 +248,23 @@ class Admin_Notices {
 	public function enqueue_dismiss_script(): void {
 		// Only enqueue on Bushido Almost Famous admin pages, or when notices exist.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$page       = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
-		$is_af_page = ( 0 === strpos( $page, 'bushido-almost-famous' ) || 0 === strpos( $page, 'af-' ) );
+		$page                  = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+		$is_almost_famous_page = ( 0 === strpos( $page, 'bushido-almost-famous' ) || 0 === strpos( $page, 'almost-famous-' ) );
 
-		if ( ! $is_af_page && empty( $this->notices ) ) {
+		if ( ! $is_almost_famous_page && empty( $this->notices ) ) {
 			return;
 		}
 
+		wp_register_script(
+			'almost-famous-notice-dismiss',
+			'',
+			array(),
+			ALMOST_FAMOUS_VERSION,
+			true
+		);
+		wp_enqueue_script( 'almost-famous-notice-dismiss' );
 		wp_add_inline_script(
-			'common',
+			'almost-famous-notice-dismiss',
 			sprintf(
 				'( function() {
 					"use strict";
@@ -268,7 +276,7 @@ class Admin_Notices {
 						var noticeId = notice.getAttribute( "data-af-notice-id" );
 						if ( ! noticeId ) return;
 						var data = new FormData();
-						data.append( "action", "af_dismiss_notice" );
+						data.append( "action", "almost_famous_dismiss_notice" );
 						data.append( "nonce", "%s" );
 						data.append( "notice_id", noticeId );
 						fetch( "%s", { method: "POST", credentials: "same-origin", body: data } );

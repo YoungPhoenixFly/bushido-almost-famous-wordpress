@@ -1,6 +1,6 @@
 <?php
 /**
- * Tests that every Bushido Almost Famous admin page is gated on an af_* capability
+ * Tests that every Bushido Almost Famous admin page is gated on an almost_famous_* capability
  * (with manage_options fallback) instead of bare manage_options.
  *
  * @package AlmostFamous
@@ -50,46 +50,46 @@ class Test_Admin_Capability_Gating extends TestCase {
 		return null;
 	}
 
-	public function test_dashboard_uses_af_view_campaigns(): void {
+	public function test_dashboard_uses_almost_famous_view_campaigns(): void {
 		( new Dashboard() )->register_page();
 
 		$entry = $this->find_page( Dashboard::PAGE_SLUG );
 		$this->assertNotNull( $entry, 'Dashboard page must register.' );
-		$this->assertSame( 'af_view_campaigns', $entry['capability'] );
+		$this->assertSame( 'almost_famous_view_campaigns', $entry['capability'] );
 	}
 
-	public function test_audiences_uses_af_view_campaigns(): void {
+	public function test_audiences_uses_almost_famous_view_campaigns(): void {
 		( new Audiences( $this->api, $this->cache ) )->register_submenu();
-		$entry = $this->find_page( 'af-audiences' );
+		$entry = $this->find_page( 'almost-famous-audiences' );
 		$this->assertNotNull( $entry );
-		$this->assertSame( 'af_view_campaigns', $entry['capability'] );
+		$this->assertSame( 'almost_famous_view_campaigns', $entry['capability'] );
 	}
 
-	public function test_creatives_uses_af_view_campaigns(): void {
+	public function test_creatives_uses_almost_famous_view_campaigns(): void {
 		( new Creatives( $this->api, $this->cache ) )->register_submenu();
-		$entry = $this->find_page( 'af-creatives' );
+		$entry = $this->find_page( 'almost-famous-creatives' );
 		$this->assertNotNull( $entry );
-		$this->assertSame( 'af_view_campaigns', $entry['capability'] );
+		$this->assertSame( 'almost_famous_view_campaigns', $entry['capability'] );
 	}
 
-	public function test_settings_uses_af_manage_settings(): void {
+	public function test_settings_uses_almost_famous_manage_settings(): void {
 		( new Settings( $this->api ) )->register_page();
 		$entry = $this->find_page( Settings::PAGE_SLUG );
 		$this->assertNotNull( $entry );
-		$this->assertSame( 'af_manage_settings', $entry['capability'] );
+		$this->assertSame( 'almost_famous_manage_settings', $entry['capability'] );
 	}
 
-	public function test_setup_wizard_uses_af_manage_settings(): void {
+	public function test_setup_wizard_uses_almost_famous_manage_settings(): void {
 		( new Setup_Wizard( $this->auth, $this->api ) )->register_page();
 		$entry = $this->find_page( Setup_Wizard::PAGE_SLUG );
 		$this->assertNotNull( $entry );
-		$this->assertSame( 'af_manage_settings', $entry['capability'] );
+		$this->assertSame( 'almost_famous_manage_settings', $entry['capability'] );
 	}
 
-	public function test_accounts_uses_af_manage_accounts(): void {
+	public function test_accounts_uses_almost_famous_manage_accounts(): void {
 		( new Accounts( $this->api ) )->register_page();
 		$entry = $this->find_page( Accounts::PAGE_SLUG );
 		$this->assertNotNull( $entry );
-		$this->assertSame( 'af_manage_accounts', $entry['capability'] );
+		$this->assertSame( 'almost_famous_manage_accounts', $entry['capability'] );
 	}
 }

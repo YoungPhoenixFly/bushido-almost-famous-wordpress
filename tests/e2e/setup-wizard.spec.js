@@ -16,13 +16,13 @@ test.describe( 'Setup Wizard', () => {
 		try {
 			wpCli( 'plugin', 'activate', 'bushido-almost-famous' );
 		} catch ( _ ) {}
-		wpCli( 'eval', 'af_e2e_reset_connection();' );
+		wpCli( 'eval', 'almost_famous_e2e_reset_connection();' );
 		wpCli( 'plugin', 'deactivate', 'bushido-almost-famous' );
 		wpCli( 'plugin', 'activate', 'bushido-almost-famous' );
 	} );
 
 	test.afterAll( () => {
-		wpCli( 'eval', 'af_e2e_seed_connected_site("agency");' );
+		wpCli( 'eval', 'almost_famous_e2e_seed_connected_site("agency");' );
 	} );
 
 	test( 'auto-redirects to wizard, walks all 3 steps, then renders dashboard', async ( {
@@ -31,7 +31,7 @@ test.describe( 'Setup Wizard', () => {
 	} ) => {
 		// Step 1 — landing on wp-admin triggers the one-shot redirect transient.
 		await admin.visitAdminPage( 'index.php' );
-		await page.waitForURL( /page=af-setup-wizard/ );
+		await page.waitForURL( /page=almost-famous-setup-wizard/ );
 		await expect(
 			page.getByRole( 'heading', {
 				name: /Bushido Almost Famous Setup/i,
@@ -48,7 +48,7 @@ test.describe( 'Setup Wizard', () => {
 			.getByText( 'I already have an API key', { exact: true } )
 			.click();
 		await page
-			.locator( '#af_api_key' )
+			.locator( '#almost_famous_api_key' )
 			.fill( 'bsh_live_e2e_test_key_xxxxxx' );
 		await page.getByRole( 'button', { name: /Save & Verify/i } ).click();
 

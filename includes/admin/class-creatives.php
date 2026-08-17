@@ -72,8 +72,8 @@ class Creatives {
 			'bushido-almost-famous',
 			__( 'Creatives', 'bushido-almost-famous' ),
 			__( 'Creatives', 'bushido-almost-famous' ),
-			'af_view_campaigns',
-			'af-creatives',
+			'almost_famous_view_campaigns',
+			'almost-famous-creatives',
 			array( $this, 'render_page' )
 		);
 	}
@@ -106,24 +106,24 @@ class Creatives {
 	 * @return void
 	 */
 	public function handle_upload(): void {
-		if ( ! isset( $_POST['af_creative_upload_nonce'] ) ) {
+		if ( ! isset( $_POST['almost_famous_creative_upload_nonce'] ) ) {
 			return;
 		}
 
 		if ( ! wp_verify_nonce(
-			sanitize_text_field( wp_unslash( $_POST['af_creative_upload_nonce'] ) ),
-			'af_creative_upload'
+			sanitize_text_field( wp_unslash( $_POST['almost_famous_creative_upload_nonce'] ) ),
+			'almost_famous_creative_upload'
 		) ) {
 			wp_die( esc_html__( 'Security check failed.', 'bushido-almost-famous' ) );
 		}
 
-		if ( ! current_user_can( 'af_manage_campaigns' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'almost_famous_manage_campaigns' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Permission denied.', 'bushido-almost-famous' ) );
 		}
 
 		// Check if a media library attachment ID was provided.
-		$attachment_id = isset( $_POST['af_source_attachment_id'] )
-			? absint( $_POST['af_source_attachment_id'] )
+		$attachment_id = isset( $_POST['almost_famous_source_attachment_id'] )
+			? absint( $_POST['almost_famous_source_attachment_id'] )
 			: 0;
 
 		$asset_url     = '';
@@ -139,7 +139,7 @@ class Creatives {
 			$mime_type     = (string) get_post_mime_type( $attachment_id );
 			$file_size     = file_exists( $file_path ) ? (int) filesize( $file_path ) : 0;
 			$stored_attach = $attachment_id;
-		} elseif ( ! empty( $_FILES['af_source_asset'] ) && ! empty( $_FILES['af_source_asset']['name'] ) ) {
+		} elseif ( ! empty( $_FILES['almost_famous_source_asset'] ) && ! empty( $_FILES['almost_famous_source_asset']['name'] ) ) {
 			// Handle direct file upload.
 			$overrides = array(
 				'test_form' => false,
@@ -153,11 +153,11 @@ class Creatives {
 				),
 			);
 
-			$uploaded = wp_handle_upload( $_FILES['af_source_asset'], $overrides );
+			$uploaded = wp_handle_upload( $_FILES['almost_famous_source_asset'], $overrides );
 
 			if ( isset( $uploaded['error'] ) ) {
-				set_transient( 'af_creative_error', $uploaded['error'], 30 );
-				wp_safe_redirect( admin_url( 'admin.php?page=af-creatives' ) );
+				set_transient( 'almost_famous_creative_error', $uploaded['error'], 30 );
+				wp_safe_redirect( admin_url( 'admin.php?page=almost-famous-creatives' ) );
 				exit;
 			}
 
@@ -185,13 +185,13 @@ class Creatives {
 		}
 
 		if ( empty( $asset_url ) || empty( $file_path ) || empty( $mime_type ) || $file_size <= 0 ) {
-			set_transient( 'af_creative_error', __( 'No source asset provided.', 'bushido-almost-famous' ), 30 );
-			wp_safe_redirect( admin_url( 'admin.php?page=af-creatives' ) );
+			set_transient( 'almost_famous_creative_error', __( 'No source asset provided.', 'bushido-almost-famous' ), 30 );
+			wp_safe_redirect( admin_url( 'admin.php?page=almost-famous-creatives' ) );
 			exit;
 		}
 
-		$creative_name = isset( $_POST['af_creative_name'] )
-			? sanitize_text_field( wp_unslash( $_POST['af_creative_name'] ) )
+		$creative_name = isset( $_POST['almost_famous_creative_name'] )
+			? sanitize_text_field( wp_unslash( $_POST['almost_famous_creative_name'] ) )
 			: __( 'Untitled Creative', 'bushido-almost-famous' );
 
 		$response = Creative_Assets::upload_asset_from_file(
@@ -213,20 +213,20 @@ class Creatives {
 		$this->cache->delete_by_prefix( 'creatives' );
 
 		if ( isset( $response['error'] ) ) {
-			set_transient( 'af_creative_error', $response['error']->message, 30 );
+			set_transient( 'almost_famous_creative_error', $response['error']->message, 30 );
 		} else {
 			$creative_id = $response['data']['id'] ?? '';
 			$message     = __( 'Creative asset uploaded successfully.', 'bushido-almost-famous' );
 
-			set_transient( 'af_creative_success', $message, 30 );
+			set_transient( 'almost_famous_creative_success', $message, 30 );
 
 			if ( ! empty( $creative_id ) ) {
-				wp_safe_redirect( admin_url( 'admin.php?page=af-creatives&creative_id=' . $creative_id ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=almost-famous-creatives&creative_id=' . $creative_id ) );
 				exit;
 			}
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=af-creatives' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=almost-famous-creatives' ) );
 		exit;
 	}
 

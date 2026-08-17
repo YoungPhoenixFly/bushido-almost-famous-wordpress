@@ -52,7 +52,7 @@ $almost_famous_signup_url = add_query_arg(
 			<p>
 				<a
 					class="button button-primary button-hero"
-					href="<?php echo esc_url( admin_url( 'admin.php?page=af-setup-wizard' ) ); ?>"
+					href="<?php echo esc_url( admin_url( 'admin.php?page=almost-famous-setup-wizard' ) ); ?>"
 				>
 					<?php esc_html_e( 'Connect your Bushido account', 'bushido-almost-famous' ); ?>
 				</a>
@@ -92,7 +92,7 @@ $almost_famous_signup_url = add_query_arg(
 					<?php esc_html_e( 'Create a page for the campaign console so you and your team can browse, launch, and track campaigns on the front end.', 'bushido-almost-famous' ); ?>
 				</p>
 				<form method="post" action="<?php echo esc_url( $hub->get_create_console_action_url() ); ?>">
-					<?php wp_nonce_field( $hub->get_create_console_nonce_action(), 'af_console_nonce' ); ?>
+					<?php wp_nonce_field( $hub->get_create_console_nonce_action(), 'almost_famous_console_nonce' ); ?>
 					<button type="submit" class="button button-secondary">
 						<?php esc_html_e( 'Create console page', 'bushido-almost-famous' ); ?>
 					</button>
@@ -103,19 +103,19 @@ $almost_famous_signup_url = add_query_arg(
 		<div class="card">
 			<h2><?php esc_html_e( 'Configure', 'bushido-almost-famous' ); ?></h2>
 			<div class="af-hub-links">
-				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=af-audiences' ) ); ?>">
+				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=almost-famous-audiences' ) ); ?>">
 					<?php esc_html_e( 'Audiences', 'bushido-almost-famous' ); ?>
 				</a>
-				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=af-creatives' ) ); ?>">
+				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=almost-famous-creatives' ) ); ?>">
 					<?php esc_html_e( 'Creatives', 'bushido-almost-famous' ); ?>
 				</a>
-				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=af-pixels' ) ); ?>">
+				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=almost-famous-pixels' ) ); ?>">
 					<?php esc_html_e( 'Conversions', 'bushido-almost-famous' ); ?>
 				</a>
-				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=af-accounts' ) ); ?>">
+				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=almost-famous-accounts' ) ); ?>">
 					<?php esc_html_e( 'Connections', 'bushido-almost-famous' ); ?>
 				</a>
-				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=af-settings' ) ); ?>">
+				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=almost-famous-settings' ) ); ?>">
 					<?php esc_html_e( 'Settings', 'bushido-almost-famous' ); ?>
 				</a>
 			</div>

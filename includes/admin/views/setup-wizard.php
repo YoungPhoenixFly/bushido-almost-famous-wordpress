@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $almost_famous_current_step  = $wizard->get_current_step();
 $almost_famous_error_message = $wizard->get_error_message();
-$almost_famous_nonce_action  = 'af_setup_wizard_nonce';
+$almost_famous_nonce_action  = 'almost_famous_setup_wizard_nonce';
 $almost_famous_app_base_url  = \AlmostFamous\Config::resolve_bushido_app_url();
 $almost_famous_signup_url    = add_query_arg(
 	array(
@@ -72,19 +72,19 @@ $almost_famous_api_keys_url  = add_query_arg(
 			<?php if ( $wizard->passes_ssl_check() ) : ?>
 				<div class="notice notice-success inline">
 					<p>
-						<span class="dashicons dashicons-yes-alt" aria-hidden="true" style="color: #46b450;"></span>
+						<span class="dashicons dashicons-yes-alt af-status-icon--ok" aria-hidden="true"></span>
 						<?php esc_html_e( 'SSL is active. Your connection is secure.', 'bushido-almost-famous' ); ?>
 					</p>
 				</div>
 				<p>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=af-setup-wizard&step=2' ) ); ?>" class="button button-primary button-hero">
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=almost-famous-setup-wizard&step=2' ) ); ?>" class="button button-primary button-hero">
 						<?php esc_html_e( 'Continue to API Setup', 'bushido-almost-famous' ); ?>
 					</a>
 				</p>
 			<?php else : ?>
 				<div class="notice notice-error inline">
 					<p>
-						<span class="dashicons dashicons-warning" aria-hidden="true" style="color: #dc3232;"></span>
+						<span class="dashicons dashicons-warning af-status-icon--error" aria-hidden="true"></span>
 						<?php esc_html_e( 'SSL is not active on this site.', 'bushido-almost-famous' ); ?>
 					</p>
 				</div>
@@ -156,21 +156,21 @@ $almost_famous_api_keys_url  = add_query_arg(
 				</p>
 
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
-					<?php wp_nonce_field( $almost_famous_nonce_action, 'af_wizard_nonce' ); ?>
-					<input type="hidden" name="af_wizard_step" value="2" />
+					<?php wp_nonce_field( $almost_famous_nonce_action, 'almost_famous_wizard_nonce' ); ?>
+					<input type="hidden" name="almost_famous_wizard_step" value="2" />
 
 					<table class="form-table" role="presentation">
 						<tr>
 							<th scope="row">
-								<label for="af_api_key"><?php esc_html_e( 'API Key', 'bushido-almost-famous' ); ?></label>
+								<label for="almost_famous_api_key"><?php esc_html_e( 'API Key', 'bushido-almost-famous' ); ?></label>
 							</th>
 							<td>
 								<input
 									type="password"
-									name="af_api_key"
-									id="af_api_key"
+									name="almost_famous_api_key"
+									id="almost_famous_api_key"
 									class="regular-text"
-									placeholder="<?php esc_attr_e( 'af_…', 'bushido-almost-famous' ); ?>"
+									placeholder="<?php esc_attr_e( 'almost_famous_…', 'bushido-almost-famous' ); ?>"
 									autocomplete="off"
 								/>
 								<p class="description">
@@ -180,12 +180,12 @@ $almost_famous_api_keys_url  = add_query_arg(
 						</tr>
 					</table>
 
-					<?php submit_button( __( 'Save & Verify', 'bushido-almost-famous' ), 'secondary', 'af_submit_api_key' ); ?>
+					<?php submit_button( __( 'Save & Verify', 'bushido-almost-famous' ), 'secondary', 'almost_famous_submit_api_key' ); ?>
 				</form>
 			</details>
 
 			<p>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=af-setup-wizard&step=1' ) ); ?>">
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=almost-famous-setup-wizard&step=1' ) ); ?>">
 					&larr; <?php esc_html_e( 'Back to SSL Check', 'bushido-almost-famous' ); ?>
 				</a>
 			</p>
@@ -195,11 +195,11 @@ $almost_famous_api_keys_url  = add_query_arg(
 		<!-- Step 3: Confirmation -->
 		<?php
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only display, no DB writes.
-		$almost_famous_setup_outcome = isset( $_GET['af_setup'] ) ? sanitize_key( wp_unslash( $_GET['af_setup'] ) ) : '';
+		$almost_famous_setup_outcome = isset( $_GET['almost_famous_setup'] ) ? sanitize_key( wp_unslash( $_GET['almost_famous_setup'] ) ) : '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$almost_famous_setup_error_code = isset( $_GET['af_setup_error'] ) ? sanitize_key( wp_unslash( $_GET['af_setup_error'] ) ) : '';
-		$almost_famous_credential_mode  = (string) get_option( 'af_org_credential_mode', 'agency' );
-		$almost_famous_channel_name     = (string) get_option( 'af_org_channel_name', '' );
+		$almost_famous_setup_error_code = isset( $_GET['almost_famous_setup_error'] ) ? sanitize_key( wp_unslash( $_GET['almost_famous_setup_error'] ) ) : '';
+		$almost_famous_credential_mode  = (string) get_option( 'almost_famous_org_credential_mode', 'agency' );
+		$almost_famous_channel_name     = (string) get_option( 'almost_famous_org_channel_name', '' );
 		?>
 		<div class="af-wizard-step" id="af-step-confirmation">
 			<?php if ( 'error' === $almost_famous_setup_outcome || 'cancelled' === $almost_famous_setup_outcome ) : ?>
@@ -215,7 +215,7 @@ $almost_famous_api_keys_url  = add_query_arg(
 					</p>
 				</div>
 				<p>
-					<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=af-setup-wizard&step=2' ) ); ?>">
+					<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=almost-famous-setup-wizard&step=2' ) ); ?>">
 						&larr; <?php esc_html_e( 'Back to step 2', 'bushido-almost-famous' ); ?>
 					</a>
 				</p>
@@ -237,7 +237,7 @@ $almost_famous_api_keys_url  = add_query_arg(
 				<?php if ( 'agency' === $almost_famous_credential_mode ) : ?>
 					<div class="notice notice-success inline">
 						<p>
-							<span class="dashicons dashicons-yes-alt" aria-hidden="true" style="color: #46b450;"></span>
+							<span class="dashicons dashicons-yes-alt af-status-icon--ok" aria-hidden="true"></span>
 							<?php esc_html_e( "You're running on Bushido's shared ad accounts. You can create your first campaign right away — no per-platform OAuth needed.", 'bushido-almost-famous' ); ?>
 						</p>
 					</div>
@@ -263,10 +263,10 @@ $almost_famous_api_keys_url  = add_query_arg(
 										<td><?php echo esc_html( $almost_famous_platform_name ); ?></td>
 										<td>
 											<?php if ( $almost_famous_is_ok ) : ?>
-												<span class="dashicons dashicons-yes-alt" aria-hidden="true" style="color: #46b450;"></span>
+												<span class="dashicons dashicons-yes-alt af-status-icon--ok" aria-hidden="true"></span>
 												<?php echo esc_html( ucfirst( $almost_famous_platform_status ) ); ?>
 											<?php else : ?>
-												<span class="dashicons dashicons-warning" aria-hidden="true" style="color: #f0b849;"></span>
+												<span class="dashicons dashicons-warning af-status-icon--warn" aria-hidden="true"></span>
 												<?php echo esc_html( ucfirst( $almost_famous_platform_status ) ); ?>
 											<?php endif; ?>
 										</td>
@@ -278,78 +278,13 @@ $almost_famous_api_keys_url  = add_query_arg(
 				<?php endif; ?>
 
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
-					<?php wp_nonce_field( $almost_famous_nonce_action, 'af_wizard_nonce' ); ?>
-					<input type="hidden" name="af_wizard_step" value="3" />
+					<?php wp_nonce_field( $almost_famous_nonce_action, 'almost_famous_wizard_nonce' ); ?>
+					<input type="hidden" name="almost_famous_wizard_step" value="3" />
 
-					<?php submit_button( __( 'Go to Dashboard', 'bushido-almost-famous' ), 'primary', 'af_complete_setup' ); ?>
+					<?php submit_button( __( 'Go to Dashboard', 'bushido-almost-famous' ), 'primary', 'almost_famous_complete_setup' ); ?>
 				</form>
 			<?php endif; ?>
 		</div>
 	<?php endif; ?>
 </div>
 
-<style>
-	.af-setup-wizard {
-		max-width: 800px;
-		margin: 20px auto;
-	}
-	.af-wizard-steps__nav {
-		display: flex;
-		list-style: none;
-		padding: 0;
-		margin: 20px 0 30px;
-		border-bottom: 2px solid #e0e0e0;
-	}
-	.af-wizard-steps__nav li {
-		flex: 1;
-		padding: 12px 16px;
-		text-align: center;
-		font-weight: 600;
-		color: #999;
-		border-bottom: 3px solid transparent;
-		margin-bottom: -2px;
-	}
-	.af-wizard-steps__nav li.active {
-		color: #1d2327;
-		border-bottom-color: #2271b1;
-	}
-	.af-wizard-steps__nav li.complete {
-		color: #46b450;
-	}
-	.af-wizard-step {
-		background: #fff;
-		padding: 24px;
-		border: 1px solid #c3c4c7;
-		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
-	}
-	.af-platforms-table {
-		margin: 16px 0;
-	}
-	.af-ssl-instructions {
-		background: #f9f9f9;
-		padding: 16px;
-		border-left: 4px solid #2271b1;
-		margin: 16px 0;
-	}
-	.af-connect-primary {
-		padding: 24px;
-		background: #f6f7f7;
-		border: 1px solid #c3c4c7;
-		border-left: 4px solid #5865f2;
-		margin-bottom: 24px;
-	}
-	.af-connect-blurb {
-		font-size: 14px;
-		margin-top: 0;
-	}
-	.af-connect-fallback {
-		margin-top: 16px;
-		padding: 16px;
-		border: 1px solid #dcdcde;
-		background: #fff;
-	}
-	.af-connect-fallback summary {
-		cursor: pointer;
-		font-weight: 600;
-	}
-</style>

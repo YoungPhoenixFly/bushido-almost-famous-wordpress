@@ -25,7 +25,7 @@ use AlmostFamous\Api\Api_Client;
  *   Step 2 — API key input & connection verification
  *   Step 3 — Connected platform confirmation
  *
- * Sets af_setup_complete option on completion and auto-redirects
+ * Sets almost_famous_setup_complete option on completion and auto-redirects
  * to the wizard when the option is false.
  */
 class Setup_Wizard {
@@ -35,14 +35,14 @@ class Setup_Wizard {
 	 *
 	 * @var string
 	 */
-	public const PAGE_SLUG = 'af-setup-wizard';
+	public const PAGE_SLUG = 'almost-famous-setup-wizard';
 
 	/**
 	 * Nonce action for wizard form submissions.
 	 *
 	 * @var string
 	 */
-	private const NONCE_ACTION = 'af_setup_wizard_nonce';
+	private const NONCE_ACTION = 'almost_famous_setup_wizard_nonce';
 
 	/**
 	 * API authentication handler.
@@ -90,26 +90,26 @@ class Setup_Wizard {
 			'', // Hidden, no parent menu.
 			__( 'Bushido Almost Famous Setup', 'bushido-almost-famous' ),
 			__( 'Setup', 'bushido-almost-famous' ),
-			'af_manage_settings',
+			'almost_famous_manage_settings',
 			self::PAGE_SLUG,
 			array( $this, 'render' )
 		);
 	}
 
 	/**
-	 * Auto-redirect to wizard on first activation when af_setup_complete is false.
+	 * Auto-redirect to wizard on first activation when almost_famous_setup_complete is false.
 	 *
 	 * Only fires once per activation via a transient flag to prevent redirect loops.
 	 *
 	 * @return void
 	 */
 	public function maybe_redirect_to_wizard(): void {
-		if ( get_option( 'af_setup_complete', false ) ) {
+		if ( get_option( 'almost_famous_setup_complete', false ) ) {
 			return;
 		}
 
 		// Only redirect admins.
-		if ( ! current_user_can( 'af_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'almost_famous_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
@@ -126,8 +126,8 @@ class Setup_Wizard {
 		}
 
 		// Use transient to redirect only once per activation.
-		if ( get_transient( 'af_activation_redirect' ) ) {
-			delete_transient( 'af_activation_redirect' );
+		if ( get_transient( 'almost_famous_activation_redirect' ) ) {
+			delete_transient( 'almost_famous_activation_redirect' );
 			wp_safe_redirect( admin_url( 'admin.php?page=' . self::PAGE_SLUG ) );
 			exit;
 		}
@@ -140,17 +140,17 @@ class Setup_Wizard {
 	 */
 	public function handle_form_submission(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( ! isset( $_POST['af_wizard_step'] ) ) {
+		if ( ! isset( $_POST['almost_famous_wizard_step'] ) ) {
 			return;
 		}
 
-		if ( ! current_user_can( 'af_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'almost_famous_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Unauthorized.', 'bushido-almost-famous' ) );
 		}
 
-		check_admin_referer( self::NONCE_ACTION, 'af_wizard_nonce' );
+		check_admin_referer( self::NONCE_ACTION, 'almost_famous_wizard_nonce' );
 
-		$step = (int) sanitize_text_field( wp_unslash( $_POST['af_wizard_step'] ) );
+		$step = (int) sanitize_text_field( wp_unslash( $_POST['almost_famous_wizard_step'] ) );
 
 		switch ( $step ) {
 			case 2:
@@ -169,15 +169,15 @@ class Setup_Wizard {
 	 */
 	private function process_api_key_step(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified in handle_form_submission; key sanitized by regex validation below (sanitize_text_field would strip +/= chars that are valid in base64-encoded keys).
-		$api_key = isset( $_POST['af_api_key'] ) ? trim( wp_unslash( $_POST['af_api_key'] ) ) : '';
+		$api_key = isset( $_POST['almost_famous_api_key'] ) ? trim( wp_unslash( $_POST['almost_famous_api_key'] ) ) : '';
 
 		// Validate API key characters — sanitize_text_field strips +/= which are valid in API keys.
 		if ( ! empty( $api_key ) && ! preg_match( '/^[a-zA-Z0-9_\-\+\/\=\.]+$/', $api_key ) ) {
 			$redirect = add_query_arg(
 				array(
-					'page'     => self::PAGE_SLUG,
-					'step'     => 2,
-					'af_error' => 'invalid_key_format',
+					'page'                => self::PAGE_SLUG,
+					'step'                => 2,
+					'almost_famous_error' => 'invalid_key_format',
 				),
 				admin_url( 'admin.php' )
 			);
@@ -188,9 +188,9 @@ class Setup_Wizard {
 		if ( empty( $api_key ) ) {
 			$redirect = add_query_arg(
 				array(
-					'page'     => self::PAGE_SLUG,
-					'step'     => 2,
-					'af_error' => 'empty_key',
+					'page'                => self::PAGE_SLUG,
+					'step'                => 2,
+					'almost_famous_error' => 'empty_key',
 				),
 				admin_url( 'admin.php' )
 			);
@@ -203,9 +203,9 @@ class Setup_Wizard {
 		if ( ! $stored ) {
 			$redirect = add_query_arg(
 				array(
-					'page'     => self::PAGE_SLUG,
-					'step'     => 2,
-					'af_error' => 'store_failed',
+					'page'                => self::PAGE_SLUG,
+					'step'                => 2,
+					'almost_famous_error' => 'store_failed',
 				),
 				admin_url( 'admin.php' )
 			);
@@ -223,9 +223,9 @@ class Setup_Wizard {
 
 			$redirect = add_query_arg(
 				array(
-					'page'     => self::PAGE_SLUG,
-					'step'     => 2,
-					'af_error' => 'connection_failed',
+					'page'                => self::PAGE_SLUG,
+					'step'                => 2,
+					'almost_famous_error' => 'connection_failed',
 				),
 				admin_url( 'admin.php' )
 			);
@@ -236,7 +236,7 @@ class Setup_Wizard {
 		// /auth/validate doesn't list platforms — keep the Step 3 transient
 		// empty; the confirmation step renders a generic "you're connected"
 		// message and pulls platform status on demand.
-		set_transient( 'af_wizard_platforms', array(), HOUR_IN_SECONDS );
+		set_transient( 'almost_famous_wizard_platforms', array(), HOUR_IN_SECONDS );
 
 		$redirect = add_query_arg(
 			array(
@@ -250,13 +250,13 @@ class Setup_Wizard {
 	}
 
 	/**
-	 * Complete the wizard by setting af_setup_complete.
+	 * Complete the wizard by setting almost_famous_setup_complete.
 	 *
 	 * @return void
 	 */
 	private function complete_wizard(): void {
-		update_option( 'af_setup_complete', true );
-		delete_transient( 'af_wizard_platforms' );
+		update_option( 'almost_famous_setup_complete', true );
+		delete_transient( 'almost_famous_wizard_platforms' );
 
 		wp_safe_redirect( admin_url( 'admin.php?page=bushido-almost-famous' ) );
 		exit;
@@ -298,7 +298,7 @@ class Setup_Wizard {
 	 */
 	public function get_error_message(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$error = isset( $_GET['af_error'] ) ? sanitize_text_field( wp_unslash( $_GET['af_error'] ) ) : '';
+		$error = isset( $_GET['almost_famous_error'] ) ? sanitize_text_field( wp_unslash( $_GET['almost_famous_error'] ) ) : '';
 
 		switch ( $error ) {
 			case 'empty_key':
@@ -320,7 +320,7 @@ class Setup_Wizard {
 	 * @return array Array of platform objects.
 	 */
 	public function get_connected_platforms(): array {
-		$platforms = get_transient( 'af_wizard_platforms' );
+		$platforms = get_transient( 'almost_famous_wizard_platforms' );
 		return is_array( $platforms ) ? $platforms : array();
 	}
 
@@ -330,7 +330,7 @@ class Setup_Wizard {
 	 * @return void
 	 */
 	public function render(): void {
-		if ( ! current_user_can( 'af_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'almost_famous_manage_settings' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Unauthorized.', 'bushido-almost-famous' ) );
 		}
 

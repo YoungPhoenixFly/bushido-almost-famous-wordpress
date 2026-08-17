@@ -26,7 +26,7 @@ class Test_Oauth_Controller extends TestCase {
 		af_test_reset();
 
 		$auth = new Api_Auth();
-		update_option( 'af_api_key', $auth->encrypt_api_key( 'bsh_test_key_unit' ) );
+		update_option( 'almost_famous_api_key', $auth->encrypt_api_key( 'bsh_test_key_unit' ) );
 		$this->oauth = new Oauth_Controller( new Api_Client( $auth ) );
 	}
 
@@ -50,7 +50,7 @@ class Test_Oauth_Controller extends TestCase {
 		$this->assertStringStartsWith( 'https://facebook.com/dialog/oauth', $data['authorizationUrl'] );
 		$this->assertStringContainsString( 'client_state=', $data['authorizationUrl'] );
 
-		$stored = get_transient( 'af_oauth_state_1' );
+		$stored = get_transient( 'almost_famous_oauth_state_1' );
 		$this->assertIsArray( $stored );
 		$this->assertSame( 'meta', $stored['platform'] );
 		$this->assertNotEmpty( $stored['state'] );
@@ -106,7 +106,7 @@ class Test_Oauth_Controller extends TestCase {
 	}
 
 	public function test_callback_persists_credential_on_valid_state(): void {
-		set_transient( 'af_oauth_state_1', array( 'state' => 'nonce-abc', 'platform' => 'meta' ), 600 );
+		set_transient( 'almost_famous_oauth_state_1', array( 'state' => 'nonce-abc', 'platform' => 'meta' ), 600 );
 		// The callback resolves the credential from the connections LIST —
 		// there is no per-id route on the backend.
 		af_test_register_http_response(
@@ -141,21 +141,21 @@ class Test_Oauth_Controller extends TestCase {
 
 		$this->assertSame( 302, $resp->get_status() );
 		$location = $resp->get_headers()['Location'] ?? '';
-		$this->assertStringContainsString( 'af_connected=meta', $location );
+		$this->assertStringContainsString( 'almost_famous_connected=meta', $location );
 
-		$accounts = get_option( 'af_accounts', array() );
+		$accounts = get_option( 'almost_famous_accounts', array() );
 		$this->assertArrayHasKey( 'meta', $accounts );
 		$this->assertSame( 'cred-789', $accounts['meta']['credentialId'] );
 		$this->assertSame( 'act_42', $accounts['meta']['accountId'] );
 
 		$this->assertFalse(
-			get_transient( 'af_oauth_state_1' ),
+			get_transient( 'almost_famous_oauth_state_1' ),
 			'State must be consumed on use to prevent replay.'
 		);
 	}
 
 	public function test_callback_rejects_invalid_state(): void {
-		set_transient( 'af_oauth_state_1', array( 'state' => 'real', 'platform' => 'meta' ), 600 );
+		set_transient( 'almost_famous_oauth_state_1', array( 'state' => 'real', 'platform' => 'meta' ), 600 );
 
 		$req = new WP_REST_Request( 'GET', '/almost-famous/v1/oauth/callback' );
 		$req->set_param( 'status', 'success' );
@@ -165,8 +165,8 @@ class Test_Oauth_Controller extends TestCase {
 		$resp = $this->oauth->callback( $req );
 
 		$this->assertSame( 302, $resp->get_status() );
-		$this->assertStringContainsString( 'af_connect_error=invalid_state', $resp->get_headers()['Location'] );
-		$this->assertSame( array(), get_option( 'af_accounts', array() ) );
+		$this->assertStringContainsString( 'almost_famous_connect_error=invalid_state', $resp->get_headers()['Location'] );
+		$this->assertSame( array(), get_option( 'almost_famous_accounts', array() ) );
 	}
 
 	public function test_callback_rejects_missing_state(): void {
@@ -177,11 +177,11 @@ class Test_Oauth_Controller extends TestCase {
 		$resp = $this->oauth->callback( $req );
 
 		$this->assertSame( 302, $resp->get_status() );
-		$this->assertStringContainsString( 'af_connect_error=missing_state', $resp->get_headers()['Location'] );
+		$this->assertStringContainsString( 'almost_famous_connect_error=missing_state', $resp->get_headers()['Location'] );
 	}
 
 	public function test_callback_redirects_with_error_on_status_error(): void {
-		set_transient( 'af_oauth_state_1', array( 'state' => 'n', 'platform' => 'meta' ), 600 );
+		set_transient( 'almost_famous_oauth_state_1', array( 'state' => 'n', 'platform' => 'meta' ), 600 );
 
 		$req = new WP_REST_Request( 'GET', '/almost-famous/v1/oauth/callback' );
 		$req->set_param( 'status', 'error' );
@@ -191,12 +191,12 @@ class Test_Oauth_Controller extends TestCase {
 		$resp = $this->oauth->callback( $req );
 
 		$this->assertSame( 302, $resp->get_status() );
-		$this->assertStringContainsString( 'af_connect_error=user_denied', $resp->get_headers()['Location'] );
+		$this->assertStringContainsString( 'almost_famous_connect_error=user_denied', $resp->get_headers()['Location'] );
 	}
 
 	public function test_disconnect_calls_backend_and_removes_local_record(): void {
 		update_option(
-			'af_accounts',
+			'almost_famous_accounts',
 			array(
 				'meta' => array( 'credentialId' => 'cred-789', 'accountId' => 'act_42' ),
 			)
@@ -216,7 +216,7 @@ class Test_Oauth_Controller extends TestCase {
 		$resp = $this->oauth->disconnect( $req );
 
 		$this->assertSame( 200, $resp->get_status() );
-		$accounts = get_option( 'af_accounts', null );
+		$accounts = get_option( 'almost_famous_accounts', null );
 		$this->assertNotNull( $accounts );
 		$this->assertArrayNotHasKey( 'meta', $accounts );
 
@@ -227,7 +227,7 @@ class Test_Oauth_Controller extends TestCase {
 
 	public function test_disconnect_surfaces_backend_error_without_fatal(): void {
 		update_option(
-			'af_accounts',
+			'almost_famous_accounts',
 			array( 'meta' => array( 'credentialId' => 'cred-789', 'accountId' => 'act_42' ) )
 		);
 		af_test_register_http_response(
@@ -251,12 +251,12 @@ class Test_Oauth_Controller extends TestCase {
 		$this->assertSame( 'downstream failed', $data['error']['message'] );
 
 		// The local record is preserved when the backend delete fails.
-		$accounts = get_option( 'af_accounts', array() );
+		$accounts = get_option( 'almost_famous_accounts', array() );
 		$this->assertArrayHasKey( 'meta', $accounts );
 	}
 
 	public function test_disconnect_is_idempotent_when_platform_unknown(): void {
-		update_option( 'af_accounts', array() );
+		update_option( 'almost_famous_accounts', array() );
 
 		$req = new WP_REST_Request( 'POST', '/almost-famous/v1/oauth/disconnect' );
 		$req->set_param( 'platform', 'tiktok' );

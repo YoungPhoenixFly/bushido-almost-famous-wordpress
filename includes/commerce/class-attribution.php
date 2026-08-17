@@ -47,7 +47,7 @@ class Attribution {
 		$screen = $this->get_order_screen_id();
 
 		add_meta_box(
-			'af-attribution',
+			'almost-famous-attribution',
 			__( 'Bushido Almost Famous Attribution', 'bushido-almost-famous' ),
 			array( $this, 'render_attribution_meta_box' ),
 			$screen,
@@ -70,7 +70,7 @@ class Attribution {
 			return;
 		}
 
-		$attribution = $order->get_meta( 'af_attribution' );
+		$attribution = $order->get_meta( 'almost_famous_attribution' );
 
 		if ( empty( $attribution ) || ! is_array( $attribution ) ) {
 			echo '<p>' . esc_html__( 'No attribution data available for this order.', 'bushido-almost-famous' ) . '</p>';
@@ -149,7 +149,7 @@ class Attribution {
 		}
 
 		// Conversion event ID if tracked.
-		$event_id = $order->get_meta( 'af_conversion_event_id' );
+		$event_id = $order->get_meta( 'almost_famous_conversion_event_id' );
 
 		if ( ! empty( $event_id ) ) {
 			echo '<p class="description">';

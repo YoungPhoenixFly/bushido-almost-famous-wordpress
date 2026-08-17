@@ -82,8 +82,8 @@ class Audiences {
 			'bushido-almost-famous',
 			__( 'Audiences', 'bushido-almost-famous' ),
 			__( 'Audiences', 'bushido-almost-famous' ),
-			'af_view_campaigns',
-			'af-audiences',
+			'almost_famous_view_campaigns',
+			'almost-famous-audiences',
 			array( $this, 'render_page' )
 		);
 	}
@@ -98,13 +98,13 @@ class Audiences {
 	 * @return void
 	 */
 	public function enqueue_page_data( string $hook_suffix ): void {
-		if ( false === strpos( $hook_suffix, 'af-audiences' ) ) {
+		if ( false === strpos( $hook_suffix, 'almost-famous-audiences' ) ) {
 			return;
 		}
 
 		wp_localize_script(
-			'af-admin',
-			'afAudienceData',
+			'almost-famous-admin',
+			'almostFamousAudienceData',
 			array(
 				'credentials' => $this->resolve_platform_credentials(),
 			)

@@ -36,7 +36,7 @@ class Woo_Integration {
 	 *
 	 * @var string
 	 */
-	public const CONSENT_META_KEY = 'af_marketing_consent';
+	public const CONSENT_META_KEY = 'almost_famous_marketing_consent';
 
 	/**
 	 * Stored consent verdict: buyer consented to marketing tracking.
@@ -57,7 +57,7 @@ class Woo_Integration {
 	 *
 	 * @var string
 	 */
-	private const ATTRIBUTION_SCRIPT_HANDLE = 'af-attribution-capture';
+	private const ATTRIBUTION_SCRIPT_HANDLE = 'almost-famous-attribution-capture';
 
 	/**
 	 * Conversion tracking instance.
@@ -104,7 +104,7 @@ class Woo_Integration {
 		add_action( 'woocommerce_checkout_order_created', array( $this, 'on_order_created' ) );
 		add_action( 'woocommerce_new_order', array( $this, 'capture_attribution_data' ) );
 
-		// Front-end capture of ad-click / UTM params into the af_attribution cookie.
+		// Front-end capture of ad-click / UTM params into the almost_famous_attribution cookie.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_attribution_capture_script' ) );
 	}
 
@@ -171,7 +171,7 @@ class Woo_Integration {
 		$this->store_consent_meta( $order );
 
 		// Only store if not already present (avoid double-fire).
-		$existing = $order->get_meta( 'af_attribution' );
+		$existing = $order->get_meta( 'almost_famous_attribution' );
 
 		if ( ! empty( $existing ) ) {
 			return;
@@ -229,7 +229,7 @@ class Woo_Integration {
 
 		// Read from cookie set by Bushido Almost Famous tracking.
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$cookie_data = isset( $_COOKIE['af_attribution'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['af_attribution'] ) ) : '';
+		$cookie_data = isset( $_COOKIE['almost_famous_attribution'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['almost_famous_attribution'] ) ) : '';
 
 		if ( ! empty( $cookie_data ) ) {
 			$decoded = json_decode( $cookie_data, true );
@@ -270,7 +270,7 @@ class Woo_Integration {
 		}
 
 		if ( ! empty( $attribution ) ) {
-			$order->update_meta_data( 'af_attribution', $attribution );
+			$order->update_meta_data( 'almost_famous_attribution', $attribution );
 			$order->save();
 		}
 	}
@@ -278,12 +278,12 @@ class Woo_Integration {
 	/**
 	 * Enqueue the front-end attribution-capture inline script.
 	 *
-	 * `store_attribution_meta()` reads the `af_attribution` first-party
+	 * `store_attribution_meta()` reads the `almost_famous_attribution` first-party
 	 * cookie at checkout, but nothing wrote it historically — attribution
 	 * only survived when UTM params reached the checkout request itself.
 	 * This tiny dependency-free script writes that cookie on any front-end
-	 * page load that carries marketing params (utm_*, af_campaign,
-	 * af_platform, fbclid/ttclid/gclid), so the click landing page is
+	 * page load that carries marketing params (utm_*, almost_famous_campaign,
+	 * almost_famous_platform, fbclid/ttclid/gclid), so the click landing page is
 	 * enough to attribute the eventual order.
 	 *
 	 * Consent-gated: this runs during the visitor's own request, where the
@@ -310,12 +310,12 @@ class Woo_Integration {
 	/**
 	 * Build the attribution-capture inline script.
 	 *
-	 * Writes a first-party `af_attribution` cookie whose JSON shape mirrors
+	 * Writes a first-party `almost_famous_attribution` cookie whose JSON shape mirrors
 	 * exactly what {@see Woo_Integration::store_attribution_meta()} parses:
 	 * platform, campaign_id, campaign, source, medium, click_id. Platform is
 	 * inferred from the click-id param (fbclid/ttclid/gclid) or utm_source
-	 * unless `af_platform` names it explicitly; campaign_id prefers
-	 * `af_campaign` and falls back to `utm_campaign`.
+	 * unless `almost_famous_platform` names it explicitly; campaign_id prefers
+	 * `almost_famous_campaign` and falls back to `utm_campaign`.
 	 *
 	 * The script is static — no server-side values are interpolated.
 	 *
@@ -328,7 +328,7 @@ class Woo_Integration {
 	var q = new URLSearchParams( window.location.search );
 	var clickPlatforms = { fbclid: "meta", ttclid: "tiktok", gclid: "google" };
 	var sourcePlatforms = { facebook: "meta", instagram: "meta", meta: "meta", tiktok: "tiktok", google: "google", youtube: "google", spotify: "spotify" };
-	var platform = q.get( "af_platform" ) || "";
+	var platform = q.get( "almost_famous_platform" ) || "";
 	var clickId = "";
 	Object.keys( clickPlatforms ).some( function( key ) {
 		var value = q.get( key );
@@ -340,7 +340,7 @@ class Woo_Integration {
 	var source = q.get( "utm_source" ) || "";
 	var medium = q.get( "utm_medium" ) || "";
 	var campaign = q.get( "utm_campaign" ) || "";
-	var campaignId = q.get( "af_campaign" ) || "";
+	var campaignId = q.get( "almost_famous_campaign" ) || "";
 	if ( ! platform && source && sourcePlatforms[ source.toLowerCase() ] ) {
 		platform = sourcePlatforms[ source.toLowerCase() ];
 	}
@@ -353,7 +353,7 @@ class Woo_Integration {
 		medium: medium,
 		click_id: clickId
 	};
-	var cookie = "af_attribution=" + encodeURIComponent( JSON.stringify( payload ) ) +
+	var cookie = "almost_famous_attribution=" + encodeURIComponent( JSON.stringify( payload ) ) +
 		"; path=/; max-age=2592000; SameSite=Lax";
 	if ( "https:" === window.location.protocol ) { cookie += "; Secure"; }
 	document.cookie = cookie;

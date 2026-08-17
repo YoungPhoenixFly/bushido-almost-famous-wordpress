@@ -48,13 +48,13 @@ class Wp_Connect_Controller {
 	 * Non-autoloaded option containing an encrypted setup code while an
 	 * acknowledgement, abort, or local rollback still needs confirmation.
 	 */
-	private const DELIVERY_OPTION = 'af_wp_connect_pending_delivery';
+	private const DELIVERY_OPTION = 'almost_famous_wp_connect_pending_delivery';
 
 	/**
 	 * Background hook and short-lived mutex for delivery retries.
 	 */
 	public const DELIVERY_RETRY_HOOK   = 'almost_famous_retry_wp_delivery';
-	private const DELIVERY_LOCK_OPTION = 'af_wp_connect_delivery_lock';
+	private const DELIVERY_LOCK_OPTION = 'almost_famous_wp_connect_delivery_lock';
 	private const DELIVERY_RETRY_DELAY = 60;
 
 	/**
@@ -63,12 +63,12 @@ class Wp_Connect_Controller {
 	 * @var array<int, string>
 	 */
 	private const CONNECTION_OPTIONS = array(
-		'af_api_key',
-		'af_setup_complete',
-		'af_org_id',
-		'af_org_channel_id',
-		'af_org_channel_name',
-		'af_org_credential_mode',
+		'almost_famous_api_key',
+		'almost_famous_setup_complete',
+		'almost_famous_org_id',
+		'almost_famous_org_channel_id',
+		'almost_famous_org_channel_name',
+		'almost_famous_org_credential_mode',
 	);
 
 	/**
@@ -146,12 +146,7 @@ class Wp_Connect_Controller {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'callback' ),
-				// Authenticated via the per-user state transient set in
-				// start(); WP cookie-auth's `_wpnonce` requirement would
-				// reject the redirect from the Bushido app (which never sees
-				// a WP nonce). The handler verifies state with
-				// hash_equals before touching anything.
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this, 'allow_connect_callback' ),
 			)
 		);
 	}
@@ -168,6 +163,19 @@ class Wp_Connect_Controller {
 	}
 
 	/**
+	 * Connect callback is a browser redirect from the Bushido consent app.
+	 *
+	 * A WP REST nonce cannot be required: the Bushido app never sees one.
+	 * The handler authenticates the request with the per-request state
+	 * transient set in start(), compared with hash_equals.
+	 *
+	 * @return bool
+	 */
+	public function allow_connect_callback(): bool {
+		return true;
+	}
+
+	/**
 	 * Start the handshake — set the CSRF state and bounce to the
 	 * Bushido consent page.
 	 *
@@ -178,8 +186,8 @@ class Wp_Connect_Controller {
 		if ( false !== get_option( self::DELIVERY_OPTION, false ) ) {
 			$this->redirect_to_wizard(
 				array(
-					'af_setup'       => 'error',
-					'af_setup_error' => 'delivery_confirmation_pending',
+					'almost_famous_setup'       => 'error',
+					'almost_famous_setup_error' => 'delivery_confirmation_pending',
 				)
 			);
 			return;
@@ -240,8 +248,8 @@ class Wp_Connect_Controller {
 		if ( '' !== $error ) {
 			$this->redirect_to_wizard(
 				array(
-					'af_setup'       => 'cancelled',
-					'af_setup_error' => $error,
+					'almost_famous_setup'       => 'cancelled',
+					'almost_famous_setup_error' => $error,
 				)
 			);
 			return;
@@ -250,8 +258,8 @@ class Wp_Connect_Controller {
 		if ( '' === $code || '' === $state ) {
 			$this->redirect_to_wizard(
 				array(
-					'af_setup'       => 'error',
-					'af_setup_error' => 'missing_parameters',
+					'almost_famous_setup'       => 'error',
+					'almost_famous_setup_error' => 'missing_parameters',
 				)
 			);
 			return;
@@ -263,8 +271,8 @@ class Wp_Connect_Controller {
 		if ( false === $expected ) {
 			$this->redirect_to_wizard(
 				array(
-					'af_setup'       => 'error',
-					'af_setup_error' => 'invalid_state',
+					'almost_famous_setup'       => 'error',
+					'almost_famous_setup_error' => 'invalid_state',
 				)
 			);
 			return;
@@ -277,8 +285,8 @@ class Wp_Connect_Controller {
 		if ( '' === $encrypted_code ) {
 			$this->redirect_to_wizard(
 				array(
-					'af_setup'       => 'error',
-					'af_setup_error' => 'delivery_encryption_failed',
+					'almost_famous_setup'       => 'error',
+					'almost_famous_setup_error' => 'delivery_encryption_failed',
 				)
 			);
 			return;
@@ -288,8 +296,8 @@ class Wp_Connect_Controller {
 		if ( false !== get_option( self::DELIVERY_OPTION, false ) ) {
 			$this->redirect_to_wizard(
 				array(
-					'af_setup'       => 'error',
-					'af_setup_error' => 'delivery_confirmation_pending',
+					'almost_famous_setup'       => 'error',
+					'almost_famous_setup_error' => 'delivery_confirmation_pending',
 				)
 			);
 			return;
@@ -302,8 +310,8 @@ class Wp_Connect_Controller {
 		if ( ! $this->persist_option( self::DELIVERY_OPTION, $delivery ) ) {
 			$this->redirect_to_wizard(
 				array(
-					'af_setup'       => 'error',
-					'af_setup_error' => 'delivery_state_storage_failed',
+					'almost_famous_setup'       => 'error',
+					'almost_famous_setup_error' => 'delivery_state_storage_failed',
 				)
 			);
 			return;
@@ -312,15 +320,15 @@ class Wp_Connect_Controller {
 		delete_transient( $key );
 		$acknowledged    = $this->retry_pending_delivery();
 		$pending         = get_option( self::DELIVERY_OPTION, false );
-		$committed       = true === get_option( 'af_setup_complete', false )
+		$committed       = true === get_option( 'almost_famous_setup_complete', false )
 			&& '' !== $this->auth->decrypt_api_key();
-		$credential_mode = (string) get_option( 'af_org_credential_mode', '' );
+		$credential_mode = (string) get_option( 'almost_famous_org_credential_mode', '' );
 
 		if ( ! $committed ) {
 			$this->redirect_to_wizard(
 				array(
-					'af_setup'       => 'error',
-					'af_setup_error' => is_array( $pending ) && 'exchange' === ( $pending['action'] ?? '' )
+					'almost_famous_setup'       => 'error',
+					'almost_famous_setup_error' => is_array( $pending ) && 'exchange' === ( $pending['action'] ?? '' )
 						? 'exchange_retry_pending'
 						: 'delivery_confirmation_pending',
 				)
@@ -332,9 +340,9 @@ class Wp_Connect_Controller {
 
 		$this->redirect_to_wizard(
 			array(
-				'af_setup'           => 'success',
-				'af_credential_mode' => $credential_mode,
-				'af_setup_sync'      => $acknowledged ? 'confirmed' : 'pending',
+				'almost_famous_setup'           => 'success',
+				'almost_famous_credential_mode' => $credential_mode,
+				'almost_famous_setup_sync'      => $acknowledged ? 'confirmed' : 'pending',
 			)
 		);
 	}
@@ -550,11 +558,11 @@ class Wp_Connect_Controller {
 		$delivery['api_key_id']        = $api_key_id;
 		$delivery['encrypted_api_key'] = $encrypted_api_key;
 		$delivery['metadata']          = array(
-			'af_setup_complete'      => true,
-			'af_org_id'              => $org_id,
-			'af_org_channel_id'      => $channel_id,
-			'af_org_channel_name'    => $channel_name,
-			'af_org_credential_mode' => $credential_mode,
+			'almost_famous_setup_complete'      => true,
+			'almost_famous_org_id'              => $org_id,
+			'almost_famous_org_channel_id'      => $channel_id,
+			'almost_famous_org_channel_name'    => $channel_name,
+			'almost_famous_org_credential_mode' => $credential_mode,
 		);
 		if ( ! $this->persist_option( self::DELIVERY_OPTION, $delivery ) ) {
 			return false;
@@ -582,11 +590,11 @@ class Wp_Connect_Controller {
 		}
 
 		$required_metadata = array(
-			'af_setup_complete',
-			'af_org_id',
-			'af_org_channel_id',
-			'af_org_channel_name',
-			'af_org_credential_mode',
+			'almost_famous_setup_complete',
+			'almost_famous_org_id',
+			'almost_famous_org_channel_id',
+			'almost_famous_org_channel_name',
+			'almost_famous_org_credential_mode',
 		);
 		foreach ( $required_metadata as $option_name ) {
 			if ( ! array_key_exists( $option_name, $delivery['metadata'] ) ) {
@@ -594,9 +602,9 @@ class Wp_Connect_Controller {
 			}
 		}
 		if (
-			'' === (string) $delivery['metadata']['af_org_id']
-			|| '' === (string) $delivery['metadata']['af_org_channel_id']
-			|| ! in_array( $delivery['metadata']['af_org_credential_mode'], array( 'agency', 'own' ), true )
+			'' === (string) $delivery['metadata']['almost_famous_org_id']
+			|| '' === (string) $delivery['metadata']['almost_famous_org_channel_id']
+			|| ! in_array( $delivery['metadata']['almost_famous_org_credential_mode'], array( 'agency', 'own' ), true )
 		) {
 			return $this->abort_and_restore( $delivery );
 		}
@@ -778,7 +786,7 @@ class Wp_Connect_Controller {
 	 * @return string
 	 */
 	private function state_transient_key( string $state ): string {
-		return 'af_wp_connect_state_' . md5( $state );
+		return 'almost_famous_wp_connect_state_' . md5( $state );
 	}
 
 	/**
@@ -811,7 +819,7 @@ class Wp_Connect_Controller {
 	 * @return void
 	 */
 	private function redirect_to_wizard( array $args ): void {
-		$base = admin_url( 'admin.php?page=af-setup-wizard&step=3' );
+		$base = admin_url( 'admin.php?page=almost-famous-setup-wizard&step=3' );
 		$url  = add_query_arg( $args, $base );
 		wp_safe_redirect( $url, 302, 'almost-famous-plugin' );
 		exit;

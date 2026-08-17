@@ -47,7 +47,7 @@ class Shortcodes {
 	 */
 	public function register_shortcodes(): void {
 		// Classic editor fallback shortcode for the campaign-widget block.
-		add_shortcode( 'af-campaign-widget', array( $this, 'render_campaign_widget_shortcode' ) );
+		add_shortcode( 'almost-famous-campaign-widget', array( $this, 'render_campaign_widget_shortcode' ) );
 
 		// Public portal shortcode.
 		add_shortcode( 'almost-famous-portal', array( $this, 'render_public_portal_shortcode' ) );
@@ -77,14 +77,14 @@ class Shortcodes {
 		$asset_file = include ALMOST_FAMOUS_PLUGIN_DIR . 'assets/js/public-portal.asset.php';
 
 		wp_enqueue_style(
-			'af-public-portal',
+			'almost-famous-public-portal',
 			ALMOST_FAMOUS_PLUGIN_URL . 'assets/css/public-portal.css',
 			array(),
 			$asset_file['version']
 		);
 
 		wp_enqueue_script(
-			'af-public-portal',
+			'almost-famous-public-portal',
 			ALMOST_FAMOUS_PLUGIN_URL . 'assets/js/public-portal.js',
 			$asset_file['dependencies'],
 			$asset_file['version'],
@@ -94,18 +94,18 @@ class Shortcodes {
 		// Load JS translations for the portal's `__()` calls, and hand the
 		// React app the site locale so Intl formats currency/dates the WP
 		// way rather than always en-US.
-		wp_set_script_translations( 'af-public-portal', 'bushido-almost-famous' );
+		wp_set_script_translations( 'almost-famous-public-portal', 'bushido-almost-famous' );
 
 		// Capability tiers mirror the REST proxy's permission callbacks:
-		// viewing needs af_view_campaigns, managing needs af_manage_campaigns
+		// viewing needs almost_famous_view_campaigns, managing needs almost_famous_manage_campaigns
 		// (manage_options always qualifies). Demo mode is self-contained
 		// fixtures, so it grants the full UI to anyone for local testing.
-		$can_view   = current_user_can( 'af_view_campaigns' ) || current_user_can( 'manage_options' );
-		$can_manage = current_user_can( 'af_manage_campaigns' ) || current_user_can( 'manage_options' );
+		$can_view   = current_user_can( 'almost_famous_view_campaigns' ) || current_user_can( 'manage_options' );
+		$can_manage = current_user_can( 'almost_famous_manage_campaigns' ) || current_user_can( 'manage_options' );
 
 		wp_localize_script(
-			'af-public-portal',
-			'afPublicPortal',
+			'almost-famous-public-portal',
+			'almostFamousPublicPortal',
 			array(
 				'restBase'           => rest_url( 'almost-famous/v1' ),
 				'restNamespace'      => 'almost-famous/v1',
@@ -142,13 +142,13 @@ class Shortcodes {
 		);
 
 		return sprintf(
-			'<div id="af-public-portal"><div class="af-loading">%s</div></div>',
+			'<div id="almost-famous-public-portal"><div class="af-loading">%s</div></div>',
 			esc_html__( 'Loading Bushido Almost Famous Portal\u2026', 'bushido-almost-famous' )
 		);
 	}
 
 	/**
-	 * Render the [af-campaign-widget] classic editor shortcode.
+	 * Render the [almost-famous-campaign-widget] classic editor shortcode.
 	 *
 	 * Delegates to the same render logic as the campaign-widget Gutenberg block.
 	 *
@@ -159,7 +159,7 @@ class Shortcodes {
 		$atts = shortcode_atts(
 			array( 'id' => '' ),
 			$atts,
-			'af-campaign-widget'
+			'almost-famous-campaign-widget'
 		);
 
 		$campaign_id = sanitize_text_field( $atts['id'] );

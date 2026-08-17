@@ -30,21 +30,21 @@ class Network_Admin {
 	 *
 	 * @var string
 	 */
-	public const PAGE_SLUG = 'af-network-settings';
+	public const PAGE_SLUG = 'almost-famous-network-settings';
 
 	/**
 	 * Site option key for the encrypted network API key.
 	 *
 	 * @var string
 	 */
-	public const NETWORK_API_KEY_OPTION = 'af_network_api_key';
+	public const NETWORK_API_KEY_OPTION = 'almost_famous_network_api_key';
 
 	/**
 	 * Nonce action for network settings form.
 	 *
 	 * @var string
 	 */
-	private const NONCE_ACTION = 'af_network_settings_nonce';
+	private const NONCE_ACTION = 'almost_famous_network_settings_nonce';
 
 	/**
 	 * API authentication handler.
@@ -73,7 +73,7 @@ class Network_Admin {
 		}
 
 		add_action( 'network_admin_menu', array( $this, 'register_network_page' ) );
-		add_action( 'network_admin_edit_af_network_settings', array( $this, 'handle_save_settings' ) );
+		add_action( 'network_admin_edit_almost_famous_network_settings', array( $this, 'handle_save_settings' ) );
 	}
 
 	/**
@@ -95,12 +95,12 @@ class Network_Admin {
 	/**
 	 * Handle saving network settings.
 	 *
-	 * Hooked to 'network_admin_edit_af_network_settings' action.
+	 * Hooked to 'network_admin_edit_almost_famous_network_settings' action.
 	 *
 	 * @return void
 	 */
 	public function handle_save_settings(): void {
-		check_admin_referer( self::NONCE_ACTION, 'af_network_nonce' );
+		check_admin_referer( self::NONCE_ACTION, 'almost_famous_network_nonce' );
 
 		if ( ! current_user_can( 'manage_network_options' ) ) {
 			wp_die( esc_html__( 'Unauthorized.', 'bushido-almost-famous' ) );
@@ -109,7 +109,7 @@ class Network_Admin {
 		// Handle API key — use trim + pattern validation instead of sanitize_text_field
 		// which strips +/= characters valid in API keys.
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified above; the key is pattern-validated below (sanitize_text_field would strip characters valid in API keys) and stored encrypted.
-		$api_key = isset( $_POST['af_network_api_key'] ) ? trim( wp_unslash( $_POST['af_network_api_key'] ) ) : '';
+		$api_key = isset( $_POST['almost_famous_network_api_key'] ) ? trim( wp_unslash( $_POST['almost_famous_network_api_key'] ) ) : '';
 
 		if ( ! empty( $api_key ) && ! preg_match( '/^[a-zA-Z0-9_\-\+\/\=\.]+$/', $api_key ) ) {
 			wp_safe_redirect(
@@ -141,8 +141,8 @@ class Network_Admin {
 
 		// Handle per-site override setting.
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce already verified above.
-		$allow_site_override = isset( $_POST['af_allow_site_override'] ) ? '1' : '0';
-		update_site_option( 'af_allow_site_override', $allow_site_override );
+		$allow_site_override = isset( $_POST['almost_famous_allow_site_override'] ) ? '1' : '0';
+		update_site_option( 'almost_famous_allow_site_override', $allow_site_override );
 
 		// Redirect back to the settings page with a success message.
 		wp_safe_redirect(
@@ -247,7 +247,7 @@ class Network_Admin {
 	 * @return bool True if sites can use their own API keys.
 	 */
 	public function allows_site_override(): bool {
-		return '1' === get_site_option( 'af_allow_site_override', '1' );
+		return '1' === get_site_option( 'almost_famous_allow_site_override', '1' );
 	}
 
 	/**
@@ -280,25 +280,25 @@ class Network_Admin {
 					<?php esc_html_e( 'Set a global Bushido API key that will be used by all sites in the network. Individual sites can override this with their own key if allowed below.', 'bushido-almost-famous' ); ?>
 				</p>
 
-				<form method="post" action="<?php echo esc_url( network_admin_url( 'edit.php?action=af_network_settings' ) ); ?>">
-					<?php wp_nonce_field( self::NONCE_ACTION, 'af_network_nonce' ); ?>
+				<form method="post" action="<?php echo esc_url( network_admin_url( 'edit.php?action=almost_famous_network_settings' ) ); ?>">
+					<?php wp_nonce_field( self::NONCE_ACTION, 'almost_famous_network_nonce' ); ?>
 
 					<table class="form-table" role="presentation">
 						<tr>
 							<th scope="row">
-								<label for="af_network_api_key"><?php esc_html_e( 'API Key', 'bushido-almost-famous' ); ?></label>
+								<label for="almost_famous_network_api_key"><?php esc_html_e( 'API Key', 'bushido-almost-famous' ); ?></label>
 							</th>
 							<td>
 								<?php if ( $has_key ) : ?>
-									<p class="description" style="margin-bottom: 8px;">
-										<span class="dashicons dashicons-yes-alt" style="color: #46b450;"></span>
+									<p class="description af-desc-tight">
+										<span class="dashicons dashicons-yes-alt af-status-icon--ok"></span>
 										<?php esc_html_e( 'A network API key is currently stored. Enter a new key below to replace it.', 'bushido-almost-famous' ); ?>
 									</p>
 								<?php endif; ?>
 								<input
 									type="password"
-									name="af_network_api_key"
-									id="af_network_api_key"
+									name="almost_famous_network_api_key"
+									id="almost_famous_network_api_key"
 									class="regular-text"
 									placeholder="<?php esc_attr_e( 'bsh_live_...', 'bushido-almost-famous' ); ?>"
 									autocomplete="off"
@@ -311,11 +311,11 @@ class Network_Admin {
 						<tr>
 							<th scope="row"><?php esc_html_e( 'Per-Site Override', 'bushido-almost-famous' ); ?></th>
 							<td>
-								<label for="af_allow_site_override">
+								<label for="almost_famous_allow_site_override">
 									<input
 										type="checkbox"
-										name="af_allow_site_override"
-										id="af_allow_site_override"
+										name="almost_famous_allow_site_override"
+										id="almost_famous_allow_site_override"
 										value="1"
 										<?php checked( $allow_override ); ?>
 									/>
@@ -330,15 +330,6 @@ class Network_Admin {
 			</div>
 		</div>
 
-		<style>
-			.af-settings-section {
-				background: #fff;
-				padding: 20px;
-				border: 1px solid #c3c4c7;
-				box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
-				margin-bottom: 20px;
-			}
-		</style>
 		<?php
 	}
 }

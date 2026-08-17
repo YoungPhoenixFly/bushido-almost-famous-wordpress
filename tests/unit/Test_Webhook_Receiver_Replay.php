@@ -24,7 +24,7 @@ class Test_Webhook_Receiver_Replay extends TestCase {
 		parent::setUp();
 		af_test_reset();
 		$auth = new Api_Auth();
-		update_option( 'af_webhook_secret', $auth->encrypt( self::SECRET ) );
+		update_option( 'almost_famous_webhook_secret', $auth->encrypt( self::SECRET ) );
 
 		$handlers       = new Webhook_Handlers( new \AlmostFamous\Api\Api_Cache() );
 		$this->receiver = new Webhook_Receiver( $handlers, $auth );

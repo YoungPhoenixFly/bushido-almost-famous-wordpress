@@ -116,10 +116,10 @@ class Test_Network_Admin extends TestCase {
 	}
 
 	public function test_allows_site_override_respects_disabled_value(): void {
-		update_site_option( 'af_allow_site_override', '0' );
+		update_site_option( 'almost_famous_allow_site_override', '0' );
 		$this->assertFalse( $this->network_admin->allows_site_override() );
 
-		update_site_option( 'af_allow_site_override', '1' );
+		update_site_option( 'almost_famous_allow_site_override', '1' );
 		$this->assertTrue( $this->network_admin->allows_site_override() );
 	}
 
@@ -142,8 +142,8 @@ class Test_Network_Admin extends TestCase {
 	public function test_handle_save_settings_blocks_users_lacking_manage_network_options(): void {
 		af_test_set_caps( array() ); // strip caps including manage_options
 		$_POST = array(
-			'af_network_nonce'    => 'test-nonce',
-			'af_network_api_key'  => 'bsh_attempt',
+			'almost_famous_network_nonce'    => 'test-nonce',
+			'almost_famous_network_api_key'  => 'bsh_attempt',
 		);
 
 		$this->expectException( RuntimeException::class );

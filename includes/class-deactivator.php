@@ -30,7 +30,7 @@ class Deactivator {
 	}
 
 	/**
-	 * Remove all af_ prefixed transients.
+	 * Remove all almost_famous_ prefixed transients.
 	 *
 	 * @return void
 	 */
@@ -41,8 +41,8 @@ class Deactivator {
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
-				$wpdb->esc_like( '_transient_af_' ) . '%',
-				$wpdb->esc_like( '_transient_timeout_af_' ) . '%'
+				$wpdb->esc_like( '_transient_almost_famous_' ) . '%',
+				$wpdb->esc_like( '_transient_timeout_almost_famous_' ) . '%'
 			)
 		);
 	}

@@ -72,40 +72,40 @@ $almost_famous_badge_class    = $almost_famous_status_classes[ $almost_famous_ca
 $almost_famous_status_label   = ucfirst( $almost_famous_campaign_status );
 
 ?>
-<div class="af-campaign-widget" style="border: 1px solid #e2e4e7; border-radius: 4px; padding: 16px; background: #fff; max-width: 400px;">
-	<div class="af-campaign-widget__header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-		<h4 class="af-campaign-widget__name" style="margin: 0; font-size: 16px;">
+<div class="af-campaign-widget">
+	<div class="af-campaign-widget__header">
+		<h4 class="af-campaign-widget__name">
 			<?php echo $almost_famous_name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already escaped above. ?>
 		</h4>
-		<span class="af-badge <?php echo esc_attr( $almost_famous_badge_class ); ?>" style="display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 600; text-transform: uppercase; background: #f0f0f1; color: #50575e;">
+		<span class="af-badge <?php echo esc_attr( $almost_famous_badge_class ); ?>">
 			<?php echo esc_html( $almost_famous_status_label ); ?>
 		</span>
 	</div>
 
-	<div class="af-campaign-widget__metrics" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+	<div class="af-campaign-widget__metrics">
 		<div class="af-campaign-widget__metric">
-			<span class="af-campaign-widget__metric-label" style="display: block; font-size: 11px; text-transform: uppercase; color: #757575; margin-bottom: 2px;">
+			<span class="af-campaign-widget__metric-label">
 				<?php esc_html_e( 'ROAS', 'bushido-almost-famous' ); ?>
 			</span>
-			<span class="af-campaign-widget__metric-value" style="display: block; font-size: 20px; font-weight: 700; color: #1d2327;">
+			<span class="af-campaign-widget__metric-value">
 				<?php echo esc_html( $almost_famous_roas ); ?>
 			</span>
 		</div>
 
 		<div class="af-campaign-widget__metric">
-			<span class="af-campaign-widget__metric-label" style="display: block; font-size: 11px; text-transform: uppercase; color: #757575; margin-bottom: 2px;">
+			<span class="af-campaign-widget__metric-label">
 				<?php esc_html_e( 'Impressions', 'bushido-almost-famous' ); ?>
 			</span>
-			<span class="af-campaign-widget__metric-value" style="display: block; font-size: 20px; font-weight: 700; color: #1d2327;">
+			<span class="af-campaign-widget__metric-value">
 				<?php echo esc_html( $almost_famous_impressions ); ?>
 			</span>
 		</div>
 
 		<div class="af-campaign-widget__metric">
-			<span class="af-campaign-widget__metric-label" style="display: block; font-size: 11px; text-transform: uppercase; color: #757575; margin-bottom: 2px;">
+			<span class="af-campaign-widget__metric-label">
 				<?php esc_html_e( 'Spend', 'bushido-almost-famous' ); ?>
 			</span>
-			<span class="af-campaign-widget__metric-value" style="display: block; font-size: 20px; font-weight: 700; color: #1d2327;">
+			<span class="af-campaign-widget__metric-value">
 				<?php echo esc_html( $almost_famous_spend ); ?>
 			</span>
 		</div>

@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests for AlmostFamous\Roles\Roles activation / deactivation behavior and
- * the af_role_mapping option store.
+ * the almost_famous_role_mapping option store.
  *
  * @package AlmostFamous
  * @license GPL-2.0-or-later
@@ -57,9 +57,9 @@ class Test_Roles extends TestCase {
 
 		$editor = get_role( 'editor' );
 		$this->assertNotNull( $editor );
-		$this->assertTrue( $editor->has_cap( 'af_view_campaigns' ) );
+		$this->assertTrue( $editor->has_cap( 'almost_famous_view_campaigns' ) );
 		$this->assertFalse(
-			$editor->has_cap( 'af_manage_settings' ),
+			$editor->has_cap( 'almost_famous_manage_settings' ),
 			'Editor should not get the manage settings cap.'
 		);
 	}
@@ -67,7 +67,7 @@ class Test_Roles extends TestCase {
 	public function test_register_roles_seeds_default_role_mapping_when_unset(): void {
 		Roles::register_roles();
 
-		$mapping = get_option( 'af_role_mapping' );
+		$mapping = get_option( 'almost_famous_role_mapping' );
 		$this->assertIsArray( $mapping );
 		$this->assertSame( 'bushido_admin', $mapping['administrator'] );
 		$this->assertSame( 'manager', $mapping['editor'] );
@@ -76,7 +76,7 @@ class Test_Roles extends TestCase {
 
 	public function test_register_roles_does_not_overwrite_existing_mapping(): void {
 		update_option(
-			'af_role_mapping',
+			'almost_famous_role_mapping',
 			array( 'administrator' => 'viewer' )
 		);
 
@@ -84,7 +84,7 @@ class Test_Roles extends TestCase {
 
 		$this->assertSame(
 			array( 'administrator' => 'viewer' ),
-			get_option( 'af_role_mapping' )
+			get_option( 'almost_famous_role_mapping' )
 		);
 	}
 
@@ -107,9 +107,9 @@ class Test_Roles extends TestCase {
 		}
 
 		$editor = get_role( 'editor' );
-		$this->assertFalse( $editor->has_cap( 'af_view_campaigns' ) );
+		$this->assertFalse( $editor->has_cap( 'almost_famous_view_campaigns' ) );
 
-		$this->assertFalse( get_option( 'af_role_mapping' ) );
+		$this->assertFalse( get_option( 'almost_famous_role_mapping' ) );
 	}
 
 	public function test_get_role_mapping_falls_back_to_defaults_when_unset_or_invalid(): void {
@@ -118,11 +118,11 @@ class Test_Roles extends TestCase {
 		$this->assertSame( 'bushido_admin', $defaults['administrator'] );
 
 		// Set to a non-array → defaults returned.
-		update_option( 'af_role_mapping', 'not-an-array' );
+		update_option( 'almost_famous_role_mapping', 'not-an-array' );
 		$this->assertSame( $defaults, Roles::get_role_mapping() );
 
 		// Set to empty array → defaults returned.
-		update_option( 'af_role_mapping', array() );
+		update_option( 'almost_famous_role_mapping', array() );
 		$this->assertSame( $defaults, Roles::get_role_mapping() );
 	}
 
@@ -136,7 +136,7 @@ class Test_Roles extends TestCase {
 			)
 		);
 
-		$stored = get_option( 'af_role_mapping' );
+		$stored = get_option( 'almost_famous_role_mapping' );
 		$this->assertIsArray( $stored );
 		$this->assertSame( 'bushido_admin', $stored['administrator'] );
 		$this->assertSame( 'manager', $stored['editor'] );
@@ -146,7 +146,7 @@ class Test_Roles extends TestCase {
 
 	public function test_map_wp_role_to_bushido_uses_mapping_with_viewer_fallback(): void {
 		update_option(
-			'af_role_mapping',
+			'almost_famous_role_mapping',
 			array(
 				'administrator' => 'bushido_admin',
 				'editor'        => 'manager',

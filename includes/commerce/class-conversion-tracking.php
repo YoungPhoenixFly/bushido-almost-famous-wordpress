@@ -27,7 +27,7 @@ use AlmostFamous\Plugin;
  * Events are POSTed to `/pixels/{pixelId}/events`. The pixel id is
  * resolved from `/pixels` and cached locally; the first Meta pixel in
  * the org is used by default, overridable via the
- * `almost_famous/default_pixel_id` filter or the `af_default_pixel_id`
+ * `almost_famous/default_pixel_id` filter or the `almost_famous_default_pixel_id`
  * option.
  */
 class Conversion_Tracking {
@@ -37,14 +37,14 @@ class Conversion_Tracking {
 	 *
 	 * @var string
 	 */
-	private const EVENT_ID_META_KEY = 'af_conversion_event_id';
+	private const EVENT_ID_META_KEY = 'almost_famous_conversion_event_id';
 
 	/**
 	 * Order meta key for pending/sent delivery state.
 	 *
 	 * @var string
 	 */
-	private const EVENT_STATUS_META_KEY = 'af_conversion_event_status';
+	private const EVENT_STATUS_META_KEY = 'almost_famous_conversion_event_status';
 
 	/**
 	 * Conversion delivery status values.
@@ -55,7 +55,7 @@ class Conversion_Tracking {
 	/**
 	 * Retry metadata and bounded retry schedule.
 	 */
-	private const RETRY_ATTEMPTS_META_KEY = 'af_conversion_retry_attempts';
+	private const RETRY_ATTEMPTS_META_KEY = 'almost_famous_conversion_retry_attempts';
 	private const RETRY_HOOK              = 'almost_famous_retry_conversion';
 	private const MAX_RETRY_ATTEMPTS      = 4;
 	private const RETRY_BASE_DELAY        = 60;
@@ -63,7 +63,7 @@ class Conversion_Tracking {
 	/**
 	 * Lock option prefix and stale-lock timeout.
 	 */
-	private const LOCK_OPTION_PREFIX = 'af_conversion_lock_';
+	private const LOCK_OPTION_PREFIX = 'almost_famous_conversion_lock_';
 	private const LOCK_TTL_SECONDS   = 300;
 
 	/**
@@ -71,14 +71,14 @@ class Conversion_Tracking {
 	 *
 	 * @var string
 	 */
-	private const DEFAULT_PIXEL_OPTION = 'af_default_pixel_id';
+	private const DEFAULT_PIXEL_OPTION = 'almost_famous_default_pixel_id';
 
 	/**
 	 * Transient key for the auto-resolved pixel ID cache.
 	 *
 	 * @var string
 	 */
-	private const PIXEL_CACHE_TRANSIENT = 'af_default_pixel_id_cache';
+	private const PIXEL_CACHE_TRANSIENT = 'almost_famous_default_pixel_id_cache';
 
 	/**
 	 * How long to cache the resolved pixel ID before re-querying /pixels.
@@ -218,7 +218,7 @@ class Conversion_Tracking {
 			return;
 		}
 
-		$attribution = $order->get_meta( 'af_attribution' );
+		$attribution = $order->get_meta( 'almost_famous_attribution' );
 		if ( ! is_array( $attribution ) ) {
 			$attribution = array();
 		}
@@ -454,7 +454,7 @@ class Conversion_Tracking {
 	 *
 	 * Order of preference:
 	 *   1. `almost_famous/default_pixel_id` filter (lets site code pick).
-	 *   2. `af_default_pixel_id` option (user-pinned in Settings).
+	 *   2. `almost_famous_default_pixel_id` option (user-pinned in Settings).
 	 *   3. First Meta pixel returned by `/pixels` (auto-discovered, cached).
 	 *
 	 * @param \AlmostFamous\Api\Api_Client $client API client.

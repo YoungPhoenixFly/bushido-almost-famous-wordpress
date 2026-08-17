@@ -32,18 +32,10 @@ require_once ALMOST_FAMOUS_PLUGIN_DIR . 'vendor/autoload.php';
 require_once ALMOST_FAMOUS_PLUGIN_DIR . 'includes/class-config.php';
 require_once ALMOST_FAMOUS_PLUGIN_DIR . 'includes/class-creative-assets.php';
 
-$almost_famous_endpoints = \AlmostFamous\Config::resolve_service_endpoints();
-if ( ! defined( 'AF_API_BASE_URL' ) ) {
-	// Backward-compatible public constant documented for wp-config.php.
-	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
-	define( 'AF_API_BASE_URL', $almost_famous_endpoints['api'] );
-}
-if ( ! defined( 'AF_BUSHIDO_APP_URL' ) ) {
-	// Backward-compatible public constant documented for wp-config.php.
-	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
-	define( 'AF_BUSHIDO_APP_URL', $almost_famous_endpoints['app'] );
-}
-unset( $almost_famous_endpoints );
+// Fail closed on invalid endpoint configuration before the rest of the plugin boots.
+// Site owners may override endpoints with ALMOST_FAMOUS_API_BASE_URL and
+// ALMOST_FAMOUS_BUSHIDO_APP_URL (or the legacy AF_* names) in wp-config.php.
+\AlmostFamous\Config::resolve_service_endpoints();
 
 register_activation_hook( __FILE__, array( \AlmostFamous\Activator::class, 'activate' ) );
 register_deactivation_hook( __FILE__, array( \AlmostFamous\Deactivator::class, 'deactivate' ) );
@@ -56,16 +48,16 @@ add_action( 'wp_initialize_site', array( \AlmostFamous\Activator::class, 'provis
 add_filter(
 	'plugin_action_links_' . ALMOST_FAMOUS_PLUGIN_BASENAME,
 	static function ( array $links ): array {
-		if ( get_option( 'af_setup_complete', false ) ) {
+		if ( get_option( 'almost_famous_setup_complete', false ) ) {
 			$link = sprintf(
 				'<a href="%s">%s</a>',
-				esc_url( admin_url( 'admin.php?page=af-settings' ) ),
+				esc_url( admin_url( 'admin.php?page=almost-famous-settings' ) ),
 				esc_html__( 'Settings', 'bushido-almost-famous' )
 			);
 		} else {
 			$link = sprintf(
 				'<a href="%s"><strong>%s</strong></a>',
-				esc_url( admin_url( 'admin.php?page=af-setup-wizard' ) ),
+				esc_url( admin_url( 'admin.php?page=almost-famous-setup-wizard' ) ),
 				esc_html__( 'Connect', 'bushido-almost-famous' )
 			);
 		}

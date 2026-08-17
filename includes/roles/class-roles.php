@@ -14,7 +14,7 @@ namespace AlmostFamous\Roles;
  * WordPress role and capability registration for Bushido Admin.
  *
  * Manages creation of the bushido_admin role with appropriate capabilities
- * and provides WP-to-Bushido role mapping via the af_role_mapping option.
+ * and provides WP-to-Bushido role mapping via the almost_famous_role_mapping option.
  */
 class Roles {
 
@@ -38,10 +38,10 @@ class Roles {
 	 * @var string[]
 	 */
 	private const CAPABILITIES = array(
-		'af_manage_campaigns',
-		'af_manage_settings',
-		'af_manage_accounts',
-		'af_view_campaigns',
+		'almost_famous_manage_campaigns',
+		'almost_famous_manage_settings',
+		'almost_famous_manage_accounts',
+		'almost_famous_view_campaigns',
 	);
 
 	/**
@@ -57,11 +57,11 @@ class Roles {
 			'bushido_admin',
 			__( 'Bushido Admin', 'bushido-almost-famous' ),
 			array(
-				'read'                => true,
-				'af_manage_campaigns' => true,
-				'af_manage_settings'  => true,
-				'af_manage_accounts'  => true,
-				'af_view_campaigns'   => true,
+				'read'                           => true,
+				'almost_famous_manage_campaigns' => true,
+				'almost_famous_manage_settings'  => true,
+				'almost_famous_manage_accounts'  => true,
+				'almost_famous_view_campaigns'   => true,
 			)
 		);
 
@@ -76,12 +76,12 @@ class Roles {
 		// Grant view capability to editors.
 		$editor_role = get_role( 'editor' );
 		if ( $editor_role ) {
-			$editor_role->add_cap( 'af_view_campaigns' );
+			$editor_role->add_cap( 'almost_famous_view_campaigns' );
 		}
 
 		// Set default role mapping if not already set.
-		if ( false === get_option( 'af_role_mapping' ) ) {
-			update_option( 'af_role_mapping', self::DEFAULT_MAPPING );
+		if ( false === get_option( 'almost_famous_role_mapping' ) ) {
+			update_option( 'almost_famous_role_mapping', self::DEFAULT_MAPPING );
 		}
 	}
 
@@ -104,7 +104,7 @@ class Roles {
 			}
 		}
 
-		delete_option( 'af_role_mapping' );
+		delete_option( 'almost_famous_role_mapping' );
 	}
 
 	/**
@@ -113,7 +113,7 @@ class Roles {
 	 * @return array<string, string> Associative array of WP role slug => Bushido role name.
 	 */
 	public static function get_role_mapping(): array {
-		$mapping = get_option( 'af_role_mapping', array() );
+		$mapping = get_option( 'almost_famous_role_mapping', array() );
 
 		if ( ! is_array( $mapping ) || empty( $mapping ) ) {
 			return self::DEFAULT_MAPPING;
@@ -142,7 +142,7 @@ class Roles {
 			}
 		}
 
-		return update_option( 'af_role_mapping', $sanitized );
+		return update_option( 'almost_famous_role_mapping', $sanitized );
 	}
 
 	/**

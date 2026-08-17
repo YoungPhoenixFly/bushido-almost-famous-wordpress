@@ -188,7 +188,7 @@ function App() {
 }
 
 domReady( () => {
-	const el = document.getElementById( 'af-public-portal' );
+	const el = document.getElementById( 'almost-famous-public-portal' );
 	if ( el ) {
 		render( <App />, el );
 	}

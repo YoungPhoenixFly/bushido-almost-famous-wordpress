@@ -45,7 +45,7 @@ class Test_Shortcodes extends TestCase {
 		foreach (
 			array(
 				'almost-famous-portal',
-				'af-campaign-widget',
+				'almost-famous-campaign-widget',
 			) as $expected
 		) {
 			$this->assertContains( $expected, $tags );
@@ -64,10 +64,10 @@ class Test_Shortcodes extends TestCase {
 	public function test_portal_shortcode_outputs_mount_target_and_localizes_data(): void {
 		$html = $this->shortcodes->render_public_portal_shortcode( array() );
 
-		$this->assertStringContainsString( 'id="af-public-portal"', $html );
+		$this->assertStringContainsString( 'id="almost-famous-public-portal"', $html );
 		$this->assertStringContainsString( 'af-loading', $html );
 
-		$localized = get_option( '__localized_afPublicPortal' );
+		$localized = get_option( '__localized_almostFamousPublicPortal' );
 		$this->assertIsArray( $localized );
 		$this->assertArrayHasKey( 'restBase', $localized );
 		$this->assertArrayHasKey( 'nonce', $localized );
@@ -83,9 +83,9 @@ class Test_Shortcodes extends TestCase {
 	public function test_portal_shortcode_demo_attribute_enables_demo_mode(): void {
 		$html = $this->shortcodes->render_public_portal_shortcode( array( 'demo' => '1' ) );
 
-		$this->assertStringContainsString( 'id="af-public-portal"', $html );
+		$this->assertStringContainsString( 'id="almost-famous-public-portal"', $html );
 
-		$localized = get_option( '__localized_afPublicPortal' );
+		$localized = get_option( '__localized_almostFamousPublicPortal' );
 		$this->assertTrue( $localized['demoMode'] );
 
 		// The portal is an authenticated console — no guest token is emitted.

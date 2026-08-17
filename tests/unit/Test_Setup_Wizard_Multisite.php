@@ -2,7 +2,7 @@
 /**
  * Multisite scoping tests for the Setup_Wizard.
  *
- * The wizard's completion flag (`af_setup_complete`) is a per-site option:
+ * The wizard's completion flag (`almost_famous_setup_complete`) is a per-site option:
  * every subsite runs its own connect flow and mints its own per-site API
  * key. A network-level (site option) flag must never suppress a subsite's
  * wizard, and one subsite completing setup must not mark the network done.
@@ -54,9 +54,9 @@ class Test_Setup_Wizard_Multisite extends TestCase {
 	public function test_network_level_flag_does_not_suppress_subsite_wizard(): void {
 		// A network admin completing setup elsewhere writes a SITE option,
 		// never the per-site flag this subsite consults.
-		update_site_option( 'af_setup_complete', true );
-		set_transient( 'af_activation_redirect', true, 60 );
-		af_test_set_caps( array( 'af_manage_settings' => true ) );
+		update_site_option( 'almost_famous_setup_complete', true );
+		set_transient( 'almost_famous_activation_redirect', true, 60 );
+		af_test_set_caps( array( 'almost_famous_manage_settings' => true ) );
 
 		try {
 			$this->wizard->maybe_redirect_to_wizard();
@@ -67,7 +67,7 @@ class Test_Setup_Wizard_Multisite extends TestCase {
 		global $af_test_redirects;
 		$this->assertNotEmpty(
 			$af_test_redirects,
-			'A subsite without its own af_setup_complete must still get the wizard.'
+			'A subsite without its own almost_famous_setup_complete must still get the wizard.'
 		);
 		$this->assertStringContainsString(
 			'page=' . Setup_Wizard::PAGE_SLUG,
@@ -76,9 +76,9 @@ class Test_Setup_Wizard_Multisite extends TestCase {
 	}
 
 	public function test_per_site_flag_suppresses_wizard_on_multisite(): void {
-		update_option( 'af_setup_complete', true );
-		set_transient( 'af_activation_redirect', true, 60 );
-		af_test_set_caps( array( 'af_manage_settings' => true ) );
+		update_option( 'almost_famous_setup_complete', true );
+		set_transient( 'almost_famous_activation_redirect', true, 60 );
+		af_test_set_caps( array( 'almost_famous_manage_settings' => true ) );
 
 		$this->wizard->maybe_redirect_to_wizard();
 
@@ -87,7 +87,7 @@ class Test_Setup_Wizard_Multisite extends TestCase {
 	}
 
 	public function test_subsite_completion_does_not_touch_network_options(): void {
-		af_test_set_caps( array( 'af_manage_settings' => true ) );
+		af_test_set_caps( array( 'almost_famous_manage_settings' => true ) );
 
 		$method = new \ReflectionMethod( $this->wizard, 'complete_wizard' );
 		try {
@@ -96,9 +96,9 @@ class Test_Setup_Wizard_Multisite extends TestCase {
 			// Expected — wp_safe_redirect threw to short-circuit exit().
 		}
 
-		$this->assertTrue( (bool) get_option( 'af_setup_complete' ) );
+		$this->assertTrue( (bool) get_option( 'almost_famous_setup_complete' ) );
 		$this->assertFalse(
-			(bool) get_site_option( 'af_setup_complete' ),
+			(bool) get_site_option( 'almost_famous_setup_complete' ),
 			'Completing one subsite must not mark the whole network as set up.'
 		);
 	}

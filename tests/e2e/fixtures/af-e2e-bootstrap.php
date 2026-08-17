@@ -19,28 +19,28 @@ add_filter( 'almost_famous_passes_ssl_check', '__return_true' );
  * @param string $credential_mode Organization credential mode.
  * @return void
  */
-function af_e2e_seed_connected_site( string $credential_mode = 'agency' ): void {
+function almost_famous_e2e_seed_connected_site( string $credential_mode = 'agency' ): void {
 	$mode = in_array( $credential_mode, array( 'agency', 'own' ), true )
 		? $credential_mode
 		: 'agency';
 
 	$auth = new \AlmostFamous\Api\Api_Auth();
-	if ( ! $auth->store_api_key( 'af_e2e_test_key_0000000000000000' ) ) {
+	if ( ! $auth->store_api_key( 'almost_famous_e2e_test_key_0000000000000000' ) ) {
 		throw new RuntimeException( 'Unable to seed the E2E API key.' );
 	}
 
-	update_option( 'af_setup_complete', true );
-	update_option( 'af_org_id', 'org_e2e' );
-	update_option( 'af_org_channel_id', 'channel_e2e' );
-	update_option( 'af_org_channel_name', 'E2E Channel' );
-	update_option( 'af_org_credential_mode', $mode );
-	delete_option( 'af_accounts' );
-	delete_transient( 'af_activation_redirect' );
-	delete_transient( 'af_system_credentials' );
-	delete_transient( 'af_creatives_list' );
-	delete_transient( 'af_campaigns_cmp_e2e_analytics' );
-	delete_transient( 'af_campaigns_cmp_e2e_block' );
-	delete_option( 'af_e2e_uploaded_asset' );
+	update_option( 'almost_famous_setup_complete', true );
+	update_option( 'almost_famous_org_id', 'org_e2e' );
+	update_option( 'almost_famous_org_channel_id', 'channel_e2e' );
+	update_option( 'almost_famous_org_channel_name', 'E2E Channel' );
+	update_option( 'almost_famous_org_credential_mode', $mode );
+	delete_option( 'almost_famous_accounts' );
+	delete_transient( 'almost_famous_activation_redirect' );
+	delete_transient( 'almost_famous_system_credentials' );
+	delete_transient( 'almost_famous_creatives_list' );
+	delete_transient( 'almost_famous_campaigns_cmp_e2e_analytics' );
+	delete_transient( 'almost_famous_campaigns_cmp_e2e_block' );
+	delete_option( 'almost_famous_e2e_uploaded_asset' );
 }
 
 /**
@@ -48,19 +48,19 @@ function af_e2e_seed_connected_site( string $credential_mode = 'agency' ): void 
  *
  * @return void
  */
-function af_e2e_reset_connection(): void {
+function almost_famous_e2e_reset_connection(): void {
 	( new \AlmostFamous\Api\Api_Auth() )->delete_api_key();
 
 	foreach (
 		array(
-			'af_setup_complete',
-			'af_org_id',
-			'af_org_channel_id',
-			'af_org_channel_name',
-				'af_org_credential_mode',
-				'af_accounts',
-				'af_e2e_uploaded_asset',
-				'af_e2e_uploaded_bytes',
+			'almost_famous_setup_complete',
+			'almost_famous_org_id',
+			'almost_famous_org_channel_id',
+			'almost_famous_org_channel_name',
+				'almost_famous_org_credential_mode',
+				'almost_famous_accounts',
+				'almost_famous_e2e_uploaded_asset',
+				'almost_famous_e2e_uploaded_bytes',
 			) as $option
 	) {
 		delete_option( $option );
@@ -68,11 +68,11 @@ function af_e2e_reset_connection(): void {
 
 	foreach (
 		array(
-			'af_activation_redirect',
-			'af_system_credentials',
-			'af_creatives_list',
-			'af_campaigns_cmp_e2e_analytics',
-			'af_campaigns_cmp_e2e_block',
+			'almost_famous_activation_redirect',
+			'almost_famous_system_credentials',
+			'almost_famous_creatives_list',
+			'almost_famous_campaigns_cmp_e2e_analytics',
+			'almost_famous_campaigns_cmp_e2e_block',
 		) as $transient
 	) {
 		delete_transient( $transient );
@@ -103,11 +103,11 @@ add_filter(
 					|| (string) strlen( $expected_bytes ) !== (string) ( $headers['content-length'] ?? '' )
 				) {
 					return new WP_Error(
-						'af_e2e_invalid_upload',
+						'almost_famous_e2e_invalid_upload',
 						'Creative upload did not transmit the expected PNG bytes and headers.'
 					);
 				}
-				update_option( 'af_e2e_uploaded_bytes', hash( 'sha256', $body ) );
+				update_option( 'almost_famous_e2e_uploaded_bytes', hash( 'sha256', $body ) );
 				return array(
 				'headers'  => array(),
 				'body'     => '',
@@ -131,7 +131,7 @@ add_filter(
 			)
 		) {
 			return new WP_Error(
-				'af_e2e_unexpected_external_request',
+				'almost_famous_e2e_unexpected_external_request',
 				'Unexpected external request in E2E: ' . $url
 			);
 		}
@@ -150,7 +150,7 @@ add_filter(
 				'data' => array(
 					'id'             => 'org_e2e',
 					'name'           => 'E2E Organization',
-					'credentialMode' => (string) get_option( 'af_org_credential_mode', 'agency' ),
+					'credentialMode' => (string) get_option( 'almost_famous_org_credential_mode', 'agency' ),
 					'status'         => 'active',
 					'metadata'       => array( 'tier' => 'pro' ),
 				),
@@ -162,7 +162,7 @@ add_filter(
 		} elseif ( str_ends_with( $path, '/public/auth/connect/META' ) ) {
 			$body = array(
 				'data' => array(
-					'authorizationUrl' => admin_url( 'admin.php?page=af-accounts&af_connected=meta' ),
+					'authorizationUrl' => admin_url( 'admin.php?page=almost-famous-accounts&almost_famous_connected=meta' ),
 				),
 			);
 		} elseif ( str_ends_with( $path, '/public/assets' ) && 'GET' === ( $args['method'] ?? 'GET' ) ) {
@@ -175,7 +175,7 @@ add_filter(
 					'status'   => 'processing',
 				),
 			);
-			if ( get_option( 'af_e2e_uploaded_asset', false ) ) {
+			if ( get_option( 'almost_famous_e2e_uploaded_asset', false ) ) {
 				$assets[] = array(
 					'id'       => 'cre_e2e_uploaded',
 					'name'     => 'E2E Uploaded Asset',
@@ -202,13 +202,13 @@ add_filter(
 					true
 				)
 			);
-			if ( ! hash_equals( $expected_hash, (string) get_option( 'af_e2e_uploaded_bytes', '' ) ) ) {
+			if ( ! hash_equals( $expected_hash, (string) get_option( 'almost_famous_e2e_uploaded_bytes', '' ) ) ) {
 				return new WP_Error(
-					'af_e2e_upload_not_received',
+					'almost_famous_e2e_upload_not_received',
 					'Creative confirmation arrived before the expected bytes.'
 				);
 			}
-			update_option( 'af_e2e_uploaded_asset', true );
+			update_option( 'almost_famous_e2e_uploaded_asset', true );
 			$body = array(
 				'data' => array(
 					'id'     => 'cre_e2e_uploaded',
@@ -253,7 +253,7 @@ add_filter(
 		}
 		if ( null === $body ) {
 			return new WP_Error(
-				'af_e2e_missing_fixture',
+				'almost_famous_e2e_missing_fixture',
 				'No deterministic E2E fixture for ' . (string) ( $args['method'] ?? 'GET' ) . ' ' . $path
 			);
 		}

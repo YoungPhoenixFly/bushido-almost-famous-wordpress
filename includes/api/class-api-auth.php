@@ -50,7 +50,7 @@ class Api_Auth {
 	 *
 	 * @var string
 	 */
-	private const OPTION_KEY = 'af_api_key';
+	private const OPTION_KEY = 'almost_famous_api_key';
 
 	/**
 	 * In-memory plaintext key override. When set (via with_plaintext_key()),
@@ -64,7 +64,7 @@ class Api_Auth {
 
 	/**
 	 * Build an Api_Auth that always returns the given plaintext key when
-	 * decrypt_api_key() is called, regardless of the af_api_key option.
+	 * decrypt_api_key() is called, regardless of the almost_famous_api_key option.
 	 *
 	 * @param string $plaintext Decrypted key to pin.
 	 * @return self

@@ -30,7 +30,7 @@ class Test_Site_Manager_Network_Key extends TestCase {
 		$this->auth = new Api_Auth();
 
 		// Site-level key.
-		update_option( 'af_api_key', $this->auth->encrypt_api_key( self::SITE_KEY ) );
+		update_option( 'almost_famous_api_key', $this->auth->encrypt_api_key( self::SITE_KEY ) );
 
 		// Network-level key.
 		update_site_option(
@@ -51,7 +51,7 @@ class Test_Site_Manager_Network_Key extends TestCase {
 	}
 
 	public function test_network_key_used_when_override_disabled(): void {
-		update_site_option( 'af_allow_site_override', '0' );
+		update_site_option( 'almost_famous_allow_site_override', '0' );
 		af_test_register_http_response(
 			'/campaigns',
 			array(
@@ -70,7 +70,7 @@ class Test_Site_Manager_Network_Key extends TestCase {
 	}
 
 	public function test_site_key_used_when_override_enabled(): void {
-		update_site_option( 'af_allow_site_override', '1' );
+		update_site_option( 'almost_famous_allow_site_override', '1' );
 		af_test_register_http_response(
 			'/campaigns',
 			array(
@@ -89,8 +89,8 @@ class Test_Site_Manager_Network_Key extends TestCase {
 	}
 
 	public function test_falls_back_to_network_when_site_missing(): void {
-		update_site_option( 'af_allow_site_override', '1' );
-		delete_option( 'af_api_key' );
+		update_site_option( 'almost_famous_allow_site_override', '1' );
+		delete_option( 'almost_famous_api_key' );
 		af_test_register_http_response(
 			'/campaigns',
 			array(

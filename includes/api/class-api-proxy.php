@@ -722,7 +722,7 @@ class Api_Proxy {
 	 * @return bool True if the current user can view campaigns.
 	 */
 	public function check_read_permission(): bool {
-		return current_user_can( 'af_view_campaigns' ) || current_user_can( 'manage_options' );
+		return current_user_can( 'almost_famous_view_campaigns' ) || current_user_can( 'manage_options' );
 	}
 
 	/**
@@ -731,7 +731,7 @@ class Api_Proxy {
 	 * @return bool True if the current user can manage campaigns.
 	 */
 	public function check_write_permission(): bool {
-		return current_user_can( 'af_manage_campaigns' ) || current_user_can( 'manage_options' );
+		return current_user_can( 'almost_famous_manage_campaigns' ) || current_user_can( 'manage_options' );
 	}
 
 	/**
@@ -766,7 +766,7 @@ class Api_Proxy {
 
 			if ( ! $this->check_write_permission() ) {
 				return new WP_Error(
-					'af_forbidden',
+					'almost_famous_forbidden',
 					__( 'You do not have permission to modify campaigns.', 'bushido-almost-famous' ),
 					array( 'status' => 403 )
 				);
@@ -775,7 +775,7 @@ class Api_Proxy {
 			$nonce = (string) $request->get_header( 'x-wp-nonce' );
 			if ( '' === $nonce ) {
 				return new WP_Error(
-					'af_csrf_missing',
+					'almost_famous_csrf_missing',
 					__( 'A REST nonce is required for write requests. Refresh the page and try again.', 'bushido-almost-famous' ),
 					array( 'status' => 403 )
 				);
@@ -783,7 +783,7 @@ class Api_Proxy {
 
 			if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
 				return new WP_Error(
-					'af_csrf_invalid',
+					'almost_famous_csrf_invalid',
 					__( 'REST nonce is invalid or expired.', 'bushido-almost-famous' ),
 					array( 'status' => 403 )
 				);
@@ -800,7 +800,7 @@ class Api_Proxy {
 		// renders server-side with the site key and does not use this surface.
 		if ( $is_mutating ) {
 			return new WP_Error(
-				'af_portal_write_forbidden',
+				'almost_famous_portal_write_forbidden',
 				__( 'Portal write operations require a signed-in WordPress user.', 'bushido-almost-famous' ),
 				array( 'status' => 401 )
 			);
@@ -812,14 +812,14 @@ class Api_Proxy {
 
 		if ( is_user_logged_in() ) {
 			return new WP_Error(
-				'af_forbidden',
+				'almost_famous_forbidden',
 				__( 'You do not have permission to view campaigns.', 'bushido-almost-famous' ),
 				array( 'status' => 403 )
 			);
 		}
 
 		return new WP_Error(
-			'af_portal_auth_required',
+			'almost_famous_portal_auth_required',
 			__( 'Sign in to view your campaigns.', 'bushido-almost-famous' ),
 			array( 'status' => 401 )
 		);
@@ -831,7 +831,7 @@ class Api_Proxy {
 	 * @return bool
 	 */
 	public function check_manage_accounts(): bool {
-		return current_user_can( 'af_manage_accounts' ) || current_user_can( 'manage_options' );
+		return current_user_can( 'almost_famous_manage_accounts' ) || current_user_can( 'manage_options' );
 	}
 
 	/**
@@ -990,7 +990,7 @@ class Api_Proxy {
 
 		// 24h cache for countries (rarely change); 1h for everything else.
 		$ttl_seconds   = 'countries' === $kind ? DAY_IN_SECONDS : HOUR_IN_SECONDS;
-		$transient_key = 'af_targeting_' . md5( $kind . '|' . $query );
+		$transient_key = 'almost_famous_targeting_' . md5( $kind . '|' . $query );
 		$cached        = get_transient( $transient_key );
 		if ( false !== $cached && is_array( $cached ) ) {
 			return $this->format_response( $cached, false );
@@ -1294,7 +1294,7 @@ class Api_Proxy {
 			return null;
 		}
 
-		$config = $this->client->get_af_config();
+		$config = $this->client->get_almost_famous_config();
 		$floors = isset( $config['platformMinimumDailyBudget'] ) && is_array( $config['platformMinimumDailyBudget'] )
 			? $config['platformMinimumDailyBudget']
 			: array();
@@ -2016,7 +2016,7 @@ class Api_Proxy {
 	 * @return WP_REST_Response|null Error response or null if passed.
 	 */
 	private function check_budget_safety( array $data ): ?WP_REST_Response {
-		$daily_limit = (float) get_option( 'af_daily_budget_limit', 0 );
+		$daily_limit = (float) get_option( 'almost_famous_daily_budget_limit', 0 );
 
 		if ( $daily_limit <= 0 ) {
 			return null;
@@ -2028,7 +2028,7 @@ class Api_Proxy {
 			return null;
 		}
 
-		$settings   = get_option( 'af_settings', array() );
+		$settings   = get_option( 'almost_famous_settings', array() );
 		$multiplier = (int) ( $settings['budget_safety_multiplier'] ?? 10 );
 		$multiplier = max( 2, $multiplier );
 

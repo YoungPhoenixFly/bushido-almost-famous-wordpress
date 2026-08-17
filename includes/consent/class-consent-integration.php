@@ -99,7 +99,7 @@ class Consent_Integration {
 		 * Defaults to false so EU visitors (and anyone else) are not tracked
 		 * implicitly. Sites that operate outside consent-required regions can
 		 * opt back into "assume consent" via the Settings → Privacy checkbox
-		 * (the `af_assume_consent_no_cmp` option) or with
+		 * (the `almost_famous_assume_consent_no_cmp` option) or with
 		 * add_filter( 'almost_famous_default_consent', '__return_true' );
 		 *
 		 * @since 1.0.0
@@ -107,7 +107,7 @@ class Consent_Integration {
 		 */
 		return (bool) apply_filters(
 			'almost_famous_default_consent',
-			'1' === get_option( 'af_assume_consent_no_cmp', '' )
+			'1' === get_option( 'almost_famous_assume_consent_no_cmp', '' )
 		);
 	}
 
@@ -232,7 +232,7 @@ class Consent_Integration {
 	 * Export personal data for a given email address.
 	 *
 	 * Called by WordPress Privacy API during a data export request. The
-	 * plugin's only per-visitor personal data is the `af_attribution`
+	 * plugin's only per-visitor personal data is the `almost_famous_attribution`
 	 * click/UTM meta captured on WooCommerce orders — export that. (The
 	 * Bushido backend only ever receives SHA-256-hashed emails for
 	 * conversion matching and exposes no per-email privacy API; requests
@@ -247,7 +247,7 @@ class Consent_Integration {
 		$orders       = $this->get_attributed_orders( $email_address, $page );
 
 		foreach ( $orders as $order ) {
-			$attribution = $order->get_meta( 'af_attribution' );
+			$attribution = $order->get_meta( 'almost_famous_attribution' );
 
 			if ( empty( $attribution ) || ! is_array( $attribution ) ) {
 				continue;
@@ -268,10 +268,10 @@ class Consent_Integration {
 			}
 
 			$export_items[] = array(
-				'group_id'          => 'af-attribution',
+				'group_id'          => 'almost-famous-attribution',
 				'group_label'       => __( 'Bushido Almost Famous Ad Attribution', 'bushido-almost-famous' ),
 				'group_description' => __( 'Ad click and campaign attribution captured on your orders by Bushido Almost Famous.', 'bushido-almost-famous' ),
-				'item_id'           => 'af-attribution-' . $order->get_id(),
+				'item_id'           => 'almost-famous-attribution-' . $order->get_id(),
 				'data'              => $data,
 			);
 		}
@@ -286,7 +286,7 @@ class Consent_Integration {
 	 * Erase personal data for a given email address.
 	 *
 	 * Called by WordPress Privacy API during a data erasure request.
-	 * Removes the `af_attribution` meta from the requester's orders.
+	 * Removes the `almost_famous_attribution` meta from the requester's orders.
 	 *
 	 * @param string $email_address The user's email address.
 	 * @param int    $page          Page number for paginated erasure.
@@ -298,13 +298,13 @@ class Consent_Integration {
 		$orders = $this->get_attributed_orders( $email_address, $page );
 
 		foreach ( $orders as $order ) {
-			$attribution = $order->get_meta( 'af_attribution' );
+			$attribution = $order->get_meta( 'almost_famous_attribution' );
 
 			if ( empty( $attribution ) ) {
 				continue;
 			}
 
-			$order->delete_meta_data( 'af_attribution' );
+			$order->delete_meta_data( 'almost_famous_attribution' );
 			$order->save();
 			++$items_removed;
 		}

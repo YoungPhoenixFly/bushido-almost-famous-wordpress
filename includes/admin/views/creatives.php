@@ -21,14 +21,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Transient notices.
-$almost_famous_success_msg = get_transient( 'af_creative_success' );
-$almost_famous_error_msg   = get_transient( 'af_creative_error' );
+$almost_famous_success_msg = get_transient( 'almost_famous_creative_success' );
+$almost_famous_error_msg   = get_transient( 'almost_famous_creative_error' );
 
 if ( $almost_famous_success_msg ) {
-	delete_transient( 'af_creative_success' );
+	delete_transient( 'almost_famous_creative_success' );
 }
 if ( $almost_famous_error_msg ) {
-	delete_transient( 'af_creative_error' );
+	delete_transient( 'almost_famous_creative_error' );
 }
 
 $almost_famous_viewing_creative       = ! empty( $creative );
@@ -65,7 +65,7 @@ $almost_famous_is_processing          = 'processing' === $almost_famous_creative
 			</p>
 
 			<form method="post" enctype="multipart/form-data" class="af-upload-form">
-				<?php wp_nonce_field( 'af_creative_upload', 'af_creative_upload_nonce' ); ?>
+				<?php wp_nonce_field( 'almost_famous_creative_upload', 'almost_famous_creative_upload_nonce' ); ?>
 
 				<table class="form-table" role="presentation">
 					<tr>
@@ -73,7 +73,7 @@ $almost_famous_is_processing          = 'processing' === $almost_famous_creative
 							<label for="af-creative-name"><?php esc_html_e( 'Creative Name', 'bushido-almost-famous' ); ?></label>
 						</th>
 						<td>
-							<input type="text" id="af-creative-name" name="af_creative_name" class="regular-text"
+							<input type="text" id="af-creative-name" name="almost_famous_creative_name" class="regular-text"
 								required placeholder="<?php esc_attr_e( 'e.g., Summer EP Cover Art', 'bushido-almost-famous' ); ?>">
 						</td>
 					</tr>
@@ -85,9 +85,9 @@ $almost_famous_is_processing          = 'processing' === $almost_famous_creative
 							<div class="af-upload-methods">
 								<!-- Media Library Selection -->
 								<div class="af-upload-method">
-									<input type="hidden" name="af_source_attachment_id" id="af-source-attachment-id" value="">
+									<input type="hidden" name="almost_famous_source_attachment_id" id="af-source-attachment-id" value="">
 									<button type="button" class="button" id="af-select-media">
-										<span class="dashicons dashicons-admin-media" aria-hidden="true" style="vertical-align: text-bottom;"></span>
+										<span class="dashicons dashicons-admin-media af-icon-align" aria-hidden="true"></span>
 										<?php esc_html_e( 'Choose from Media Library', 'bushido-almost-famous' ); ?>
 									</button>
 									<span id="af-selected-media-name" class="description"></span>
@@ -97,7 +97,7 @@ $almost_famous_is_processing          = 'processing' === $almost_famous_creative
 
 								<!-- Direct Upload -->
 								<div class="af-upload-method">
-									<input type="file" name="af_source_asset" id="af-source-asset"
+									<input type="file" name="almost_famous_source_asset" id="af-source-asset"
 										accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime">
 									<p class="description">
 										<?php esc_html_e( 'Accepted: JPG, PNG, GIF, WebP, MP4, MOV. Max size determined by server settings.', 'bushido-almost-famous' ); ?>
@@ -108,7 +108,7 @@ $almost_famous_is_processing          = 'processing' === $almost_famous_creative
 					</tr>
 				</table>
 
-				<?php submit_button( __( 'Upload Asset', 'bushido-almost-famous' ), 'primary', 'af_upload_submit' ); ?>
+				<?php submit_button( __( 'Upload Asset', 'bushido-almost-famous' ), 'primary', 'almost_famous_upload_submit' ); ?>
 			</form>
 		</div>
 
@@ -146,7 +146,7 @@ $almost_famous_is_processing          = 'processing' === $almost_famous_creative
 								</span>
 							</div>
 
-							<a href="<?php echo esc_url( admin_url( 'admin.php?page=af-creatives&creative_id=' . $almost_famous_item_id ) ); ?>" class="af-creative-card__link">
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=almost-famous-creatives&creative_id=' . $almost_famous_item_id ) ); ?>" class="af-creative-card__link">
 								<?php esc_html_e( 'View Details', 'bushido-almost-famous' ); ?>
 							</a>
 						</div>
@@ -176,9 +176,9 @@ $almost_famous_is_processing          = 'processing' === $almost_famous_creative
 						$almost_famous_is_video = preg_match( '/\.(mp4|mov|webm)$/i', $almost_famous_creative_source_url );
 						if ( $almost_famous_is_video ) :
 							?>
-							<video src="<?php echo esc_url( $almost_famous_creative_source_url ); ?>" controls class="af-source-video" style="max-width:400px;"></video>
+							<video src="<?php echo esc_url( $almost_famous_creative_source_url ); ?>" controls class="af-source-video"></video>
 						<?php else : ?>
-							<img src="<?php echo esc_url( $almost_famous_creative_source_url ); ?>" alt="<?php echo esc_attr( $almost_famous_creative_name ); ?>" class="af-source-image" style="max-width:400px;">
+							<img src="<?php echo esc_url( $almost_famous_creative_source_url ); ?>" alt="<?php echo esc_attr( $almost_famous_creative_name ); ?>" class="af-source-image">
 						<?php endif; ?>
 					</div>
 				<?php endif; ?>
